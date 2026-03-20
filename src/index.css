@@ -1,30 +1,84 @@
 @import "tailwindcss";
 
 @theme {
-  /* Full Palette */
-  --color-primary-50: #e6f4f6;
-  --color-primary-100: #cde9ed;
-  --color-primary-200: #a6d7dc;
-  --color-primary-300: #7fc5cc;
-  --color-primary-400: #4fbccc;
-  --color-primary-500: #1fb3c4;
-  --color-primary-600: #1aa2b1;
-  --color-primary-700: #168a96;
-  --color-primary-800: #126f78;
-  --color-primary-900: #0e5560;
-  --color-primary-950: #083a42;
-
-  /* Semantic Mappings */
-  --color-primary-dark: var(--color-primary-900);
-  --color-primary-main: var(--color-primary-500);
-  --color-primary-hover: var(--color-primary-600);
-  --color-primary-active: var(--color-primary-700);
-  --color-primary-heavy: var(--color-primary-200);
-  --color-primary-light: var(--color-primary-100);
-  --color-primary-subtle: var(--color-primary-50);
+  /* Brand Identity */
+  --font-inter: "Inter", sans-serif;
+  --font-space: "Space Grotesk", sans-serif;
+  
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6; /* Electric Blue */
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+  
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+  
+  /* Redefining primary as brand */
+  --color-primary-50: var(--color-brand-50);
+  --color-primary-100: var(--color-brand-100);
+  --color-primary-200: var(--color-brand-200);
+  --color-primary-300: var(--color-brand-300);
+  --color-primary-400: var(--color-brand-400);
+  --color-primary-500: var(--color-brand-500);
+  --color-primary-600: var(--color-brand-600);
+  --color-primary-700: var(--color-brand-700);
+  --color-primary-800: var(--color-brand-800);
+  --color-primary-900: var(--color-brand-900);
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-inter antialiased;
+  }
+  
+  h1, h2, h3, h4, .font-space {
+    @apply font-space;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20;
+  }
+  
+  .glass-dark {
+    @apply bg-slate-900/70 backdrop-blur-md border border-white/10;
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  }
+  
+  .bg-grid-white {
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+}
+
+/* Custom Scrollbar Utilities */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 rounded-full hover:bg-slate-300;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #e2e8f0 transparent;
 }

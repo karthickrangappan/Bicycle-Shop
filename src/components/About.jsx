@@ -1,104 +1,208 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import PageHeader from '../layout/PageHeader';
+import { 
+  Info, 
+  Target, 
+  Users, 
+  Zap, 
+  ShieldCheck, 
+  Award, 
+  Bike, 
+  History,
+  Heart,
+  TrendingUp,
+  MapPin,
+  CheckCircle2
+} from 'lucide-react';
 
 export default function About() {
   const values = [
     {
-      title: "Expert Advice",
-      desc: "Our staff are passionate riders who know bikes inside and out, ready to guide you.",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-      )
+      title: "Obsessive Precision",
+      desc: "We don't just fix bikes; we calibrate them to factory-spec perfection. Every bolt receives exact torque.",
+      icon: Target,
+      color: "blue"
     },
     {
-      title: "Premium Quality",
-      desc: "We carry only the top brands and the highest quality components for safety and performance.",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-        </svg>
-      )
+      title: "Rider First",
+      desc: "Our community is built on trust. Whether you're a pro or a beginner, we treat your journey with respect.",
+      icon: Heart,
+      color: "red"
     },
     {
-      title: "Dedicated Support",
-      desc: "Enjoy ongoing support, professional servicing, and maintenance to keep you riding smoothly.",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      )
+      title: "Future Ready",
+      desc: "From carbon-fiber frames to high-voltage e-bike systems, we master the cutting edge of cycling tech.",
+      icon: Zap,
+      color: "brand"
     }
   ];
 
-  return (
-    <div className="bg-white text-gray-900 min-h-screen">
-      
-      {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary-subtle to-white py-16 sm:py-20 lg:py-24 text-center px-4">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">
-            About <span className="text-primary-main">Bicycle Shop</span>
-          </h1>
-          <p className="mt-4 sm:mt-6 mx-auto text-gray-500 text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl">
-            Passionate about cycling. Committed to quality. Your journey starts here.
-          </p>
-        </div>
-      </section>
+  const milestones = [
+    { year: "2010", label: "Foundation", desc: "Started as a small custom tuning shop in a local garage." },
+    { year: "2015", label: "Expansion", desc: "Opened our flagship store with a dedicated master service lab." },
+    { year: "2020", label: "Innovation", desc: "Launched our first signature line of custom-built performance machines." },
+    { year: "2026", label: "Legacy", desc: "Now the premier destination for elite cyclists across the continent." },
+  ];
 
-      {/* Story Section */}
-      <section className="py-12 sm:py-16 lg:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          <div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-gray-900 mb-6">
-              Our Story
+  return (
+    <div className="bg-slate-50 min-h-screen pb-20">
+      
+      <PageHeader 
+        title="Our Cycling Legacy"
+        subtitle="Passionate about riding. Committed to perfection. Since 2010, we've been crafting elite journeys for every cyclist."
+        icon={Info}
+        badge="Elite Bicycle Boutique"
+      />
+
+      {/* STORY SECTION */}
+      <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <div className="flex items-center gap-2 mb-6 text-brand-500 font-black uppercase tracking-widest text-[10px]">
+               <div className="w-10 h-[2px] bg-brand-500" />
+               Our Heritage
+            </div>
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tighter text-slate-900 mb-8 leading-tight">
+              Engineering the <span className="text-brand-500">Perfect Ride</span> Since 2010.
             </h2>
-            <div className="space-y-4 text-sm sm:text-base md:text-lg text-gray-500 leading-relaxed">
+            <div className="space-y-6 text-slate-500 font-medium leading-relaxed text-lg">
               <p>
-                Founded in 2010, VeloDynamics started in a small garage with a big dream: to make high-quality bicycles accessible to everyone. Over the years, we've grown from a humble repair shop into a premier destination for cyclists of all levels.
+                Founded in 2010, <span className="text-slate-900 font-black">CycleCore</span> started with a single bench and a passion for speed. We didn't want to be just another bike shop; we wanted to be a service sanctuary for those who demand the absolute best from their machines.
               </p>
               <p>
-                Whether you're a daily commuter, a weekend trail warrior, or a competitive road racer, we believe that the right bike can transform your life. Our team of expert mechanics and cycling enthusiasts are here to help you find the perfect ride.
+                Over a decade later, we've evolved into a premier destination for world-class cyclists. Our facility combines old-world craftsmanship with aerospace-grade tools, ensuring every bicycle that leaves our floor is a masterpiece of efficiency and safety.
               </p>
             </div>
-          </div>
-          <div className="relative rounded-3xl overflow-hidden shadow-xl h-64 sm:h-80 md:h-96 lg:h-[450px]">
-            <img 
-              src="/images/img-7.png" 
-              alt="Our Story" 
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-            />
-          </div>
+
+            <div className="grid grid-cols-2 gap-6 mt-12">
+               <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/50">
+                  <p className="text-4xl font-black text-slate-900 mb-1 tracking-tighter">15+</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Years Experience</p>
+               </div>
+               <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/50">
+                  <p className="text-4xl font-black text-slate-900 mb-1 tracking-tighter">12K+</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Custom Builds</p>
+               </div>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            <div className="absolute -inset-4 bg-brand-500/10 rounded-[3rem] blur-3xl -z-10" />
+            <div className="relative rounded-[3.5rem] overflow-hidden shadow-2xl shadow-indigo-500/20 aspect-[4/5]">
+               <img 
+                 src="https://images.unsplash.com/photo-1571188654248-7a89213915f7?auto=format&fit=crop&q=80&w=800" 
+                 alt="Workshop Perfection" 
+                 className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-1000" 
+               />
+               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
+               <div className="absolute bottom-10 left-10 right-10 flex items-center gap-4 bg-white/10 backdrop-blur-xl p-4 rounded-2xl border border-white/20">
+                  <div className="w-12 h-12 bg-brand-500 rounded-xl flex items-center justify-center text-white">
+                      <ShieldCheck size={24} />
+                  </div>
+                  <div>
+                    <p className="text-white font-black tracking-tight">Certified Excellence</p>
+                    <p className="text-white/60 text-xs font-bold">Approved Master Mechanics</p>
+                  </div>
+               </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Values Section */}
-      <section className="bg-gray-50 py-16 sm:py-20 lg:py-24 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900">Why Choose Us</h2>
-            <p className="mt-4 max-w-2xl text-sm sm:text-base md:text-lg text-gray-500 mx-auto">
-              We don't just sell bikes; we build relationships. Here is what sets us apart.
-            </p>
+      {/* CORE VALUES */}
+      <section className="bg-slate-900 py-24 sm:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10" 
+          style={{ 
+            backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
+            backgroundSize: '40px 40px'
+          }} 
+        />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-20">
+            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tighter mb-4">The CycleCore Standards</h2>
+            <p className="text-slate-400 font-medium max-w-xl mx-auto">Our values define every revolution of the pedal. We don't settle for "good enough."</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-            {values.map((item, index) => (
-              <div key={index} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 text-center group hover:-translate-y-1 hover:shadow-md transition-all duration-300">
-                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-2xl bg-primary-subtle text-primary-main mb-6 group-hover:scale-110 group-hover:bg-primary-main group-hover:text-white transition-all duration-300">
-                  {item.icon}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {values.map((item, idx) => (
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.15 }}
+                viewport={{ once: true }}
+                className="bg-white/5 backdrop-blur-xl p-10 rounded-[3rem] border border-white/10 group hover:bg-white/10 transition-all"
+              >
+                <div className={`w-16 h-16 rounded-[2rem] flex items-center justify-center mb-8 bg-slate-800 text-slate-400 group-hover:bg-brand-500 group-hover:text-white transition-all duration-500`}>
+                  <item.icon size={30} />
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">
-                  {item.title}
-                </h3>
-                <p className="text-gray-500 text-sm sm:text-base leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
+                <h3 className="text-2xl font-black text-white mb-4 tracking-tight">{item.title}</h3>
+                <p className="text-slate-400 font-medium leading-relaxed">{item.desc}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* TIMELINE */}
+      <section className="py-24 sm:py-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-5xl font-black text-slate-950 tracking-tighter mb-20">Our Journey</h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative">
+            {milestones.map((ms, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: idx * 0.2 }}
+                viewport={{ once: true }}
+                className="relative p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-100/30 group"
+              >
+                <div className="text-brand-500 font-black text-4xl mb-2 tracking-tighter opacity-20 group-hover:opacity-100 transition-opacity">
+                   {ms.year}
+                </div>
+                <h4 className="text-xl font-black text-slate-900 mb-2">{ms.label}</h4>
+                <p className="text-xs font-bold text-slate-400 leading-relaxed">{ms.desc}</p>
+                {idx < 3 && (
+                  <div className="hidden lg:block absolute top-1/2 -right-2 w-4 h-4 bg-slate-50 border border-slate-100 rounded-full z-10 -translate-y-1/2" />
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+         <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-brand-600 to-indigo-700 rounded-[3rem] p-12 sm:p-20 text-center text-white relative overflow-hidden"
+         >
+            <div className="absolute inset-0 bg-grid-white opacity-10" />
+            <div className="relative z-10 max-w-2xl mx-auto">
+               <h2 className="text-4xl sm:text-5xl font-black tracking-tighter mb-6">Ready to Experience Perfection?</h2>
+               <p className="text-lg font-medium text-white/80 mb-10">Join the thousands of riders who have discovered their true potential at CycleCore.</p>
+               <button className="px-10 py-5 bg-white text-brand-600 rounded-2xl font-black shadow-2xl shadow-black/20 hover:scale-105 active:scale-95 transition-all">
+                  Visit Our Store
+               </button>
+            </div>
+         </motion.div>
+      </div>
 
     </div>
   );

@@ -1,134 +1,319 @@
-import React from "react";
+import { Heart, ShoppingCart, Star, Eye } from "lucide-react";
+import { motion } from "framer-motion";
+import { useShop } from "../context/ShopContext";
+import { Link, useNavigate } from "react-router-dom";
 
+// ✅ YOUR MOCK DATA WITH RATINGS
 export const MOCK_PRODUCTS = [
   {
     id: 1,
-    name: "TrailBlazer Pro MTB",
+    name: "Firefox Viper 21S",
     category: "Mountain",
-    price: "$1,299",
-    image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&w=800&q=80",
+    price: "₹24,999",
+    rating: 4.8,
+    reviews: 124,
+    image: "https://bicyclekart.com/cdn/shop/files/Secondary2.0_1066x.jpg?v=1730536780"
   },
   {
     id: 2,
-    name: "AeroGlide Road Bike",
+    name: "Giant TCR Advanced",
     category: "Road",
-    price: "$2,499",
-    image: "https://images.unsplash.com/photo-1511994298241-608e28f14fde?auto=format&fit=crop&w=800&q=80",
+    price: "₹1,85,000",
+    rating: 4.9,
+    reviews: 89,
+    image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&q=80&w=800"
   },
   {
     id: 3,
-    name: "EcoCommute E-Bike",
+    name: "Hero Lectro C8",
     category: "E-Bikes",
-    price: "$1,899",
-    image: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&w=800&q=80",
+    price: "₹38,995",
+    rating: 4.7,
+    reviews: 215,
+    image: "https://images.unsplash.com/photo-1571068316344-75bc76f77890?auto=format&fit=crop&q=80&w=800"
   },
   {
     id: 4,
-    name: "Metro Cruiser City",
+    name: "Btwin Riverside 120",
     category: "City",
-    price: "$699",
-    image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=800&q=80",
+    price: "₹12,999",
+    rating: 4.5,
+    reviews: 342,
+    image: "https://bicyclekart.com/cdn/shop/files/MAINcopy_4_f82b0278-c8ce-45ca-9a98-2b6a06a4d806.jpg?v=1730720227"
   },
   {
     id: 5,
-    name: "Summit Seeker MTB",
+    name: "Hercules Roadeo A50",
     category: "Mountain",
-    price: "$1,599",
-    image: "https://images.unsplash.com/photo-1559160581-4471b8ee0b66?auto=format&fit=crop&w=800&q=80",
+    price: "₹18,500",
+    rating: 4.6,
+    reviews: 156,
+    image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&q=80&w=800"
   },
   {
     id: 6,
-    name: "Veloce Carbon Road",
+    name: "Trek Domane AL 2",
     category: "Road",
-    price: "$3,199",
-    image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80",
+    price: "₹82,299",
+    rating: 4.8,
+    reviews: 92,
+    image: "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&q=80&w=800"
+  },
+  {
+    id: 7,
+    name: "Merida Big Nine 20",
+    category: "Mountain",
+    price: "₹45,500",
+    rating: 4.7,
+    reviews: 78,
+    image: "https://bicyclekart.com/cdn/shop/files/MAINcopy_4_f82b0278-c8ce-45ca-9a98-2b6a06a4d806.jpg?v=1730720227"
+  },
+  {
+    id: 8,
+    name: "Specialized Turbo Vado",
+    category: "E-Bikes",
+    price: "₹2,10,000",
+    rating: 5.0,
+    reviews: 45,
+    image: "https://bicyclekart.com/cdn/shop/files/MAINcopy_4_f82b0278-c8ce-45ca-9a98-2b6a06a4d806.jpg?v=1730720227"
+  },
+  {
+    id: 9,
+    name: "Cannondale Topstone",
+    category: "Gravel",
+    price: "₹1,45,000",
+    rating: 4.9,
+    reviews: 67,
+    image: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&q=80&w=800"
+  },
+  {
+    id: 10,
+    name: "Scott Speedster 40",
+    category: "Road",
+    price: "₹75,000",
+    rating: 4.6,
+    reviews: 112,
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwCHwgnnpZ68AiFwcT63KS9hCYnzQLIAzMrA&s"
+  },
+  {
+    id: 11,
+    name: "Kona Lava Dome",
+    category: "Mountain",
+    price: "₹58,000",
+    rating: 4.7,
+    reviews: 54,
+    image: "https://omobikes.com/cdn/shop/files/merida-big-nine-15-2022.webp?v=1760154428&width=360"
+  },
+  {
+    id: 12,
+    name: "Rad Power RadRover",
+    category: "E-Bikes",
+    price: "₹1,35,000",
+    rating: 4.8,
+    reviews: 198,
+    image: "https://omobikes.com/cdn/shop/files/Zozila21sTurboGrey1.jpg?v=1770782436&width=360"
+  },
+  {
+    id: 13,
+    name: "Brompton C Line",
+    category: "City",
+    price: "₹1,65,000",
+    rating: 4.9,
+    reviews: 32,
+    image: "https://assets.myntassets.com/w_360,q_50,,dpr_2,fl_progressive,f_webp/assets/images/2025/NOVEMBER/6/Wou7hXdK_1e28ec6ee2b5403d9dc565eb298dbb19.jpg"
+  },
+  {
+    id: 14,
+    name: "Santa Cruz Blur",
+    category: "Mountain",
+    price: "₹4,50,000",
+    rating: 5.0,
+    reviews: 28,
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZza7dPbQMkN5Yqjrrw69hTGpjNEP9smecCw&s"
+  },
+  {
+    id: 15,
+    name: "Pinarello Dogma F12",
+    category: "Road",
+    price: "₹12,00,000",
+    rating: 5.0,
+    reviews: 15,
+    image: "https://images.unsplash.com/photo-1593764592116-bfb2a97c642a?auto=format&fit=crop&q=80&w=800"
+  },
+  {
+    id: 16,
+    name: "Surly Ghost Grappler",
+    category: "Gravel",
+    price: "₹1,85,000",
+    rating: 4.7,
+    reviews: 63,
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-76BwEIcIHAzxkU1ExQxr9FlKmwPQ7HFPvA&s"
+  },
+  {
+    id: 17,
+    name: "Canyon Spectral",
+    category: "Mountain",
+    price: "₹2,90,000",
+    rating: 4.9,
+    reviews: 42,
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6v8_z0J7mcws0dhF24edYkrY5J2uObhDtZA&s"
+  },
+  {
+    id: 18,
+    name: "Bianchi Aria",
+    category: "Road",
+    price: "₹2,30,000",
+    rating: 4.8,
+    reviews: 76,
+    image: "https://images.unsplash.com/photo-1505705694340-019e1e335916?auto=format&fit=crop&q=80&w=800"
+  },
+  {
+    id: 19,
+    name: "Trek Rail 9.7",
+    category: "E-Bikes",
+    price: "₹5,40,000",
+    rating: 4.9,
+    reviews: 31,
+    image: "https://bicyclekart.com/cdn/shop/files/MAINcopy_4_f82b0278-c8ce-45ca-9a98-2b6a06a4d806.jpg?v=1730720227"
+  },
+  {
+    id: 20,
+    name: "Dahon Mariner",
+    category: "City",
+    price: "₹62,000",
+    rating: 4.7,
+    reviews: 84,
+    image: "https://bicyclekart.com/cdn/shop/files/Secondary2copy_1066x.jpg?v=1730712326"
   }
 ];
 
-export default function ProductCard({ product }) {
+// 🔥 GRID COMPONENT
+export function ProductGrid() {
   return (
-    <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 overflow-hidden group flex flex-col">
-
-      {/* Image */}
-      <div className="relative h-52 sm:h-56 md:h-60 lg:h-64 overflow-hidden bg-gray-200">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-        />
-
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition" />
-
-        {/* Category Badge */}
-        <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-xs font-bold px-3 py-1 rounded-full text-gray-800 uppercase shadow">
-          {product.category}
-        </span>
-
-        {/* Wishlist Button */}
-        <button className="absolute top-3 right-3 bg-white/90 backdrop-blur-md p-2 rounded-full text-gray-400 hover:text-red-500 shadow opacity-0 group-hover:opacity-100 transition">
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-            />
-          </svg>
-        </button>
-      </div>
-
-      {/* Content */}
-      <div className="p-4 sm:p-5 flex flex-col flex-grow">
-
-        {/* Ratings */}
-        <div className="flex items-center space-x-1 mb-2">
-          {[...Array(5)].map((_, i) => (
-            <svg
-              key={i}
-              className="w-4 h-4 text-yellow-400 fill-current"
-              viewBox="0 0 20 20"
-            >
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
-          ))}
-          <span className="text-xs text-gray-400 ml-1">(12)</span>
-        </div>
-
-        {/* Title */}
-        <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-900 mb-1 line-clamp-1 group-hover:text-primary-hover transition">
-          {product.name}
-        </h3>
-
-        {/* Price + Button */}
-        <div className="flex items-center justify-between mt-auto pt-3">
-          <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
-            {product.price}
-          </p>
-
-          <button className="bg-gray-900 text-white hover:bg-primary-hover px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm flex items-center gap-2 transition">
-            <svg
-              className="w-4 h-4 sm:w-5 sm:h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-            Add
-          </button>
-        </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8">
+        {MOCK_PRODUCTS.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
       </div>
     </div>
+  );
+}
+
+// 🔥 PRODUCT CARD
+export default function ProductCard({ product }) {
+  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useShop();
+
+  const handleWishlist = (e) => {
+    e.preventDefault();
+    isInWishlist(product.id)
+      ? removeFromWishlist(product.id)
+      : addToWishlist(product);
+  };
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    addToCart(product);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      viewport={{ once: true }}
+      className="group relative bg-white rounded-3xl border border-slate-100 overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_-12px_rgba(59,130,246,0.3)] hover:border-brand-200"
+    >
+      {/* IMAGE - Shorter Aspect Ratio */}
+      <div className="relative aspect-[4/3] overflow-hidden bg-slate-50 cursor-pointer">
+        <Link to={`/product/${product.id}`} className="block w-full h-full">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+        </Link>
+
+        {/* Wishlist Icon - Hidden by default, show on hover */}
+        <div className="absolute top-4 right-4 z-20 opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+            <button
+            onClick={handleWishlist}
+            className={`w-10 h-10 rounded-2xl flex items-center justify-center backdrop-blur-xl transition-all duration-300 ${
+                isInWishlist(product.id)
+                ? "bg-red-500 text-white shadow-lg shadow-red-500/30 rotate-0"
+                : "bg-white/90 text-slate-400 hover:text-red-500 hover:bg-white shadow-xl hover:shadow-red-500/10"
+            }`}
+            >
+            <Heart size={18} className={isInWishlist(product.id) ? "fill-white" : "transition-transform duration-300 group-hover:scale-110"} />
+            </button>
+        </div>
+
+        {/* Badge Overlay */}
+        <div className="absolute top-4 left-4 z-20 pointer-events-none">
+           <span className="px-3 py-1 bg-slate-900/80 backdrop-blur-md text-[10px] font-black text-white rounded-full uppercase tracking-widest border border-white/10 ring-1 ring-black/20">
+             {product.category}
+           </span>
+        </div>
+
+        {/* Hover Gradient Glow */}
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      </div>
+
+      {/* CONTENT */}
+      <div className="p-6">
+        <div className="flex items-center gap-2 mb-3">
+           <div className="flex">
+             {[...Array(5)].map((_, i) => (
+               <Star 
+                key={i} 
+                size={12} 
+                className={`${
+                    i < Math.floor(product.rating) 
+                    ? "fill-brand-500 text-brand-500" 
+                    : "fill-slate-200 text-slate-200"
+                }`} 
+               />
+             ))}
+           </div>
+           <span className="text-[11px] font-black text-slate-400 font-space">{product.rating}</span>
+           <span className="text-[10px] font-bold text-slate-300 ml-auto uppercase tracking-tighter">({product.reviews} reviews)</span>
+        </div>
+
+        <Link to={`/product/${product.id}`} className="block">
+          <h3 className="font-black text-lg text-slate-950 group-hover:text-brand-600 transition truncate leading-snug mb-4">
+            {product.name}
+          </h3>
+        </Link>
+
+        <div className="flex items-center justify-between mt-auto">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black text-brand-500/60 uppercase tracking-widest leading-none mb-1">Price Outlet</span>
+            <span className="text-xl font-black text-slate-950 tracking-tighter font-space">
+              {product.price}
+            </span>
+          </div>
+
+          <div className="flex gap-2">
+            <Link 
+              to={`/product/${product.id}`}
+              className="w-11 h-11 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center text-slate-400 hover:text-brand-500 hover:bg-brand-50 hover:border-brand-200 transition-all shadow-sm group/btn"
+              title="View Details"
+            >
+              <Eye size={18} className="transition-transform duration-300 group-hover/btn:scale-110" />
+            </Link>
+            <button
+              onClick={handleAddToCart}
+              className="w-11 h-11 bg-brand-500 text-white rounded-2xl flex items-center justify-center hover:bg-brand-500 transition-all shadow-[0_10px_20px_-5px_rgba(59,130,246,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(59,130,246,0.5)] active:scale-95 group/cart"
+              title="Add to Cart"
+            >
+              <ShoppingCart size={18} className="transition-transform duration-300 group-hover/cart:rotate-[-12deg] group-hover/cart:scale-110" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Border Accent */}
+      <div className="absolute bottom-0 left-0 w-full h-1.5 bg-brand-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+    </motion.div>
   );
 }

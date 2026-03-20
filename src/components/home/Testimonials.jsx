@@ -1,96 +1,135 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay } from 'swiper/modules';
+import { Autoplay } from 'swiper/modules';
+import { Quote, Star } from 'lucide-react';
+import { motion } from 'framer-motion';
+
 import 'swiper/css';
-import 'swiper/css/pagination';
 
 export default function Testimonials() {
   const testimonials = [
     {
       id: 1,
       name: "Sarah Jenkins",
-      role: "Daily Commuter",
-      content: "VeloDynamics helped me find the perfect city bike for my daily commute. The staff was incredibly knowledgeable and didn't try to upsell me on things I didn't need. My ride to work has never been smoother!",
+      role: "Pro Road Rider",
+      content: "Found my dream setup here. The precision in their custom building process is unmatched. My performance has seen a significant boost.",
       rating: 5,
     },
     {
       id: 2,
       name: "Marcus Thorne",
-      role: "Mountain Biker",
-      content: "I brought my mountain bike in for a full suspension overhaul after a rough season. The mechanics here are wizards. It rides better now than it did when I bought it brand new. Highly recommend their service department.",
+      role: "MTB Enthusiast",
+      content: "The technical knowledge of the staff is incredible. They rebuilt my suspension and it feels completely transformed. Peak engineering.",
       rating: 5,
     },
     {
       id: 3,
       name: "Elena Rodriguez",
-      role: "Road Cyclist",
-      content: "The custom fitting process at VeloDynamics completely changed my riding experience. I used to get knee pain after 30 miles, but after their adjustments, I just completed my first century ride pain-free!",
+      role: "Urban Adventurer",
+      content: "Eco-friendly, stylish, and remarkably fast. My new e-bike from CycleCore has completely changed my city commute. Highly recommend!",
+      rating: 5,
+    },
+    {
+      id: 1,
+      name: "Sarah Jenkins",
+      role: "Pro Road Rider",
+      content: "Found my dream setup here. The precision in their custom building process is unmatched. My performance has seen a significant boost.",
+      rating: 5,
+    },
+    {
+      id: 2,
+      name: "Marcus Thorne",
+      role: "MTB Enthusiast",
+      content: "The technical knowledge of the staff is incredible. They rebuilt my suspension and it feels completely transformed. Peak engineering.",
+      rating: 5,
+    },
+    {
+      id: 3,
+      name: "Elena Rodriguez",
+      role: "Urban Adventurer",
+      content: "Eco-friendly, stylish, and remarkably fast. My new e-bike from CycleCore has completely changed my city commute. Highly recommend!",
       rating: 5,
     }
   ];
 
   return (
-    <div className="bg-gray-50 text-gray-900 py-12 sm:py-16 md:py-20 lg:py-24 xl:py-28 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Header Section */}
-        <div className="text-center mb-16">
-          <h2 className="text-sm sm:text-base md:text-lg text-primary-main font-bold tracking-widest uppercase">Testimonials</h2>
-          <p className="mt-2 sm:mt-3 text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-extrabold tracking-tight text-gray-900">
-            What Our Riders Say
-          </p>
-          <p className="mt-4 max-w-2xl text-base sm:text-lg md:text-xl xl:text-2xl text-gray-500 mx-auto">
-            Don't just take our word for it. Read about the experiences of our amazing community of cyclists.
+    <section className="py-24 sm:py-28 bg-white relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
+
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+          <div className="max-w-2xl">
+            <motion.span className="text-brand-600 font-bold tracking-widest uppercase text-sm mb-2 block">
+              Rider Stories
+            </motion.span>
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-900">
+              Trusted by the <span className="text-brand-500">Community.</span>
+            </h2>
+          </div>
+
+          <p className="max-w-sm text-slate-500 text-sm">
+            Join thousands of riders who trust CycleCore.
           </p>
         </div>
 
-        {/* Testimonials Slider */}
+        {/* Swiper */}
         <Swiper
-          modules={[Pagination, Autoplay]}
-          spaceBetween={30}
+          modules={[Autoplay]}
+          spaceBetween={20}
           slidesPerView={1}
           loop={true}
-          autoplay={{ delay: 4000, disableOnInteraction: false }}
-          pagination={{ clickable: true }}
-          breakpoints={{
-            640: { slidesPerView: 1, spaceBetween: 20 },
-            768: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
-            1280: { slidesPerView: 3, spaceBetween: 40 },
+          speed={800} // smooth transition
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
           }}
-          className="pb-16"
+          breakpoints={{
+            640: { slidesPerView: 1.2 },
+            768: { slidesPerView: 2 },
+            1200: { slidesPerView: 3 },
+          }}
         >
           {testimonials.map((testimonial) => (
-            <SwiperSlide key={testimonial.id} className="h-auto">
-              <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl p-6 sm:p-8 md:p-10 border border-gray-100 flex flex-col h-full justify-between hover:-translate-y-2 transition-all duration-300 ease-in-out">
-              <div>
-                {/* Star Rating */}
-                <div className="flex items-center space-x-1 mb-6 text-yellow-400">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <svg key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
+            <SwiperSlide key={testimonial.id}>
+              <div className="h-full p-6 rounded-3xl bg-slate-50 hover:bg-white hover:shadow-xl transition-all duration-500 flex flex-col justify-between">
+
+                <div>
+                  {/* Stars */}
+                  <div className="flex gap-1 mb-6">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} size={16} className="fill-brand-500 text-brand-500" />
+                    ))}
+                  </div>
+
+                  {/* Quote */}
+                  <Quote className="text-brand-500/20 mb-3" size={40} />
+
+                  <p className="text-slate-700 text-base leading-relaxed mb-8">
+                    "{testimonial.content}"
+                  </p>
                 </div>
-                {/* Quote */}
-                <p className="text-gray-600 text-base sm:text-lg md:text-xl italic mb-8 leading-relaxed">"{testimonial.content}"</p>
-              </div>
-              
-              {/* Customer Info */}
-              <div className="flex items-center mt-auto">
-                <div className="flex-shrink-0 h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-full bg-primary-light flex items-center justify-center text-primary-main font-bold text-lg sm:text-xl md:text-2xl shadow-sm">
-                  {testimonial.name.charAt(0)}
+
+                {/* User */}
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-brand-500 flex items-center justify-center text-white font-bold text-lg">
+                    {testimonial.name.charAt(0)}
+                  </div>
+
+                  <div>
+                    <h4 className="font-bold text-slate-900 text-sm">
+                      {testimonial.name}
+                    </h4>
+                    <p className="text-brand-600 text-xs font-semibold">
+                      {testimonial.role}
+                    </p>
+                  </div>
                 </div>
-                <div className="ml-3 sm:ml-4">
-                  <div className="text-sm sm:text-base md:text-lg font-bold text-gray-900">{testimonial.name}</div>
-                  <div className="text-xs sm:text-sm md:text-base font-medium text-primary-main">{testimonial.role}</div>
-                </div>
-              </div>
+
               </div>
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
-    </div>
+    </section>
   );
 }

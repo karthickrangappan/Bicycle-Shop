@@ -1,111 +1,245 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import PageHeader from '../layout/PageHeader';
+import { 
+  Settings, 
+  Wrench, 
+  ShieldCheck, 
+  Zap, 
+  ArrowRight, 
+  CheckCircle2, 
+  Clock, 
+  Award, 
+  Bike,
+  Activity,
+  Droplets,
+  Gauge
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Services() {
   const servicePackages = [
     {
-      title: "Basic Tune-Up",
-      price: "$59",
-      features: ["Brake adjustment", "Shifting adjustment", "Chain lubrication", "Tire inflation", "Safety inspection"],
+      title: "Silver Tune-up",
+      price: "₹1,999",
+      description: "Essential maintenance for your regular commuter or weekend ride.",
+      icon: Settings,
+      color: "blue",
+      features: [
+        "Full Safety Inspection",
+        "Gear & Brake Adjustment",
+        "Chain Cleaning & Lube",
+        "Tire Pressure Check",
+        "Minor Wheel Truing"
+      ],
       recommended: false
     },
     {
-      title: "Comprehensive",
-      price: "$129",
-      features: ["Everything in Basic", "Drivetrain cleaning", "Wheel truing", "Bottom bracket adjustment", "Bike wash"],
+      title: "Gold Overhaul",
+      price: "₹4,499",
+      description: "Our most popular comprehensive service for performance restoration.",
+      icon: Award,
+      color: "brand",
+      features: [
+        "Silver Tune-up Included",
+        "Drivetrain Deep Clean",
+        "Bottom Bracket Service",
+        "Full Bike Polish",
+        "Precision Wheel Truing",
+        "Hydraulic Brake Bleed"
+      ],
       recommended: true
     },
     {
-      title: "Pro Overhaul",
-      price: "$249",
-      features: ["Complete disassembly", "Bearing replacement", "Hydraulic bleed", "Suspension service", "Frame detailing"],
+      title: "Platinum Rebuild",
+      price: "₹8,999",
+      description: "The ultimate factory-spec complete strip-down and master rebuild.",
+      icon: Zap,
+      color: "indigo",
+      features: [
+        "Gold Overhaul Included",
+        "Complete Disassembly",
+        "Full Bearing Replacement",
+        "Suspension Servicing",
+        "Cable & Housing Update",
+        "Lifetime Labor Warranty"
+      ],
       recommended: false
     }
   ];
 
-  return (
-    <div className="bg-white text-gray-900 min-h-screen">
-      
-      {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary-subtle to-white py-16 sm:py-20 lg:py-24 text-center px-4">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">
-            Expert <span className="text-primary-main">Bike Services</span>
-          </h1>
-          <p className="mt-4 sm:mt-6 mx-auto text-gray-500 text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl">
-            From quick tune-ups to complete custom builds, our certified mechanics treat every bike like it's their own.
-          </p>
-        </div>
-      </section>
+  const alaCarte = [
+    { name: "Puncture Repair", price: "₹249", icon: Droplets },
+    { name: "Gear Tuning", price: "₹499", icon: Settings },
+    { name: "Hydraulic Bleed", price: "₹899", icon: Activity },
+    { name: "Wheel Truing", price: "₹599", icon: Gauge },
+    { name: "Chain Replace", price: "₹299", icon: Wrench },
+    { name: "Fork Service", price: "₹2,499", icon: Bike },
+    { name: "Bearing Swap", price: "₹699", icon: Activity },
+    { name: "General Wash", price: "₹399", icon: Droplets },
+  ];
 
-      {/* Pricing/Packages */}
-      <section className="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
+  return (
+    <div className="bg-slate-50 min-h-screen pb-20">
+      <PageHeader 
+        title="CycleCore Mastercare"
+        subtitle="Precision engineering meets master craft. Our world-class mechanics ensure your ride performs as a masterpiece of mechanical perfection."
+        icon={Wrench}
+        badge="Pro Service Lab"
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16 relative z-20">
+        
+        {/* TRUST STATS */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16 sm:mb-24">
+          {[
+            { label: "Bikes Served", val: "5K+", icon: Bike },
+            { label: "Master Techs", val: "12", icon: User },
+            { label: "Warranty", val: "Life", icon: ShieldCheck },
+            { label: "Turnaround", val: "24h", icon: Clock },
+          ].map((stat, i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="bg-white/80 backdrop-blur-xl p-6 rounded-[2rem] border border-white shadow-xl shadow-slate-200/50 flex flex-col items-center text-center group hover:bg-white transition-all"
+            >
+              <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 mb-4 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all">
+                <stat.icon size={22} />
+              </div>
+              <p className="text-2xl font-black text-slate-900 tracking-tighter">{stat.val}</p>
+              <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">{stat.label}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* SERVICE PACKAGES */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 sm:mb-32">
           {servicePackages.map((pkg, idx) => (
-            <div key={idx} className={`relative p-8 rounded-3xl border ${pkg.recommended ? 'border-primary-main shadow-2xl scale-100 md:scale-105 z-10' : 'border-gray-200 shadow-md'} bg-white flex flex-col transition-transform`}>
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 + (idx * 0.1) }}
+              className={`relative group bg-white p-10 rounded-[3rem] border-2 transition-all duration-500 ${
+                pkg.recommended 
+                  ? "border-brand-500 shadow-[0_30px_60px_-15px_rgba(59,130,246,0.3)] scale-105 z-10" 
+                  : "border-slate-100 hover:border-brand-200 shadow-xl shadow-slate-100/50 hover:shadow-2xl hover:-translate-y-2"
+              }`}
+            >
               {pkg.recommended && (
-                <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary-main text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm">
-                  Most Popular
-                </span>
+                <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-6 py-2 bg-brand-500 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg shadow-brand-500/30">
+                  Master Choice
+                </div>
               )}
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{pkg.title}</h3>
-              <div className="text-4xl sm:text-5xl font-extrabold text-primary-main mb-6">{pkg.price}</div>
-              <ul className="space-y-4 mb-8 flex-grow">
+
+              <div className={`w-16 h-16 rounded-3xl flex items-center justify-center mb-10 transition-transform duration-500 group-hover:scale-110 ${
+                pkg.color === 'blue' ? "bg-blue-50 text-blue-500" :
+                pkg.color === 'indigo' ? "bg-indigo-50 text-indigo-500" :
+                "bg-brand-50 text-brand-500"
+              }`}>
+                <pkg.icon size={30} />
+              </div>
+
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-2">{pkg.title}</h3>
+              <p className="text-sm text-slate-400 font-medium leading-relaxed mb-6">{pkg.description}</p>
+              
+              <div className="mb-8">
+                <span className="text-4xl font-black text-slate-950 tracking-tighter">{pkg.price}</span>
+                <span className="text-sm font-bold text-slate-300 ml-2">/ per service</span>
+              </div>
+
+              <ul className="space-y-4 mb-10">
                 {pkg.features.map((feature, fIdx) => (
-                  <li key={fIdx} className="flex items-start text-gray-600">
-                    <svg className="w-5 h-5 text-primary-main mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                    <span className="text-sm sm:text-base">{feature}</span>
+                  <li key={fIdx} className="flex items-center gap-3 text-sm font-semibold text-slate-600">
+                    <CheckCircle2 size={18} className="text-brand-500 flex-shrink-0" />
+                    {feature}
                   </li>
                 ))}
               </ul>
-              <button className={`w-full py-3.5 rounded-xl font-bold transition-all duration-300 ${pkg.recommended ? 'bg-primary-main text-white hover:bg-primary-hover shadow-md hover:shadow-lg' : 'bg-primary-subtle text-primary-main hover:bg-primary-light'}`}>
-                Book Appointment
-              </button>
-            </div>
+
+              <Link 
+                to="/contact"
+                className={`w-full py-5 rounded-2xl font-black transition-all flex items-center justify-center gap-2 ${
+                  pkg.recommended 
+                    ? "bg-brand-500 text-white shadow-xl shadow-brand-500/30 hover:bg-brand-600" 
+                    : "bg-slate-50 text-slate-950 hover:bg-slate-900 hover:text-white"
+                }`}
+              >
+                Schedule Service <ArrowRight size={18} />
+              </Link>
+            </motion.div>
           ))}
         </div>
-      </section>
 
-      {/* A La Carte Services */}
-      <section className="bg-gray-50 py-16 sm:py-20 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">A La Carte Repairs</h2>
-            <p className="mt-3 text-gray-500 max-w-xl mx-auto">Need something specific? We offer individual services to get you back on the road quickly.</p>
+        {/* A LA CARTE */}
+        <div className="bg-slate-900 rounded-[4rem] p-8 sm:p-16 relative overflow-hidden mb-24">
+          {/* Bg Pattern */}
+          <div className="absolute inset-0 opacity-10" 
+            style={{ 
+              backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+              backgroundSize: '24px 24px'
+            }} 
+          />
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
+
+          <div className="relative z-10 text-center mb-16">
+            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tighter mb-4">Express Repair Menu</h2>
+            <p className="text-slate-400 font-medium max-w-xl mx-auto">Specific problems require surgical solutions. Quick fixes while you wait.</p>
           </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {[
-              { name: "Flat Tire Repair", price: "from $15" },
-              { name: "Brake Bleed", price: "from $35" },
-              { name: "Wheel Truing", price: "from $25" },
-              { name: "Chain Installation", price: "from $20" },
-              { name: "Suspension Service", price: "from $80" },
-              { name: "Custom Bike Build", price: "Contact Us" },
-              { name: "E-Bike Diagnostics", price: "from $50" },
-              { name: "Box & Ship Bike", price: "from $75" },
-            ].map((service, idx) => (
-              <div key={idx} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center hover:shadow-md transition-shadow group">
-                <span className="font-medium text-gray-700 group-hover:text-primary-main transition-colors">{service.name}</span>
-                <span className="text-primary-main font-semibold text-sm">{service.price}</span>
-              </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+            {alaCarte.map((item, idx) => (
+              <motion.div
+                key={idx}
+                whileHover={{ y: -5 }}
+                className="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-[2rem] flex justify-between items-center transition-colors hover:bg-white/10 group"
+              >
+                <div className="flex items-center gap-3">
+                   <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400 group-hover:text-brand-400 transition-colors">
+                      <item.icon size={18} />
+                   </div>
+                   <span className="font-bold text-white text-sm">{item.name}</span>
+                </div>
+                <span className="text-brand-400 font-black text-xs bg-brand-400/10 px-3 py-1 rounded-lg border border-brand-400/20">{item.price}</span>
+              </motion.div>
             ))}
           </div>
         </div>
-      </section>
 
-      {/* CTA Section */}
-      <section className="py-16 sm:py-20 text-center bg-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-900">Not sure what you need?</h2>
-          <p className="text-gray-500 mb-8 sm:text-lg leading-relaxed">
-            Give us a call or drop by the shop. Our experts are always happy to diagnose your bike and provide a free, no-obligation estimate.
-          </p>
-          <a href="/contact" className="inline-flex items-center justify-center bg-gray-900 text-white font-bold py-4 px-8 rounded-xl hover:bg-primary-main hover:-translate-y-1 transition-all duration-300 shadow-md">
-            Contact the Shop
-          </a>
-        </div>
-      </section>
+        {/* CUSTOM SHOP BANNER */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          className="relative bg-gradient-to-br from-brand-600 to-indigo-700 rounded-[3rem] p-12 sm:p-20 overflow-hidden text-center text-white"
+        >
+          <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-grid-white" />
+          
+          <div className="relative z-10 max-w-2xl mx-auto">
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-6 leading-tight">Need a Signature Build?</h2>
+            <p className="text-lg sm:text-xl font-medium text-white/80 mb-10 leading-relaxed">
+              From custom frame painting to world-class part matching, our Master Lab builds your dream machine from the ground up.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/contact" className="px-10 py-5 bg-white text-brand-600 rounded-2xl font-black shadow-2xl shadow-black/20 hover:scale-105 active:scale-95 transition-all">
+                Consult With a Builder
+              </Link>
+              <Link to="/shop" className="px-10 py-5 bg-transparent border-2 border-white/30 text-white rounded-2xl font-black hover:bg-white/10 transition-all">
+                Explore Components
+              </Link>
+            </div>
+          </div>
+        </motion.div>
 
+      </div>
     </div>
   );
+}
+
+// Reusing some component icons for stats
+function User(props) {
+  return (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  )
 }
