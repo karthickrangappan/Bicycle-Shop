@@ -46,7 +46,7 @@ function App() {
         {/* Protected Routes */}
         <Route path='/cart' element={<PrivateRoute><Cart /></PrivateRoute>} />
         <Route path='/wishlist' element={<PrivateRoute><Wishlist /></PrivateRoute>} />
-        {/* <Route path='/profile' element={<PrivateRoute><Profile /></PrivateRoute>} /> */}
+        <Route path='/profile' element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path='/checkout' element={<PrivateRoute><Checkout /></PrivateRoute>} />
         <Route path='/my-orders' element={<PrivateRoute><MyOrders /></PrivateRoute>} />
       </Routes>
