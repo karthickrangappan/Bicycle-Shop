@@ -64,7 +64,11 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="w-9 h-9 bg-brand-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-500/30 transition-transform group-hover:rotate-[15deg] group-hover:scale-110">
-              <ShoppingBag size={18} />
+              <svg viewBox="0 0 24 24" className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <circle cx="18.5" cy="17.5" r="3.5" />
+                <circle cx="5.5" cy="17.5" r="3.5" />
+                <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11V9a2 2 0 0 0-2-2H4" />
+              </svg>
             </div>
             <span className="text-lg font-black text-white tracking-tighter">
               CYCLE<span className="text-brand-500">CORE</span>
@@ -262,7 +266,11 @@ export default function Navbar() {
               <div className="flex justify-between items-center mb-10">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 bg-brand-500 rounded-xl flex items-center justify-center text-white">
-                    <ShoppingBag size={16} />
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <circle cx="18.5" cy="17.5" r="3.5" />
+                      <circle cx="5.5" cy="17.5" r="3.5" />
+                      <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11V9a2 2 0 0 0-2-2H4" />
+                    </svg>
                   </div>
                   <span className="font-black text-slate-950 uppercase tracking-tight">CycleCore</span>
                 </div>

@@ -5,7 +5,6 @@ const ShopContext = createContext();
 export const useShop = () => useContext(ShopContext);
 
 export const ShopProvider = ({ children }) => {
-  // ✅ Immediate initialization from localStorage to avoid flickering
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('bicycle_user');
     return savedUser ? JSON.parse(savedUser) : null;
@@ -14,7 +13,9 @@ export const ShopProvider = ({ children }) => {
   const getInitialStorage = (key, defaultVal = []) => {
     const savedUser = localStorage.getItem('bicycle_user');
     const user = savedUser ? JSON.parse(savedUser) : null;
-    const storageKey = user ? `${key}_${user.email}` : `guest_${key}`;
+    if (!user) return defaultVal;
+    
+    const storageKey = `${key}_${user.email}`;
     const savedData = localStorage.getItem(storageKey);
     return savedData ? JSON.parse(savedData) : defaultVal;
   };
@@ -23,15 +24,17 @@ export const ShopProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState(() => getInitialStorage('wishlist'));
   const [orders, setOrders] = useState(() => getInitialStorage('orders'));
 
-  // ✅ Sync with localStorage whenever cart, wishlist, or orders change
+  // Sync with localStorage whenever cart, wishlist, or orders change
   useEffect(() => {
-    const key = user ? `cart_${user.email}` : 'guest_cart';
-    localStorage.setItem(key, JSON.stringify(cart));
+    if (user) {
+      localStorage.setItem(`cart_${user.email}`, JSON.stringify(cart));
+    }
   }, [cart, user]);
 
   useEffect(() => {
-    const key = user ? `wishlist_${user.email}` : 'guest_wishlist';
-    localStorage.setItem(key, JSON.stringify(wishlist));
+    if (user) {
+      localStorage.setItem(`wishlist_${user.email}`, JSON.stringify(wishlist));
+    }
   }, [wishlist, user]);
 
   useEffect(() => {
@@ -40,49 +43,20 @@ export const ShopProvider = ({ children }) => {
     }
   }, [orders, user]);
 
-  // ✅ Auth Functions with Persistence & Merging
+  //  Auth Functions with Persistence
   const login = (userData) => {
-    // 1. Get current guest data
-    const guestCart = JSON.parse(localStorage.getItem('guest_cart')) || [];
-    const guestWishlist = JSON.parse(localStorage.getItem('guest_wishlist')) || [];
-
-    // 2. Get user's existing data from storage
+    // 1. Get user's existing data from storage
     const userCart = JSON.parse(localStorage.getItem(`cart_${userData.email}`)) || [];
     const userWishlist = JSON.parse(localStorage.getItem(`wishlist_${userData.email}`)) || [];
     const userOrders = JSON.parse(localStorage.getItem(`orders_${userData.email}`)) || [];
 
-    // 3. Merge Guest Cart into User Cart
-    const mergedCart = [...userCart];
-    guestCart.forEach(gItem => {
-      const existing = mergedCart.find(uItem => uItem.id === gItem.id);
-      if (existing) {
-        existing.quantity += gItem.quantity;
-      } else {
-        mergedCart.push(gItem);
-      }
-    });
-
-    // 4. Merge Guest Wishlist
-    const mergedWishlist = [...userWishlist];
-    guestWishlist.forEach(gItem => {
-      if (!mergedWishlist.find(uItem => uItem.id === gItem.id)) {
-        mergedWishlist.push(gItem);
-      }
-    });
-
-    // 5. Update state and localStorage
+    // 2. Update state and localStorage
     setUser(userData);
-    setCart(mergedCart);
-    setWishlist(mergedWishlist);
+    setCart(userCart);
+    setWishlist(userWishlist);
     setOrders(userOrders);
 
     localStorage.setItem('bicycle_user', JSON.stringify(userData));
-    localStorage.setItem(`cart_${userData.email}`, JSON.stringify(mergedCart));
-    localStorage.setItem(`wishlist_${userData.email}`, JSON.stringify(mergedWishlist));
-    
-    // 6. Clear guest data
-    localStorage.removeItem('guest_cart');
-    localStorage.removeItem('guest_wishlist');
   };
 
   const logout = () => {
@@ -92,8 +66,6 @@ export const ShopProvider = ({ children }) => {
     setOrders([]);
     setAddresses([]);
     localStorage.removeItem('bicycle_user');
-    localStorage.removeItem('guest_cart');
-    localStorage.removeItem('guest_wishlist');
   };
 
   const [addresses, setAddresses] = useState(() => getInitialStorage('addresses'));
@@ -124,6 +96,10 @@ export const ShopProvider = ({ children }) => {
 
   // ✅ Cart Functions
   const addToCart = (product) => {
+    if (!user) {
+      alert("Please log in to add items to your cart.");
+      return;
+    }
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id);
       if (existing) {
@@ -148,6 +124,10 @@ export const ShopProvider = ({ children }) => {
 
   // ✅ Wishlist Functions
   const addToWishlist = (product) => {
+    if (!user) {
+      alert("Please log in to add items to your wishlist.");
+      return;
+    }
     setWishlist(prev => {
       if (prev.find(item => item.id === product.id)) return prev;
       return [...prev, product];
@@ -173,7 +153,7 @@ export const ShopProvider = ({ children }) => {
       total: cart.reduce((acc, item) => acc + (parseInt(item.price.replace(/[^\d]/g, '')) * item.quantity), 0)
     };
     setOrders(prev => [newOrder, ...prev]);
-    setCart([]); // ✅ Clear cart after order
+    setCart([]); 
     return newOrder;
   };
 
@@ -189,4 +169,3 @@ export const ShopProvider = ({ children }) => {
     </ShopContext.Provider>
   );
 };
-
