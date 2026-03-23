@@ -143,25 +143,42 @@ export default function ProductDetails() {
                   )}
                </div>
 
-               {/* Subtitle logic: Attribute Lock */}
-               <div className="space-y-4 mb-8">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Select Frame Size <span className="text-red-500">*</span></label>
-                  <div className="flex flex-wrap gap-3">
-                    {sizes.map(size => (
-                      <button
-                        key={size}
-                        onClick={() => setSelectedSize(size)}
-                        className={`px-6 py-3 rounded-xl font-black transition-all ${
-                          selectedSize === size
-                          ? "bg-slate-900 text-white shadow-lg"
-                          : "bg-white text-slate-400 border border-slate-100 hover:border-slate-300"
-                        }`}
-                      >
-                        {size}
-                      </button>
-                    ))}
-                  </div>
-               </div>
+                   {/* Color Selection */}
+                   <div className="space-y-4 mb-8">
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Select Paint <span className="text-red-500">*</span></label>
+                      <div className="flex flex-wrap gap-3">
+                        {['#000000', '#ffffff', '#ef4444', '#3b82f6', '#10b981'].map(color => (
+                          <button
+                            key={color}
+                            onClick={() => setForm(f => ({ ...f, color }))}
+                            className={`w-10 h-10 rounded-full border-2 transition-all hover:scale-110 ${
+                              form.color === color ? 'border-brand-500 ring-2 ring-brand-500/20 shadow-lg' : 'border-white shadow-sm'
+                            }`}
+                            style={{ backgroundColor: color }}
+                          />
+                        ))}
+                      </div>
+                   </div>
+
+                   {/* Size Selection */}
+                   <div className="space-y-4 mb-8">
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Select Frame Size <span className="text-red-500">*</span></label>
+                      <div className="flex flex-wrap gap-3">
+                        {sizes.map(size => (
+                          <button
+                            key={size}
+                            onClick={() => setSelectedSize(size)}
+                            className={`px-6 py-3 rounded-xl font-black transition-all ${
+                              selectedSize === size
+                              ? "bg-slate-900 text-white shadow-lg"
+                              : "bg-white text-slate-400 border border-slate-100 hover:border-slate-300"
+                            }`}
+                          >
+                            {size}
+                          </button>
+                        ))}
+                      </div>
+                   </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 mb-8">
@@ -176,17 +193,6 @@ export default function ProductDetails() {
                >
                  <ShoppingCart size={20} />
                  {product.stock <= 0 ? "Out of Stock" : !selectedSize ? "Select Size to Add" : "Add to Bag"}
-               </button>
-               
-               <button 
-                 onClick={() => isInWishlist(product.id) ? removeFromWishlist(product.id) : addToWishlist(product)}
-                 className={`w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-all active:scale-90 ${
-                   isInWishlist(product.id) 
-                   ? "bg-red-50 text-red-500 border-red-200" 
-                   : "border-slate-100 text-slate-400 hover:border-red-500 hover:text-red-500"
-                 }`}
-               >
-                 <Heart size={20} className={isInWishlist(product.id) ? "fill-red-500" : ""} />
                </button>
             </div>
 
