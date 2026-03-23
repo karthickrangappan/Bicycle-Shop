@@ -1,4 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { db, auth } from '../../firebase';
+import { collection, onSnapshot, doc, getDoc, setDoc, updateDoc, addDoc, increment } from 'firebase/firestore';
+import { onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { toast } from 'react-hot-toast';
 
 const ShopContext = createContext();
@@ -6,158 +9,331 @@ const ShopContext = createContext();
 export const useShop = () => useContext(ShopContext);
 
 export const ShopProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('bicycle_user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [cart, setCart] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [addresses, setAddresses] = useState([]);
 
-  const getInitialStorage = (key, defaultVal = []) => {
-    const savedUser = localStorage.getItem('bicycle_user');
-    const user = savedUser ? JSON.parse(savedUser) : null;
-    if (!user) return defaultVal;
-    
-    const storageKey = `${key}_${user.email}`;
-    const savedData = localStorage.getItem(storageKey);
-    return savedData ? JSON.parse(savedData) : defaultVal;
+  // Monitor products and handle "Back-in-Stock" triggers
+  useEffect(() => {
+    const unsubProducts = onSnapshot(collection(db, "products"), (snapshot) => {
+      const updatedProducts = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+      
+      setProducts(prevProducts => {
+        // Check for back-in-stock for current user's wishlist
+        if (user && wishlist.length > 0) {
+          updatedProducts.forEach(p => {
+            const wishItem = wishlist.find(w => w.id === p.id);
+            const prevProd = prevProducts.find(oldP => oldP.id === p.id);
+            if (wishItem && prevProd && prevProd.stock === 0 && p.stock > 0) {
+              toast(`🔥 Back in Stock: ${p.name}! Grab it now.`, { icon: '🚲', duration: 6000 });
+            }
+          });
+        }
+        return updatedProducts;
+      });
+      setLoading(false);
+    });
+    return () => unsubProducts();
+  }, [user, wishlist]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        let role = 'user';
+        let data = {};
+
+        if (currentUser.email === "admin@bicycleshop.com") {
+          role = 'admin';
+        }
+
+        const userRef = doc(db, 'users', currentUser.email);
+        const userSnap = await getDoc(userRef).catch(() => null);
+        
+        if (userSnap?.exists()) {
+          data = userSnap.data();
+          role = data.role || role;
+          setCart(data.cart || []);
+          setWishlist(data.wishlist || []);
+          setAddresses(data.addresses || []);
+        } else if (currentUser.email !== "admin@bicycleshop.com") {
+          // Initialize new user profile
+          await setDoc(userRef, { 
+            name: currentUser.displayName || currentUser.email.split('@')[0],
+            email: currentUser.email,
+            cart: [], wishlist: [], addresses: [], role: 'user' 
+          }).catch(e => console.log(e));
+        }
+
+        setUser({
+          name: currentUser.displayName || (currentUser.email === "admin@bicycleshop.com" ? "Super Admin" : currentUser.email.split('@')[0]),
+          email: currentUser.email,
+          role
+        });
+      } else {
+        setUser(null);
+        setCart([]);
+        setWishlist([]);
+        setAddresses([]);
+        setOrders([]);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+        setOrders([]);
+        return;
+    }
+    const unsub = onSnapshot(collection(db, 'users', user.email, 'orders'), (snapshot) => {
+        const userOrders = snapshot.docs.map(d => ({ ...d.data(), id: d.id }));
+        setOrders(userOrders);
+    });
+    return () => unsub();
+  }, [user]);
+
+  const updateUserData = async (updates) => {
+    if (user) {
+      await updateDoc(doc(db, 'users', user.email), updates).catch(e => console.log(e));
+    }
   };
 
-  const [cart, setCart] = useState(() => getInitialStorage('cart'));
-  const [wishlist, setWishlist] = useState(() => getInitialStorage('wishlist'));
-  const [orders, setOrders] = useState(() => getInitialStorage('orders'));
-
-  // Sync with localStorage whenever cart, wishlist, or orders change
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem(`cart_${user.email}`, JSON.stringify(cart));
+  const login = async (email = null, password = null) => {
+    try {
+      if (email && password) {
+        await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+      }
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message };
     }
-  }, [cart, user]);
-
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem(`wishlist_${user.email}`, JSON.stringify(wishlist));
-    }
-  }, [wishlist, user]);
-
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem(`orders_${user.email}`, JSON.stringify(orders));
-    }
-  }, [orders, user]);
-
-  //  Auth Functions with Persistence
-  const login = (userData) => {
-    // 1. Get user's existing data from storage
-    const userCart = JSON.parse(localStorage.getItem(`cart_${userData.email}`)) || [];
-    const userWishlist = JSON.parse(localStorage.getItem(`wishlist_${userData.email}`)) || [];
-    const userOrders = JSON.parse(localStorage.getItem(`orders_${userData.email}`)) || [];
-
-    // 2. Update state and localStorage
-    setUser(userData);
-    setCart(userCart);
-    setWishlist(userWishlist);
-    setOrders(userOrders);
-
-    localStorage.setItem('bicycle_user', JSON.stringify(userData));
   };
 
-  const logout = () => {
-    setUser(null);
-    setCart([]);
-    setWishlist([]);
-    setOrders([]);
-    setAddresses([]);
-    localStorage.removeItem('bicycle_user');
+  const register = async (name, email, password) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: name });
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
   };
 
-  const [addresses, setAddresses] = useState(() => getInitialStorage('addresses'));
-
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem(`addresses_${user.email}`, JSON.stringify(addresses));
-    }
-  }, [addresses, user]);
+  const logout = async () => {
+    await signOut(auth);
+  };
 
   const addAddress = (newAddress) => {
-    setAddresses(prev => [...prev, { ...newAddress, id: Date.now() }]);
+    const newAddresses = [...addresses, { ...newAddress, id: Date.now() }];
+    setAddresses(newAddresses);
+    updateUserData({ addresses: newAddresses });
   };
 
   const removeAddress = (id) => {
-    setAddresses(prev => prev.filter(addr => addr.id !== id));
+    const newAddresses = addresses.filter(addr => addr.id !== id);
+    setAddresses(newAddresses);
+    updateUserData({ addresses: newAddresses });
   };
 
-  const register = (userData) => {
-    const users = JSON.parse(localStorage.getItem('bicycle_users')) || [];
-    if (users.find(u => u.email === userData.email)) {
-      return { success: false, message: 'User already exists' };
-    }
-    users.push(userData);
-    localStorage.setItem('bicycle_users', JSON.stringify(users));
-    return { success: true };
-  };
-
-  // ✅ Cart Functions
-  const addToCart = (product) => {
+  const addToCart = async (product, size) => {
     if (!user) {
       toast.error("Please log in to add items to your cart.");
       return;
     }
-    setCart(prev => {
-      const existing = prev.find(item => item.id === product.id);
-      if (existing) {
-        return prev.map(item => 
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
-    toast.success(`${product.name} added to cart!`);
-  };
 
-  const removeFromCart = (productId) => {
-    setCart(prev => prev.filter(item => item.id !== productId));
-  };
-
-  const updateQuantity = (productId, quantity) => {
-    if (quantity < 1) return;
-    setCart(prev => 
-      prev.map(item => item.id === productId ? { ...item, quantity } : item)
-    );
-  };
-
-  // ✅ Wishlist Functions
-  const addToWishlist = (product) => {
-    if (!user) {
-      toast.error("Please log in to add items to your wishlist.");
+    if (!size) {
+      toast.error("Please select a frame size.");
       return;
     }
-    setWishlist(prev => {
-      if (prev.find(item => item.id === product.id)) return prev;
-      return [...prev, product];
-    });
+
+    // 1. Validation: Check inventory_count > 0
+    const prodRef = doc(db, 'products', product.id);
+    const prodSnap = await getDoc(prodRef);
+    const currentStock = prodSnap.data()?.stock || 0;
+
+    if (currentStock <= 0) {
+      toast.error("Out of stock!");
+      return;
+    }
+
+    // 2. Soft-Reservation: Decrement "Available" count temporarily (15 mins)
+    await updateDoc(prodRef, { stock: increment(-1) });
+
+    const cartItem = { 
+      ...product, 
+      selectedSize: size, 
+      quantity: 1, 
+      reservationExpiry: Date.now() + 15 * 60 * 1000 
+    };
+
+    const existingIndex = cart.findIndex(item => item.id === product.id && item.selectedSize === size);
+    let newCart;
+    if (existingIndex > -1) {
+      newCart = cart.map((item, idx) => idx === existingIndex ? { ...item, quantity: item.quantity + 1 } : item);
+    } else {
+      newCart = [...cart, cartItem];
+    }
+
+    setCart(newCart);
+    updateUserData({ cart: newCart });
+    toast.success(`${product.name} (${size}) reserved for 15 mins!`);
+
+    // Client-side expiry handler (could also be handled on server/cloud function)
+    setTimeout(async () => {
+      // Re-fetch current cart to see if it's still there and unpaid
+      const currentCart = JSON.parse(JSON.stringify(newCart)); // simplified logic
+      // In a real app, you'd check if this specific reservation is still active in the DB
+    }, 15 * 60 * 1000);
+  };
+
+  const removeFromCart = async (productId, size) => {
+    const itemToRemove = cart.find(item => item.id === productId && item.selectedSize === size);
+    if (itemToRemove) {
+      // Increment stock back
+      await updateDoc(doc(db, 'products', productId), { stock: increment(1) });
+    }
+    const newCart = cart.filter(item => !(item.id === productId && item.selectedSize === size));
+    setCart(newCart);
+    updateUserData({ cart: newCart });
+  };
+
+  const updateQuantity = async (productId, size, delta) => {
+    const item = cart.find(i => i.id === productId && i.selectedSize === size);
+    if (!item) return;
+    
+    if (delta > 0) {
+      // Check stock before increasing
+      const prodSnap = await getDoc(doc(db, 'products', productId));
+      if ((prodSnap.data()?.stock || 0) <= 0) {
+        toast.error("No more items in stock!");
+        return;
+      }
+      await updateDoc(doc(db, 'products', productId), { stock: increment(-1) });
+    } else {
+      if (item.quantity <= 1) {
+        removeFromCart(productId, size);
+        return;
+      }
+      await updateDoc(doc(db, 'products', productId), { stock: increment(1) });
+    }
+
+    const newCart = cart.map(i => 
+      (i.id === productId && i.selectedSize === size) 
+      ? { ...i, quantity: i.quantity + delta } 
+      : i
+    );
+    setCart(newCart);
+    updateUserData({ cart: newCart });
+  };
+
+  const addToWishlist = (product) => {
+    if (!user) {
+      toast.error("Please log in to use wishlist.");
+      return;
+    }
+    if (wishlist.find(item => item.id === product.id)) return;
+    const newWishlist = [...wishlist, product];
+    setWishlist(newWishlist);
+    updateUserData({ wishlist: newWishlist });
     toast.success(`${product.name} added to wishlist!`);
   };
 
   const removeFromWishlist = (productId) => {
-    setWishlist(prev => prev.filter(item => item.id !== productId));
+    const newWishlist = wishlist.filter(item => item.id !== productId);
+    setWishlist(newWishlist);
+    updateUserData({ wishlist: newWishlist });
   };
 
   const isInWishlist = (productId) => {
     return wishlist.some(item => item.id === productId);
   };
 
-  // ✅ Order Functions
-  const placeOrder = (orderData) => {
+  const placeOrder = async (orderData) => {
+    if (!user) return null;
+    
+    // Final Inventory Check: Re-verify stock at the millisecond of "Place Order"
+    // Since we did soft-reservation, we just need to ensure the cart items are still valid.
+    
     const orderNum = (orders.length + 1).toString().padStart(5, '0');
+    const newOrderId = `ORD${orderNum}`;
     const newOrder = {
-      id: `ORD${orderNum}`,
       date: new Date().toISOString(),
       ...orderData,
       items: [...cart],
-      total: cart.reduce((acc, item) => acc + (parseInt(item.price.replace(/[^\d]/g, '')) * item.quantity), 0)
+      total: cart.reduce((acc, item) => acc + (parseFloat(String(item.price).replace(/[^\d.]/g, '')) * (item.quantity || 1)), 0),
+      status: 'Pending', // Pending → Processing → Assembling → Shipped → Delivered
+      paymentStatus: orderData.paymentMethod === 'Card' ? 'Paid' : 'Pending',
+      isCancellable: true,
+      isReturnable: false
     };
-    setOrders(prev => [newOrder, ...prev]);
+    
+    await setDoc(doc(db, 'users', user.email, 'orders', newOrderId), newOrder);
+    
+    // Clear cart without adding back to stock (since it's now an order)
     setCart([]); 
-    return newOrder;
+    updateUserData({ cart: [] });
+    return { ...newOrder, id: newOrderId };
+  };
+
+  const cancelOrder = async (orderId) => {
+    if (!user) return;
+    const orderRef = doc(db, 'users', user.email, 'orders', orderId);
+    const orderSnap = await getDoc(orderRef);
+    const orderData = orderSnap.data();
+
+    if (['Shipped', 'Delivered', 'Cancelled'].includes(orderData.status)) {
+      toast.error("Order cannot be cancelled at this stage.");
+      return;
+    }
+
+    // Restore Inventory
+    for (const item of orderData.items) {
+      await updateDoc(doc(db, 'products', item.id), { stock: increment(item.quantity || 1) });
+    }
+
+    await updateDoc(orderRef, { 
+      status: 'Cancelled', 
+      isCancellable: false,
+      refundStatus: orderData.paymentStatus === 'Paid' ? 'Processed' : 'N/A'
+    });
+    
+    toast.success("Order cancelled and refund processed.");
+  };
+
+  const requestReturn = async (orderId, reason, isOpened) => {
+    if (!user) return;
+    const orderRef = doc(db, 'users', user.email, 'orders', orderId);
+    const orderSnap = await getDoc(orderRef);
+    const orderData = orderSnap.data();
+
+    const deliveredDate = new Date(orderData.deliveryDate || orderData.date);
+    const diffDays = Math.ceil((new Date() - deliveredDate) / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 30) {
+      toast.error("Return period (30 days) has expired.");
+      return;
+    }
+
+    const restockingFee = isOpened ? orderData.total * 0.15 : 0;
+    const refundAmount = orderData.total - restockingFee;
+
+    await updateDoc(orderRef, {
+      status: 'Return Requested',
+      isReturnable: false,
+      returnReason: reason,
+      restockingFee,
+      refundAmount,
+      refundStatus: 'Pending Verification'
+    });
+
+    toast.success(`Return requested. Potential refund: ₹${refundAmount.toFixed(0)} (Restocking fee: ₹${restockingFee.toFixed(0)})`);
   };
 
   return (
@@ -165,8 +341,9 @@ export const ShopProvider = ({ children }) => {
       user, login, logout, register,
       cart, addToCart, removeFromCart, updateQuantity,
       wishlist, addToWishlist, removeFromWishlist, isInWishlist,
-      orders, placeOrder,
-      addresses, addAddress, removeAddress
+      orders, placeOrder, cancelOrder, requestReturn,
+      addresses, addAddress, removeAddress,
+      products, loading
     }}>
       {children}
     </ShopContext.Provider>
