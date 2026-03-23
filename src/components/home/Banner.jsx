@@ -13,23 +13,45 @@ const bannerData = [
     id: 1,
     title: "Conquer Any Trail",
     subtitle: "Experience the ultimate performance with our rugged mountain bike collection.",
-    image: "/images/hero/hero_mtb.png",
+    image: "/images/hero/bg-img (1).jpg",
     accent: "text-blue-400"
   },
   {
     id: 2,
     title: "Pure Speed",
     subtitle: "Aerodynamic perfection meets carbon fiber excellence. Built for the podium.",
-    image: "/images/hero/hero_road.png",
+    image: "/images/hero/bg-img (2).jpg",
     accent: "text-blue-500"
   },
   {
     id: 3,
     title: "Eco City Life",
     subtitle: "Sustainable, fast, and remarkably stylish. The future of urban commuting.",
-    image: "/images/hero/hero_city.png",
+    image: "/images/hero/bg-img (3).jpg",
+    accent: "text-cyan-400"
+  },
+  {
+    id: 4,
+    title: "Conquer Any Trail",
+    subtitle: "Experience the ultimate performance with our rugged mountain bike collection.",
+    image: "/images/hero/bg-img (4).jpg",
+    accent: "text-blue-400"
+  },
+  {
+    id: 5,
+    title: "Pure Speed",
+    subtitle: "Aerodynamic perfection meets carbon fiber excellence. Built for the podium.",
+    image: "/images/hero/bg-image (5).jpg",
+    accent: "text-blue-500"
+  },
+  {
+    id: 6,
+    title: "Eco City Life",
+    subtitle: "Sustainable, fast, and remarkably stylish. The future of urban commuting.",
+    image: "/images/hero/bg-image (2).jpg",
     accent: "text-cyan-400"
   }
+
 ];
 
 export default function Banner() {

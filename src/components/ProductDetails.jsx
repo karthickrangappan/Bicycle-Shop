@@ -50,13 +50,13 @@ export default function ProductDetails() {
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-[3rem] p-4 shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden group"
+            className="bg-white rounded-[2.5rem] p-3 shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden group"
           >
-            <div className="aspect-square rounded-[2.5rem] overflow-hidden bg-slate-50 relative">
+            <div className="aspect-[4/3] rounded-[2rem] overflow-hidden bg-white relative flex items-center justify-center p-4">
                <img 
                  src={product.image} 
                  alt={product.name} 
-                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                 className="w-full h-full object-contain drop-shadow-xl group-hover:scale-105 transition-transform duration-1000 rounded-2xl"
                />
                
                {/* Overlay badges */}
@@ -72,86 +72,77 @@ export default function ProductDetails() {
           <motion.div 
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex flex-col justify-center"
+            className="flex flex-col justify-center py-4"
           >
-            <div className="mb-8">
-               <div className="flex items-center gap-2 mb-4">
+            <div className="mb-6">
+               <div className="flex items-center gap-1.5 mb-2">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={18} className="fill-brand-500 text-brand-500" />
+                    <Star key={i} size={14} className="fill-brand-500 text-brand-500" />
                   ))}
-                  <span className="font-bold text-slate-400 ml-2">(128 Genuine Reviews)</span>
+                  <span className="text-xs font-bold text-slate-400 ml-1">(128 Reviews)</span>
                </div>
                
-               <h1 className="text-4xl sm:text-6xl font-black text-slate-950 tracking-tighter mb-4 leading-tight">
+               <h1 className="text-3xl sm:text-5xl font-black text-slate-950 tracking-tighter mb-2 leading-tight">
                  {product.name}
                </h1>
                
-               <p className="text-xl text-slate-500 font-medium leading-relaxed max-w-lg mb-8">
-                 Engineered for elite performance and ultimate comfort. This masterpiece features carbon fiber reinforced frame and high-precision gears for the perfect ride.
+               <p className="text-sm text-slate-500 font-medium leading-relaxed max-w-sm mb-6">
+                 Engineered for elite performance. Masterpiece carbon fiber frame and high-precision gears for the perfect ride.
                </p>
                
-               <div className="flex items-center gap-4">
-                  <span className="text-5xl font-black text-slate-900 tracking-tighter font-space">
+               <div className="flex items-center gap-3">
+                  <span className="text-4xl font-black text-slate-900 tracking-tighter font-space">
                     {product.price}
                   </span>
-                  <span className="px-3 py-1 bg-green-50 text-green-600 rounded-lg text-xs font-black uppercase tracking-widest border border-green-100">
-                    In Stock & Ready
+                  <span className="px-2 py-0.5 bg-green-50 text-green-600 rounded-lg text-[10px] font-black uppercase tracking-widest border border-green-100">
+                    Instock
                   </span>
                </div>
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
+            <div className="flex flex-col sm:flex-row gap-3 mb-8">
                <button 
                  onClick={() => addToCart(product)}
-                 className="flex-grow py-5 bg-brand-500 text-white rounded-2xl font-black flex items-center justify-center gap-3 shadow-xl shadow-brand-500/30 hover:bg-brand-600 transition-all hover:-translate-y-1 active:scale-95 active:translate-y-0"
+                 className="flex-grow py-4 bg-brand-500 text-white rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg shadow-brand-500/20 hover:bg-brand-600 transition-all hover:-translate-y-1 active:scale-95 active:translate-y-0"
                >
-                 <ShoppingCart size={24} />
-                 Add to Premium Bag
+                 <ShoppingCart size={20} />
+                 Add to Bag
                </button>
                
-               <button 
+               {/* <button 
                  onClick={toggleWishlist}
-                 className={`w-16 h-16 rounded-2xl flex items-center justify-center border-2 transition-all active:scale-90 ${
+                 className={`w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-all active:scale-90 ${
                    isInWishlist(product.id) 
                    ? "bg-red-50 text-red-500 border-red-200" 
                    : "border-slate-100 text-slate-400 hover:border-red-500 hover:text-red-500"
                  }`}
                >
-                 <Heart size={24} className={isInWishlist(product.id) ? "fill-red-500" : ""} />
-               </button>
+                 <Heart size={20} className={isInWishlist(product.id) ? "fill-red-500" : ""} />
+               </button> */}
             </div>
 
             {/* Features/Trust */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-10 border-t border-slate-100">
-               <div className="flex items-start gap-3 group">
-                  <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors">
-                     <Shield size={20} />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8 border-t border-slate-100">
+               <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400">
+                     <Shield size={16} />
                   </div>
-                  <div>
-                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight">Lifetime Warranty</h4>
-                    <p className="text-xs text-slate-400 font-bold">On main frame</p>
-                  </div>
+                  <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-tight">Lifetime Warranty</h4>
                </div>
                
-               <div className="flex items-start gap-3 group">
-                  <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-cyan-50 group-hover:text-cyan-500 transition-colors">
-                     <Truck size={20} />
+               <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400">
+                     <Truck size={16} />
                   </div>
-                  <div>
-                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight">Free Express</h4>
-                    <p className="text-xs text-slate-400 font-bold">Pan-India delivery</p>
-                  </div>
+                  <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-tight">Free Express</h4>
                </div>
-
-               <div className="flex items-start gap-3 group">
-                  <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-500 transition-colors">
-                     <RotateCcw size={20} />
+ 
+               <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400">
+                     <RotateCcw size={16} />
                   </div>
-                  <div>
-                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight">30 Day Return</h4>
-                    <p className="text-xs text-slate-400 font-bold">No questions asked</p>
-                  </div>
+                  <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-tight">30 Day Return</h4>
                </div>
             </div>
           </motion.div>

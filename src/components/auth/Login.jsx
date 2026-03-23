@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, LogIn, ArrowRight } from 'lucide-react';
@@ -19,9 +20,10 @@ export default function Login() {
     
     if (user) {
       login(user);
+      toast.success('Welcome back!');
       navigate('/');
     } else {
-      setError('Invalid email or password');
+      toast.error('Invalid email or password');
     }
   };
 
@@ -71,7 +73,7 @@ export default function Login() {
               </div>
             </div>
 
-            {error && <p className="text-red-500 text-sm font-bold text-center">{error}</p>}
+
 
             <button 
               type="submit"

@@ -23,10 +23,12 @@ const PrivateRoute = ({ children }) => {
 };
 
 import ScrollToTop from './layout/ScrollToTop';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-center" reverseOrder={false} />
       <ScrollToTop />
       <Navbar />
       <Routes>

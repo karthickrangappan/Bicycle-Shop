@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 
 const ShopContext = createContext();
 
@@ -97,7 +98,7 @@ export const ShopProvider = ({ children }) => {
   // ✅ Cart Functions
   const addToCart = (product) => {
     if (!user) {
-      alert("Please log in to add items to your cart.");
+      toast.error("Please log in to add items to your cart.");
       return;
     }
     setCart(prev => {
@@ -109,6 +110,7 @@ export const ShopProvider = ({ children }) => {
       }
       return [...prev, { ...product, quantity: 1 }];
     });
+    toast.success(`${product.name} added to cart!`);
   };
 
   const removeFromCart = (productId) => {
@@ -125,13 +127,14 @@ export const ShopProvider = ({ children }) => {
   // ✅ Wishlist Functions
   const addToWishlist = (product) => {
     if (!user) {
-      alert("Please log in to add items to your wishlist.");
+      toast.error("Please log in to add items to your wishlist.");
       return;
     }
     setWishlist(prev => {
       if (prev.find(item => item.id === product.id)) return prev;
       return [...prev, product];
     });
+    toast.success(`${product.name} added to wishlist!`);
   };
 
   const removeFromWishlist = (productId) => {

@@ -80,7 +80,10 @@ export default function Services() {
   ];
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-20">
+    <div className="bg-slate-50 min-h-screen pb-20 relative overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-brand-500/5 rounded-full blur-[150px] -z-10 translate-x-1/2" />
+      <div className="absolute bottom-1/4 left-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] -z-10 -translate-x-1/2" />
       <PageHeader 
         title="CycleCore Mastercare"
         subtitle="Precision engineering meets master craft. Our world-class mechanics ensure your ride performs as a masterpiece of mechanical perfection."
@@ -102,14 +105,15 @@ export default function Services() {
               key={i}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -5, scale: 1.05 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white/80 backdrop-blur-xl p-6 rounded-[2rem] border border-white shadow-xl shadow-slate-200/50 flex flex-col items-center text-center group hover:bg-white transition-all"
+              className="bg-white/80 backdrop-blur-xl p-6 rounded-[2rem] border border-white shadow-xl shadow-slate-200/50 flex flex-col items-center text-center group hover:bg-white transition-all hover:shadow-brand-500/10 hover:border-brand-200"
             >
-              <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 mb-4 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all">
+              <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 mb-4 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all group-hover:rotate-[15deg]">
                 <stat.icon size={22} />
               </div>
-              <p className="text-2xl font-black text-slate-900 tracking-tighter">{stat.val}</p>
-              <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">{stat.label}</p>
+              <p className="text-2xl font-black text-slate-900 tracking-tighter group-hover:text-brand-600 transition-colors">{stat.val}</p>
+              <p className="text-[10px] uppercase font-black tracking-widest text-slate-400 group-hover:text-slate-500 transition-colors">{stat.label}</p>
             </motion.div>
           ))}
         </div>
@@ -134,10 +138,10 @@ export default function Services() {
                 </div>
               )}
 
-              <div className={`w-16 h-16 rounded-3xl flex items-center justify-center mb-10 transition-transform duration-500 group-hover:scale-110 ${
-                pkg.color === 'blue' ? "bg-blue-50 text-blue-500" :
-                pkg.color === 'indigo' ? "bg-indigo-50 text-indigo-500" :
-                "bg-brand-50 text-brand-500"
+              <div className={`w-16 h-16 rounded-3xl flex items-center justify-center mb-10 transition-all duration-500 group-hover:scale-110 group-hover:rotate-[12deg] group-hover:shadow-lg ${
+                pkg.color === 'blue' ? "bg-blue-50 text-blue-500 group-hover:bg-blue-500 group-hover:text-white" :
+                pkg.color === 'indigo' ? "bg-indigo-50 text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white" :
+                "bg-brand-50 text-brand-500 group-hover:bg-brand-500 group-hover:text-white"
               }`}>
                 <pkg.icon size={30} />
               </div>
@@ -193,16 +197,16 @@ export default function Services() {
             {alaCarte.map((item, idx) => (
               <motion.div
                 key={idx}
-                whileHover={{ y: -5 }}
-                className="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-[2rem] flex justify-between items-center transition-colors hover:bg-white/10 group"
+                whileHover={{ y: -5, scale: 1.02 }}
+                className="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-[2rem] flex justify-between items-center transition-all hover:bg-white/10 hover:border-brand-500/50 group"
               >
                 <div className="flex items-center gap-3">
-                   <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400 group-hover:text-brand-400 transition-colors">
+                   <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400 group-hover:text-brand-400 group-hover:rotate-[10deg] transition-all">
                       <item.icon size={18} />
                    </div>
-                   <span className="font-bold text-white text-sm">{item.name}</span>
+                   <span className="font-bold text-white text-sm group-hover:text-brand-400 transition-colors">{item.name}</span>
                 </div>
-                <span className="text-brand-400 font-black text-xs bg-brand-400/10 px-3 py-1 rounded-lg border border-brand-400/20">{item.price}</span>
+                <span className="text-brand-400 font-black text-xs bg-brand-400/10 px-3 py-1 rounded-lg border border-brand-400/20 group-hover:bg-brand-500 group-hover:text-white transition-all">{item.price}</span>
               </motion.div>
             ))}
           </div>

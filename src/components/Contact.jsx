@@ -37,7 +37,10 @@ export default function Contact() {
   ];
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-24">
+    <div className="bg-slate-50 min-h-screen pb-24 relative overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-[120px] -z-10 -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[150px] -z-10 translate-x-1/2 translate-y-1/2" />
       
       <PageHeader 
         title="Get In Touch"
@@ -55,22 +58,23 @@ export default function Contact() {
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -5, scale: 1.05 }}
               transition={{ delay: 0.2 + (idx * 0.1) }}
-              className="bg-white/80 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white shadow-xl shadow-slate-200/40 relative overflow-hidden group hover:bg-white transition-all"
+              className="bg-white/80 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white shadow-xl shadow-slate-200/40 relative overflow-hidden group hover:bg-white transition-all hover:shadow-brand-500/10 hover:border-brand-200"
             >
-              <div className="absolute top-0 right-0 p-8 opacity-5">
+              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all duration-700">
                  <info.icon size={80} />
               </div>
               <div className="relative z-10">
-                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 group-hover:scale-110 ${
-                   info.color === 'brand' ? 'bg-brand-50 text-brand-500' :
-                   info.color === 'blue' ? 'bg-blue-50 text-blue-500' :
-                   'bg-indigo-50 text-indigo-500'
+                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 group-hover:scale-110 group-hover:rotate-[15deg] group-hover:shadow-lg ${
+                   info.color === 'brand' ? 'bg-brand-50 text-brand-500 group-hover:bg-brand-500 group-hover:text-white' :
+                   info.color === 'blue' ? 'bg-blue-50 text-blue-500 group-hover:bg-blue-500 group-hover:text-white' :
+                   'bg-indigo-50 text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white'
                  }`}>
                     <info.icon size={22} />
                  </div>
-                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">{info.label}</p>
-                 <p className="text-xl font-black text-slate-900 tracking-tight">{info.val}</p>
+                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-hover:text-slate-500 transition-colors">{info.label}</p>
+                 <p className="text-xl font-black text-slate-900 tracking-tight group-hover:text-brand-600 transition-colors">{info.val}</p>
               </div>
             </motion.div>
           ))}
@@ -93,35 +97,44 @@ export default function Contact() {
              </p>
 
              <div className="space-y-6">
-                <div className="flex items-center gap-4 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-100/50 group hover:border-brand-500 transition-all border-l-4 border-l-transparent hover:border-l-brand-500">
-                   <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-brand-500 group-hover:text-white transition-all">
+                <motion.div 
+                  whileHover={{ x: 10 }}
+                  className="flex items-center gap-4 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-100/50 group hover:border-brand-500 transition-all border-l-4 border-l-transparent hover:border-l-brand-500"
+                >
+                   <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-brand-500 group-hover:text-white group-hover:rotate-[10deg] transition-all">
                       <Clock size={20} />
                    </div>
                    <div>
-                      <p className="text-sm font-black text-slate-900">Service Hours</p>
+                      <p className="text-sm font-black text-slate-900 group-hover:text-brand-600 transition-colors">Service Hours</p>
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">Mon - Sat: 9:00 AM - 8:00 PM</p>
                    </div>
-                </div>
+                </motion.div>
 
-                <div className="flex items-center gap-4 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-100/50 group hover:border-brand-500 transition-all border-l-4 border-l-transparent hover:border-l-brand-500">
-                   <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-green-500 group-hover:text-white transition-all">
+                <motion.div 
+                   whileHover={{ x: 10 }}
+                   className="flex items-center gap-4 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-100/50 group hover:border-brand-500 transition-all border-l-4 border-l-transparent hover:border-l-brand-500"
+                >
+                   <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-green-500 group-hover:text-white group-hover:rotate-[10deg] transition-all">
                       <ShieldCheck size={20} />
                    </div>
                    <div>
-                      <p className="text-sm font-black text-slate-900">Safe Deliveries</p>
+                      <p className="text-sm font-black text-slate-900 group-hover:text-green-600 transition-colors">Safe Deliveries</p>
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">White Glove shipping across India</p>
                    </div>
-                </div>
+                </motion.div>
 
-                <div className="flex items-center gap-4 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-100/50 group hover:border-brand-500 transition-all border-l-4 border-l-transparent hover:border-l-brand-500">
-                   <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                <motion.div 
+                   whileHover={{ x: 10 }}
+                   className="flex items-center gap-4 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-100/50 group hover:border-brand-500 transition-all border-l-4 border-l-transparent hover:border-l-brand-500"
+                >
+                   <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-blue-500 group-hover:text-white group-hover:rotate-[10deg] transition-all">
                       <Globe size={20} />
                    </div>
                    <div>
-                      <p className="text-sm font-black text-slate-900">Global Community</p>
+                      <p className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors">Global Community</p>
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">Visit the rider hub anytime</p>
                    </div>
-                </div>
+                </motion.div>
              </div>
           </motion.div>
 

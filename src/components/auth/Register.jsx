@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, AtSign, ArrowRight } from 'lucide-react';
@@ -19,7 +20,7 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      toast.error('Passwords do not match');
       return;
     }
 
@@ -31,9 +32,10 @@ export default function Register() {
 
     if (res.success) {
       login({ name: formData.name, email: formData.email });
+      toast.success('Account created successfully!');
       navigate('/');
     } else {
-      setError(res.message);
+      toast.error(res.message);
     }
   };
 
@@ -117,7 +119,7 @@ export default function Register() {
               </div>
             </div>
 
-            {error && <p className="text-red-500 text-sm font-bold text-center">{error}</p>}
+
 
             <button 
               type="submit"

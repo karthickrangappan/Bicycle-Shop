@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useShop } from '../context/ShopContext';
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, Truck, ShieldCheck, ShoppingCart, ArrowRight, Wallet, CheckCircle2 } from 'lucide-react';
+import { CreditCard, Truck, ShieldCheck, ShoppingCart, ArrowRight, Wallet, CheckCircle2, MapPin } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import PageHeader from '../layout/PageHeader';
 
 export default function Checkout() {
@@ -59,22 +60,22 @@ export default function Checkout() {
       const pincodeRegex = /^[0-9]{6}$/;
 
       if (!formData.name || !formData.email || !formData.phone || !formData.address || !formData.city || !formData.zip) {
-         alert("Please fill all shipping details");
+         toast.error("Please fill all shipping details");
          return false;
       }
 
       if (!phoneRegex.test(formData.phone)) {
-         alert("Enter valid 10-digit phone number");
+         toast.error("Enter valid 10-digit phone number");
          return false;
       }
 
       if (!pincodeRegex.test(formData.zip)) {
-         alert("Enter valid 6-digit pincode");
+         toast.error("Enter valid 6-digit pincode");
          return false;
       }
 
       if (!cart.length) {
-         alert("Cart is empty");
+         toast.error("Cart is empty");
          return false;
       }
 
@@ -105,7 +106,7 @@ export default function Checkout() {
                paymentStatus: 'Pending',
                paymentId: `COD-${Date.now()}`
             });
-            alert("Order placed successfully 🚚 (Cash on Delivery)");
+            toast.success("Order placed successfully 🚚 (Cash on Delivery)");
             setLoading(false);
             navigate('/my-orders');
          }, 1500);
@@ -114,7 +115,7 @@ export default function Checkout() {
 
       const isLoaded = await loadRazorpay();
       if (!isLoaded) {
-         alert("Razorpay SDK failed to load. Check internet.");
+         toast.error("Razorpay SDK failed to load. Check internet.");
          setLoading(false);
          return;
       }
@@ -132,13 +133,13 @@ export default function Checkout() {
                paymentStatus: 'Paid',
                paymentId: response.razorpay_payment_id
             });
-            alert("Payment successful ✅");
+            toast.success("Payment successful ✅");
             setLoading(false);
             navigate('/my-orders');
          },
          modal: {
             ondismiss: function () {
-               alert("Payment cancelled ❌");
+               toast.error("Payment cancelled ❌");
                setLoading(false);
             },
          },

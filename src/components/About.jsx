@@ -46,7 +46,10 @@ export default function About() {
   ];
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-20">
+    <div className="bg-slate-50 min-h-screen pb-20 relative overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-[120px] -z-10 -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] -z-10 -translate-x-1/2" />
       
       <PageHeader 
         title="Our Cycling Legacy"
@@ -81,14 +84,20 @@ export default function About() {
             </div>
 
             <div className="grid grid-cols-2 gap-6 mt-12">
-               <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/50">
+               <motion.div 
+                  whileHover={{ y: -5, scale: 1.05 }}
+                  className="p-6 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/50 transition-all hover:shadow-brand-500/10 hover:border-brand-200"
+               >
                   <p className="text-4xl font-black text-slate-900 mb-1 tracking-tighter">15+</p>
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Years Experience</p>
-               </div>
-               <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/50">
+               </motion.div>
+               <motion.div 
+                  whileHover={{ y: -5, scale: 1.05 }}
+                  className="p-6 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/50 transition-all hover:shadow-brand-500/10 hover:border-brand-200"
+               >
                   <p className="text-4xl font-black text-slate-900 mb-1 tracking-tighter">12K+</p>
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Custom Builds</p>
-               </div>
+               </motion.div>
             </div>
           </motion.div>
 
@@ -142,15 +151,16 @@ export default function About() {
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.15 }}
+                whileHover={{ y: -10, scale: 1.02 }}
+                transition={{ delay: idx * 0.15, type: 'spring', stiffness: 300 }}
                 viewport={{ once: true }}
-                className="bg-white/5 backdrop-blur-xl p-10 rounded-[3rem] border border-white/10 group hover:bg-white/10 transition-all"
+                className="bg-white/5 backdrop-blur-xl p-10 rounded-[3rem] border border-white/10 group hover:bg-white/10 hover:border-brand-500/30 transition-all shadow-2xl shadow-black/20"
               >
-                <div className={`w-16 h-16 rounded-[2rem] flex items-center justify-center mb-8 bg-slate-800 text-slate-400 group-hover:bg-brand-500 group-hover:text-white transition-all duration-500`}>
+                <div className={`w-16 h-16 rounded-[2rem] flex items-center justify-center mb-8 bg-slate-800 text-slate-300 group-hover:bg-brand-500 group-hover:text-white group-hover:rotate-[10deg] transition-all duration-500 shadow-lg shadow-black/20`}>
                   <item.icon size={30} />
                 </div>
-                <h3 className="text-2xl font-black text-white mb-4 tracking-tight">{item.title}</h3>
-                <p className="text-slate-400 font-medium leading-relaxed">{item.desc}</p>
+                <h3 className="text-2xl font-black text-white mb-4 tracking-tight group-hover:text-brand-400 transition-colors">{item.title}</h3>
+                <p className="text-slate-400 font-medium leading-relaxed group-hover:text-slate-300 transition-colors">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -168,17 +178,18 @@ export default function About() {
                 key={idx}
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
+                whileHover={{ y: -8, scale: 1.05 }}
                 transition={{ delay: idx * 0.2 }}
                 viewport={{ once: true }}
-                className="relative p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-100/30 group"
+                className="relative p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-100/30 group hover:border-brand-500 hover:shadow-brand-500/10 transition-all"
               >
-                <div className="text-brand-500 font-black text-4xl mb-2 tracking-tighter opacity-20 group-hover:opacity-100 transition-opacity">
+                <div className="text-brand-500 font-black text-4xl mb-2 tracking-tighter opacity-10 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500">
                    {ms.year}
                 </div>
-                <h4 className="text-xl font-black text-slate-900 mb-2">{ms.label}</h4>
-                <p className="text-xs font-bold text-slate-400 leading-relaxed">{ms.desc}</p>
+                <h4 className="text-xl font-black text-slate-900 mb-2 group-hover:text-brand-600 transition-colors">{ms.label}</h4>
+                <p className="text-xs font-bold text-slate-400 leading-relaxed group-hover:text-slate-500">{ms.desc}</p>
                 {idx < 3 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-2 w-4 h-4 bg-slate-50 border border-slate-100 rounded-full z-10 -translate-y-1/2" />
+                  <div className="hidden lg:block absolute top-1/2 -right-2 w-4 h-4 bg-slate-50 border border-slate-100 rounded-full z-10 -translate-y-1/2 transition-colors group-hover:bg-brand-500 group-hover:border-brand-500" />
                 )}
               </motion.div>
             ))}

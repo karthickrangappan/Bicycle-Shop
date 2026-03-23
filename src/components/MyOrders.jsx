@@ -30,14 +30,15 @@ function OrderCard({ order }) {
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden group"
+      whileHover={{ scale: 1.01 }}
+      className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden group hover:border-brand-300 transition-all duration-500"
     >
       {/* Basic Order Info (Visible) */}
       <div className="px-8 py-10 bg-brand-200 border-b border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-48 h-48 bg-brand-500/5 blur-[50px] rounded-full"></div>
         
         <div className="flex items-center gap-6 relative z-10 w-full md:w-auto">
-          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-brand-500 shadow-xl shadow-brand-500/10 transition-transform group-hover:scale-110">
+          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-brand-500 shadow-xl shadow-brand-500/10 transition-all duration-500 group-hover:scale-110 group-hover:rotate-[10deg] group-hover:bg-brand-500 group-hover:text-white">
             <Box size={28} />
           </div>
           <div className="flex-grow">
@@ -49,7 +50,7 @@ function OrderCard({ order }) {
 
         <div className="flex flex-col items-center md:items-end gap-2 relative z-10 w-full md:w-auto">
           <div className="flex items-center gap-4 w-full justify-between md:justify-end">
-            <span className="px-6 py-2 bg-green-50 text-green-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-100 ring-2 ring-white">
+            <span className="px-6 py-2 bg-green-50 text-green-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-100 ring-2 ring-white group-hover:bg-green-500 group-hover:text-white transition-all duration-500">
                Confirmed & Processing
             </span>
             <button 
@@ -106,8 +107,8 @@ function OrderCard({ order }) {
                              <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500" />
                           </div>
                           <div className="flex-grow">
-                             <p className="text-[10px] font-black uppercase text-brand-500 tracking-widest">{item.category}</p>
-                             <h5 className="font-black text-slate-900 tracking-tight">{item.name}</h5>
+                             <p className="text-[10px] font-black uppercase text-brand-500 tracking-widest group-hover/item:animate-pulse">{item.category}</p>
+                             <h5 className="font-black text-slate-900 tracking-tight group-hover/item:text-brand-600 transition-colors">{item.name}</h5>
                              <p className="text-xs font-bold text-slate-400 mt-0.5 italic">Quantity: {item.quantity}</p>
                           </div>
                           <div className="text-right">
@@ -179,7 +180,9 @@ export default function MyOrders() {
 
   if (orders.length === 0) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen bg-slate-50 flex flex-col relative overflow-hidden">
+        {/* Background Decor */}
+        <div className="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-[120px] -z-10 -translate-x-1/2 -translate-y-1/2" />
         <PageHeader 
           title="Order History"
           subtitle="Track your elite rides and luxury acquisitions."
@@ -212,7 +215,10 @@ export default function MyOrders() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
+    <div className="min-h-screen bg-slate-50 pb-20 relative overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-[120px] -z-10 translate-x-1/2" />
+      <div className="absolute bottom-1/4 left-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[150px] -z-10 -translate-x-1/2" />
       <PageHeader 
         title="Your Orders"
         subtitle={`Viewing ${orders.length} successful elite purchases.`}
