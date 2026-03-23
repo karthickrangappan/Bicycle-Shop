@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { ChevronRight, Home } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
-export default function PageHeader({ title, subtitle, icon: Icon, badge }) {
+export default function PageHeader({ title, icon: Icon }) {
   const location = useLocation();
   const pathnames = location.pathname.split('/').filter((x) => x);
 
@@ -27,21 +27,7 @@ export default function PageHeader({ title, subtitle, icon: Icon, badge }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         <div className="flex flex-col items-center">
 
-          {/* Badge / Top Label */}
-          {badge && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-500/10 border border-brand-500/20 rounded-full text-brand-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4"
-            >
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-500"></span>
-              </span>
-              {badge}
-            </motion.div>
-          )}
+
 
           {/* Icon & Title Group */}
           <div className="flex flex-col items-center mb-4">
@@ -65,18 +51,6 @@ export default function PageHeader({ title, subtitle, icon: Icon, badge }) {
               {title}
             </motion.h1>
           </div>
-
-          {/* Subtitle */}
-          {subtitle && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.4 }}
-              className="text-slate-400 text-xs sm:text-base lg:text-lg font-medium max-w-2xl leading-relaxed mb-6 px-4 sm:px-0"
-            >
-              {subtitle}
-            </motion.p>
-          )}
 
           {/* Breadcrumbs */}
           <motion.nav

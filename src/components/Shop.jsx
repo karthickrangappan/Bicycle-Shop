@@ -58,9 +58,7 @@ export default function Shop() {
     <div className="bg-slate-50 min-h-screen relative">
       <PageHeader 
         title="Premium Collection"
-        // subtitle="Engineered for performance. Discover our curated selection of world-class bicycles for every terrain."
         icon={ShoppingBag}
-        // badge="Catalog 2026"
       />
       <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
         

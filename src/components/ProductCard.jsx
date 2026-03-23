@@ -204,12 +204,12 @@ export function ProductGrid() {
 export default function ProductCard({ product }) {
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useShop();
 
-  const handleWishlist = (e) => {
-    e.preventDefault();
-    isInWishlist(product.id)
-      ? removeFromWishlist(product.id)
-      : addToWishlist(product);
-  };
+  // const handleWishlist = (e) => {
+  //   e.preventDefault();
+  //   isInWishlist(product.id)
+  //     ? removeFromWishlist(product.id)
+  //     : addToWishlist(product);
+  // };
 
   const handleAddToCart = (e) => {
     e.preventDefault();
