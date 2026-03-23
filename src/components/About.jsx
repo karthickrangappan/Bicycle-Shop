@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import PageHeader from '../layout/PageHeader';
+import { Link } from 'react-router-dom';
 import { 
   Info, 
   Target, 
@@ -13,7 +14,8 @@ import {
   Heart,
   TrendingUp,
   MapPin,
-  CheckCircle2
+  CheckCircle2,
+  ArrowRight
 } from 'lucide-react';
 
 export default function About() {
@@ -198,19 +200,55 @@ export default function About() {
       </section>
 
       {/* FINAL CTA */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 relative px-4">
          <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-brand-600 to-indigo-700 rounded-[3rem] p-12 sm:p-20 text-center text-white relative overflow-hidden"
+          viewport={{ once: true }}
+          className="relative rounded-[4rem] p-16 sm:p-24 text-center text-white overflow-hidden shadow-[0_50px_100px_-20px_rgba(59,130,246,0.5)] border border-white/10 group"
          >
-            <div className="absolute inset-0 bg-grid-white opacity-10" />
-            <div className="relative z-10 max-w-2xl mx-auto">
-               <h2 className="text-4xl sm:text-5xl font-black tracking-tighter mb-6">Ready to Experience Perfection?</h2>
-               <p className="text-lg font-medium text-white/80 mb-10">Join the thousands of riders who have discovered their true potential at CycleCore.</p>
-               <button className="px-10 py-5 bg-white text-brand-600 rounded-2xl font-black shadow-2xl shadow-black/20 hover:scale-105 active:scale-95 transition-all">
-                  Visit Our Store
-               </button>
+            {/* Background Image with Ken Burns Effect */}
+            <div className="absolute inset-0 z-0">
+               <motion.img 
+                 initial={{ scale: 1.2, rotate: 2 }}
+                 whileInView={{ scale: 1, rotate: 0 }}
+                 transition={{ duration: 15, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
+                 src="/images/hero/bg-img (6).jpg" 
+                 alt="Experience Perfection" 
+                 className="w-full h-full object-cover"
+               />
+               {/* Multi-layered Overlays for Depth */}
+               <div className="absolute inset-0 bg-slate-950/60" />
+               <div className="absolute inset-0 bg-gradient-to-br from-brand-600/60 via-slate-950/80 to-transparent" />
+               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40" />
+               <div className="absolute inset-0 bg-grid-white opacity-[0.05]" />
+               
+               {/* Dynamic Light Beams */}
+               <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-brand-500/20 blur-[150px] rounded-full animate-pulse transition-all duration-[5s]" />
+               <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-indigo-500/20 blur-[150px] rounded-full animate-pulse delay-1000" />
+            </div>
+
+            <div className="relative z-10 max-w-3xl mx-auto">
+               <motion.div
+                 initial={{ opacity: 0, scale: 0.9 }}
+                 whileInView={{ opacity: 1, scale: 1 }}
+                 className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-xs font-black uppercase tracking-[0.3em] mb-10 text-brand-400"
+               >
+                 <ArrowRight size={14} /> The Master Journey
+               </motion.div>
+               <h2 className="text-5xl sm:text-7xl font-black tracking-tighter mb-8 leading-[0.95] text-white">
+                 Ready to Experience <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-cyan-400">Perfection?</span>
+               </h2>
+               <p className="text-xl sm:text-2xl font-medium text-white/70 mb-14 leading-relaxed max-w-2xl mx-auto italic">
+                 Join the thousands of riders who have discovered their true potential at <span className="text-white font-black not-italic">CycleCore</span>. Your masterpiece awaits.
+               </p>
+               <Link to="/contact" className="relative overflow-hidden inline-flex items-center gap-4 px-14 py-6 bg-white text-slate-950 rounded-[2rem] font-black shadow-[0_20px_50px_rgba(255,255,255,0.3)] hover:text-white hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] active:scale-95 transition-all duration-300 text-xl group/btn">
+                  <span className="relative z-10 flex items-center gap-4">
+                    Visit Our Store
+                    <ArrowRight size={24} className="transition-transform duration-300 group-hover/btn:translate-x-2" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+               </Link>
             </div>
          </motion.div>
       </div>

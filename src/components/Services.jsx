@@ -216,20 +216,40 @@ export default function Services() {
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          className="relative bg-gradient-to-br from-brand-600 to-indigo-700 rounded-[3rem] p-12 sm:p-20 overflow-hidden text-center text-white"
+          className="relative rounded-[3rem] p-12 sm:p-20 overflow-hidden text-center text-white min-h-[500px] flex items-center shadow-2xl"
         >
-          <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-grid-white" />
+          {/* Background Image with Overlay */}
+          <div className="absolute inset-0 z-0 group">
+             <img 
+               src="/images/hero/bg-img (10).jpg" 
+               alt="Custom Build Workshop" 
+               className="w-full h-full object-cover scale-110 group-hover:scale-105 transition-transform duration-[10s] ease-linear"
+             />
+             <div className="absolute inset-0 bg-gradient-to-br from-slate-950/95 via-indigo-950/80 to-brand-900/40" />
+             <div className="absolute inset-0 opacity-10 bg-grid-white" />
+          </div>
           
           <div className="relative z-10 max-w-2xl mx-auto">
-            <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-6 leading-tight">Need a Signature Build?</h2>
-            <p className="text-lg sm:text-xl font-medium text-white/80 mb-10 leading-relaxed">
+            <motion.span 
+               initial={{ opacity: 0, y: 10 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               className="inline-block px-5 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-[10px] font-black uppercase tracking-widest mb-8"
+            >
+               Master Lab Services
+            </motion.span>
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-6 leading-tight">Need a Signature <span className="text-brand-400">Build?</span></h2>
+            <p className="text-lg sm:text-xl font-medium text-white/70 mb-10 leading-relaxed italic">
               From custom frame painting to world-class part matching, our Master Lab builds your dream machine from the ground up.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/contact" className="px-10 py-5 bg-white text-brand-600 rounded-2xl font-black shadow-2xl shadow-black/20 hover:scale-105 active:scale-95 transition-all">
-                Consult With a Builder
+            <div className="flex flex-col sm:flex-row gap-5 justify-center">
+              <Link to="/contact" className="relative overflow-hidden inline-flex items-center justify-center px-12 py-5 bg-brand-500 text-white rounded-2xl font-black shadow-2xl shadow-brand-500/20 hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] active:scale-95 transition-all duration-300 text-lg group/btn">
+                <span className="relative z-10 flex items-center gap-3">
+                  Consult With a Builder
+                  <ArrowRight size={20} className="transition-transform duration-300 group-hover/btn:translate-x-1" />
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
               </Link>
-              <Link to="/shop" className="px-10 py-5 bg-transparent border-2 border-white/30 text-white rounded-2xl font-black hover:bg-white/10 transition-all">
+              <Link to="/shop" className="px-12 py-5 bg-white/10 backdrop-blur-xl border-2 border-white/20 text-white rounded-2xl font-black hover:bg-white/20 transition-all text-lg">
                 Explore Components
               </Link>
             </div>

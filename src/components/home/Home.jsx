@@ -3,6 +3,7 @@ import Banner from './Banner';
 import Categories from './Categories';
 import Trending from './Trending';
 import PromoBanner from './PromoBanner';
+import NewArrivals from './NewArrivals';
 import Testimonials from './Testimonials';
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
       <Categories />
       <Trending />
       <PromoBanner />
+      <NewArrivals />
       <Testimonials />
     </main>
   );

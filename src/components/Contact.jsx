@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import PageHeader from '../layout/PageHeader';
 import { 
@@ -15,6 +15,11 @@ import {
 } from 'lucide-react';
 
 export default function Contact() {
+  // Smooth scroll to top when the page loads
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }, []);
+
   const contactInfo = [
     { 
       label: "Support Email", 

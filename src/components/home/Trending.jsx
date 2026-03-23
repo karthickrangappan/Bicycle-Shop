@@ -68,8 +68,9 @@ export default function Trending() {
             loop={true}
             speed={800}
             autoplay={{
-              delay: 3000,
+              delay: 2500,
               disableOnInteraction: false,
+              pauseOnMouseEnter: true,
             }}
             breakpoints={{
               640: { slidesPerView: 2, spaceBetween: 24 },
