@@ -60,7 +60,24 @@ export const AdminProvider = ({ children }) => {
       setNotifications(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
     });
     const unsubCategories = onSnapshot(collection(db, "categories"), (snapshot) => {
-      setCategories(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+      const cats = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+      setCategories(cats);
+      
+      // Auto-seed typical bicycle shop categories if the collection is empty
+      if (cats.length === 0) {
+        const defaults = [
+          { name: 'Mountain Bikes', icon: '⛰️', active: true },
+          { name: 'Road Bikes', icon: '🛣️', active: true },
+          { name: 'Hybrid Bikes', icon: '🔀', active: true },
+          { name: 'Kids Bikes', icon: '👶', active: true },
+          { name: 'Helmets', icon: '⛑️', active: true },
+          { name: 'Lights', icon: '💡', active: true },
+          { name: 'Pumps', icon: '🔧', active: true },
+        ];
+        defaults.forEach(async (c) => {
+          await addDoc(collection(db, "categories"), c);
+        });
+      }
     });
 
     const unsubAuth = onAuthStateChanged(auth, async (user) => {

@@ -163,7 +163,7 @@ export default function Checkout() {
       for(const item of cart) {
         const prodRef = doc(db, 'products', item.id);
         const prodSnap = await getDoc(prodRef);
-        if(!prodSnap.exists() || (prodSnap.data().stock || 0) < 0) { // check < 0 because of soft-reservation
+        if(!prodSnap.exists() || (prodSnap.data().stock || 0) < 0) {
           toast.error(`Critical Stock Error: ${item.name} is no longer available.`);
           setLoading(false);
           return;
@@ -172,31 +172,32 @@ export default function Checkout() {
 
       const orderPayload = {
          ...formData,
-         paymentMethod: paymentMethod === 'cod' ? 'COD' : 'Razorpay',
-         paymentStatus: paymentMethod === 'cod' ? 'Pending' : 'Paid',
          shippingCost: shippingCosts.total,
          assemblyTier,
          addressType,
          subtotal,
          total: totalInvestment,
-         status: 'Pending' // Flow: Pending → Processing → Assembling → Shipped → Delivered
+         status: 'Pending'
       };
 
       if (paymentMethod === 'cod') {
-         setTimeout(async () => {
-            const res = await placeOrder(orderPayload);
-            if(res) {
-                toast.success("Order placed successfully 🚚 (Cash on Delivery)");
-                navigate('/my-orders');
-            }
-            setLoading(false);
-         }, 1500);
+         const res = await placeOrder({
+            ...orderPayload,
+            paymentMethod: "COD",
+            paymentId: "COD",
+         });
+         
+         if(res) {
+            toast.success("Order placed successfully 🚚 (Cash on Delivery)");
+            setTimeout(() => navigate('/my-orders'), 300);
+         }
+         setLoading(false);
          return;
       }
 
       const isLoaded = await loadRazorpay();
       if (!isLoaded) {
-         toast.error("Razorpay SDK failed to load.");
+         toast.error("Razorpay SDK failed to load. Check internet.");
          setLoading(false);
          return;
       }
@@ -205,16 +206,18 @@ export default function Checkout() {
          key: "rzp_test_2ORD27rb7vGhwj",
          amount: Math.round(totalInvestment * 100),
          currency: "INR",
-         name: "CycleCore Premium",
-         description: "Bicycle Acquisition",
+         name: "MyShop",
+         description: "Order Payment",
          handler: async function (response) {
             const res = await placeOrder({
                ...orderPayload,
-               paymentId: response.razorpay_payment_id
+               paymentMethod: "Razorpay",
+               paymentId: response.razorpay_payment_id,
+               status: "Paid",
             });
             if(res) {
-                toast.success("Payment successful ✅");
-                navigate('/my-orders');
+               toast.success("Payment successful ✅");
+               setTimeout(() => navigate('/my-orders'), 300);
             }
             setLoading(false);
          },

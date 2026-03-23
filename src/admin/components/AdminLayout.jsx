@@ -12,16 +12,7 @@ const navItems = [
   ]},
   { label: 'Orders', icon: '📦', path: '/admin/orders' },
   { label: 'Customers', icon: '👤', path: '/admin/customers' },
-  { label: 'Payments', icon: '💳', path: '/admin/payments' },
-  { label: 'Offers', icon: '🎟️', path: '/admin/offers' },
-  { label: 'Reviews', icon: '⭐', path: '/admin/reviews' },
-  { label: 'Services', icon: '🔧', path: '/admin/services' },
-  { label: 'Shipping', icon: '🚚', path: '/admin/shipping' },
-  { label: 'Reports', icon: '📈', path: '/admin/reports' },
-  { label: 'CMS', icon: '📝', path: '/admin/cms' },
   { label: 'Settings', icon: '⚙️', path: '/admin/settings' },
-  { label: 'Admins', icon: '🔑', path: '/admin/admins' },
-  { label: 'Logs', icon: '📜', path: '/admin/logs' },
 ];
 
 export default function AdminLayout({ children }) {

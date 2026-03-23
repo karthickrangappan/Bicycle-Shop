@@ -8,8 +8,8 @@ import Products from './pages/Products';
 import AddEditProduct from './pages/AddEditProduct';
 import Orders from './pages/Orders';
 import Customers from './pages/Customers';
-import { Inventory, Payments, Offers, Reviews } from './pages/InventoryPaymentsOffersReviews';
-import { Reports, Services, CMS, Shipping, Settings, AdminUsers, Logs, Categories, SpareParts } from './pages/OtherPages';
+import { Inventory } from './pages/InventoryPaymentsOffersReviews';
+import { Settings, Categories } from './pages/OtherPages';
 
 const ProtectedRoute = ({ children }) => {
   const { adminUser } = useAdmin();
@@ -40,19 +40,9 @@ export default function AdminRouter() {
       <Route path="products/edit/:id" element={<ProtectedRoute><AddEditProduct /></ProtectedRoute>} />
       <Route path="categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
       <Route path="inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
-      <Route path="spare-parts" element={<ProtectedRoute><SpareParts /></ProtectedRoute>} />
       <Route path="orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
       <Route path="customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
-      <Route path="payments" element={<ProtectedRoute><Payments /></ProtectedRoute>} />
-      <Route path="offers" element={<ProtectedRoute><Offers /></ProtectedRoute>} />
-      <Route path="reviews" element={<ProtectedRoute><Reviews /></ProtectedRoute>} />
-      <Route path="services" element={<ProtectedRoute><Services /></ProtectedRoute>} />
-      <Route path="shipping" element={<ProtectedRoute><Shipping /></ProtectedRoute>} />
-      <Route path="reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
-      <Route path="cms" element={<ProtectedRoute><CMS /></ProtectedRoute>} />
       <Route path="settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-      <Route path="admins" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
-      <Route path="logs" element={<ProtectedRoute><Logs /></ProtectedRoute>} />
     </Routes>
   );
 }

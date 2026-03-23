@@ -265,11 +265,11 @@ export const ShopProvider = ({ children }) => {
     const newOrderId = `ORD${orderNum}`;
     const newOrder = {
       date: new Date().toISOString(),
-      ...orderData,
       items: [...cart],
-      total: cart.reduce((acc, item) => acc + (parseFloat(String(item.price).replace(/[^\d.]/g, '')) * (item.quantity || 1)), 0),
-      status: 'Pending', // Pending → Processing → Assembling → Shipped → Delivered
-      paymentStatus: orderData.paymentMethod === 'Card' ? 'Paid' : 'Pending',
+      ...orderData,
+      total: orderData.total || cart.reduce((acc, item) => acc + (parseFloat(String(item.price).replace(/[^\d.]/g, '')) * (item.quantity || 1)), 0),
+      status: orderData.status || 'Pending', // Pending → Processing → Assembling → Shipped → Delivered
+      paymentStatus: orderData.paymentMethod === 'Razorpay' ? 'Paid' : 'Pending',
       isCancellable: true,
       isReturnable: false
     };

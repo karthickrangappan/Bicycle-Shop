@@ -143,13 +143,13 @@ export default function Dashboard() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono text-amber-400">{order.id}</span>
-                    <span className="text-sm font-medium text-white truncate">{order.customer}</span>
+                    <span className="text-sm font-medium text-white truncate">{order.name || order.customer || 'Guest'}</span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-0.5">{order.items.map(i=>i.name).join(', ')}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{order.items?.map(i=>i.name).join(', ') || 'No items listed'}</p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="text-sm font-bold text-white">₹{order.total.toLocaleString()}</p>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${statusColors[order.status]}`}>{order.status}</span>
+                  <p className="text-sm font-bold text-white">₹{(order.total || 0).toLocaleString()}</p>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${statusColors[order.status] || 'bg-gray-700 text-gray-400'}`}>{order.status}</span>
                 </div>
               </div>
             ))}
