@@ -80,10 +80,10 @@ export default function Profile() {
             <div className="bg-white p-6 rounded-[2.5rem] shadow-xl shadow-slate-200/50 sticky top-28 border border-slate-100">
                <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl mb-8">
                   <div className="w-14 h-14 bg-brand-500 rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-brand-500/30">
-                     {user.name[0].toUpperCase()}
+                     {(user.name || 'U')[0].toUpperCase()}
                   </div>
                   <div className="overflow-hidden">
-                    <p className="font-black text-slate-900 truncate tracking-tight">{user.name}</p>
+                    <p className="font-black text-slate-900 truncate tracking-tight">{user.name || 'Unknown User'}</p>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">{user.email}</p>
                   </div>
                </div>
@@ -151,7 +151,7 @@ export default function Profile() {
                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-300 block mb-2 px-1">Full Name</label>
                            <div className="flex items-center gap-3 p-4 bg-slate-50 border border-slate-100 rounded-2xl group focus-within:border-brand-500 transition-all">
                               <User size={18} className="text-slate-400" />
-                              <span className="font-bold text-slate-900">{user.name}</span>
+                              <span className="font-bold text-slate-900">{user.name || 'Unknown User'}</span>
                            </div>
                         </div>
 
@@ -254,7 +254,7 @@ export default function Profile() {
                                <div className="flex items-center gap-6 sm:text-right">
                                   <div>
                                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Price</p>
-                                     <p className="font-black text-slate-900 font-space text-lg text-brand-600">₹{order.total?.toLocaleString()}</p>
+                                     <p className="font-black text-slate-900 font-space text-lg text-brand-600">₹{(order.total || 0).toLocaleString()}</p>
                                   </div>
                                   <div className="px-4 py-1.5 bg-green-50 text-green-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-100">
                                      {order.status}
