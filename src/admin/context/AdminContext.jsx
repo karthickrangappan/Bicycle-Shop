@@ -67,8 +67,16 @@ export const AdminProvider = ({ children }) => {
     const unsubAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const userSnap = await getDoc(doc(db, "users", user.uid));
-        if (userSnap.exists() && userSnap.data().role === 'admin') {
-          setAdminUser({ name: userSnap.data().name || "Admin", email: user.email, role: "manager", uid: user.uid });
+        const isHardcodedAdmin = user.email === "admin@bicycleshop.com";
+        const isDbAdmin = userSnap.exists() && userSnap.data().role === 'admin';
+
+        if (isHardcodedAdmin || isDbAdmin) {
+          setAdminUser({ 
+            name: userSnap.data()?.name || (isHardcodedAdmin ? "Super Admin" : "Admin"), 
+            email: user.email, 
+            role: isHardcodedAdmin ? "super_admin" : "manager",
+            uid: user.uid 
+          });
         } else {
           setAdminUser(null);
         }
@@ -237,6 +245,20 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
+  const resetAllStocks = async () => {
+    try {
+      let count = 0;
+      for (const prod of products) {
+        await updateDoc(doc(db, "products", prod.id), { stock: 50 });
+        count++;
+      }
+      toast.success(`Successfully reset stock ${count} products to 50!`);
+      addLog("Stock Reset", `Updated ${count} products`);
+    } catch (e) {
+      toast.error("Stock reset failed: " + e.message);
+    }
+  };
+
   const categorizeAllProducts = async () => {
     let updatedCount = 0;
     for (const prod of products) {
@@ -265,7 +287,7 @@ export const AdminProvider = ({ children }) => {
   return (
     <AdminContext.Provider value={{
       adminUser, login, logout,
-      products, addProduct, updateProduct, deleteProduct, categorizeAllProducts,
+      products, addProduct, updateProduct, deleteProduct, categorizeAllProducts, resetAllStocks,
       orders, updateOrderStatus,
       customers, toggleCustomerStatus,
       coupons, addCoupon, deleteCoupon,

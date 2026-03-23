@@ -161,8 +161,8 @@ export const ShopProvider = ({ children }) => {
     updateUserData({ addresses: newAddresses });
   };
 
-  const addToCart = async (product, size) => {
-    if (!user) {
+  const addToCart = async (product, size, color = "Standard") => {
+    if (!user?.uid) {
       toast.error("Please log in to add items to your cart.");
       return;
     }
@@ -188,11 +188,12 @@ export const ShopProvider = ({ children }) => {
     const cartItem = { 
       ...product, 
       selectedSize: size, 
+      selectedColor: color,
       quantity: 1, 
       reservationExpiry: Date.now() + 15 * 60 * 1000 
     };
 
-    const existingIndex = cart.findIndex(item => item.id === product.id && item.selectedSize === size);
+    const existingIndex = cart.findIndex(item => item.id === product.id && item.selectedSize === size && item.selectedColor === color);
     let newCart;
     if (existingIndex > -1) {
       newCart = cart.map((item, idx) => idx === existingIndex ? { ...item, quantity: item.quantity + 1 } : item);
@@ -212,19 +213,19 @@ export const ShopProvider = ({ children }) => {
     }, 15 * 60 * 1000);
   };
 
-  const removeFromCart = async (productId, size) => {
-    const itemToRemove = cart.find(item => item.id === productId && item.selectedSize === size);
+  const removeFromCart = async (productId, size, color) => {
+    const itemToRemove = cart.find(item => item.id === productId && item.selectedSize === size && item.selectedColor === color);
     if (itemToRemove) {
       // Increment stock back
-      await updateDoc(doc(db, 'products', productId), { stock: increment(1) });
+      await updateDoc(doc(db, 'products', productId), { stock: increment(itemToRemove.quantity) });
     }
-    const newCart = cart.filter(item => !(item.id === productId && item.selectedSize === size));
+    const newCart = cart.filter(item => !(item.id === productId && item.selectedSize === size && item.selectedColor === color));
     setCart(newCart);
     updateUserData({ cart: newCart });
   };
 
-  const updateQuantity = async (productId, size, delta) => {
-    const item = cart.find(i => i.id === productId && i.selectedSize === size);
+  const updateQuantity = async (productId, size, delta, color) => {
+    const item = cart.find(i => i.id === productId && i.selectedSize === size && i.selectedColor === color);
     if (!item) return;
     
     if (delta > 0) {
@@ -244,7 +245,7 @@ export const ShopProvider = ({ children }) => {
     }
 
     const newCart = cart.map(i => 
-      (i.id === productId && i.selectedSize === size) 
+      (i.id === productId && i.selectedSize === size && i.selectedColor === color) 
       ? { ...i, quantity: i.quantity + delta } 
       : i
     );

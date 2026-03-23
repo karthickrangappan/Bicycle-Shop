@@ -17,6 +17,7 @@ export default function ProductDetails() {
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({ rating: 5, text: '', height: '', weight: '' });
   const [isVerified, setIsVerified] = useState(false);
+  const [form, setForm] = useState({ color: '#000000' });
 
   useEffect(() => {
     const found = products.find(p => p.id === id);
@@ -56,7 +57,7 @@ export default function ProductDetails() {
       toast.error('Please select a Frame Size first');
       return;
     }
-    addToCart(product, selectedSize);
+    addToCart(product, selectedSize, form.color);
   };
 
   const submitReview = async (e) => {
