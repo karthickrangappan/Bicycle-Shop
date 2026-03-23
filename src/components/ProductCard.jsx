@@ -216,6 +216,15 @@ export default function ProductCard({ product }) {
     addToCart(product);
   };
 
+  // Dynamic themes based on product category
+  const categoryTheme = {
+    Mountain: { gradient: "from-blue-500/40", border: "bg-blue-500", bg: "bg-blue-50/30" },
+    Road: { gradient: "from-emerald-500/40", border: "bg-emerald-500", bg: "bg-emerald-50/30" },
+    City: { gradient: "from-cyan-500/40", border: "bg-cyan-500", bg: "bg-cyan-50/30" },
+    "E-Bikes": { gradient: "from-yellow-500/40", border: "bg-yellow-500", bg: "bg-yellow-50/30" },
+    Gravel: { gradient: "from-indigo-500/40", border: "bg-indigo-500", bg: "bg-indigo-50/30" }
+  }[product.category] || { gradient: "from-brand-500/40", border: "bg-brand-500", bg: "bg-slate-50" };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -225,7 +234,7 @@ export default function ProductCard({ product }) {
       className="group relative bg-white rounded-3xl border border-slate-100 overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_-12px_rgba(59,130,246,0.3)] hover:border-brand-200"
     >
       {/* IMAGE - Shorter Aspect Ratio */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-slate-50 cursor-pointer">
+      <div className={`relative aspect-[4/3] overflow-hidden ${categoryTheme.bg} cursor-pointer`}>
         <Link to={`/product/${product.id}`} className="block w-full h-full">
           <img
             src={product.image}
@@ -253,7 +262,7 @@ export default function ProductCard({ product }) {
         </div>
 
         {/* Hover Gradient Glow */}
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        <div className={`absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t ${categoryTheme.gradient} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
       </div>
 
       {/* CONTENT */}
@@ -310,7 +319,7 @@ export default function ProductCard({ product }) {
       </div>
 
       {/* Bottom Border Accent */}
-      <div className="absolute bottom-0 left-0 w-full h-1.5 bg-brand-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+      <div className={`absolute bottom-0 left-0 w-full h-1.5 ${categoryTheme.border} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`} />
     </motion.div>
   );
 }

@@ -6,33 +6,33 @@ import { Link, useNavigate } from 'react-router-dom';
 const categories = [
   {
     id: 1,
-    title: "Mountain Bikes",
+    title: "Electronics bicycles",
     subtitle: "Conquer rugged terrain with precision.",
-    image: "/images/cat_mountain_*.png", 
+    image: "/images/hero/bg-img (9).jpg", 
     link: "/shop",
     color: "from-blue-600/80"
   },
   {
     id: 2,
-    title: "Road Performance",
+    title: "Kids Bicycles",
     subtitle: "Engineered for speed and endurance.",
-    image: "/images/cat_road_*.png",
+    image: "/images/hero/bg-img (2).jpg",
     link: "/shop",
     color: "from-yellow-600/80"
   },
   {
     id: 3,
-    title: "Urban Commuters",
+    title: "women Bicycles",
     subtitle: "The ultimate city riding experience.",
-    image: "/images/hero/hero_city.png",
+    image: "/images/hero/bg-img (5).jpg",
     link: "/shop",
     color: "from-cyan-600/80"
   },
   {
     id: 4,
-    title: "Elite Gear",
+    title: "Men Bicycles",
     subtitle: "Professional accessories and apparel.",
-    image: "/images/hero/hero_mtb.png",
+    image: "/images/hero/bg-img (4).jpg",
     link: "/shop",
     color: "from-indigo-600/80"
   }

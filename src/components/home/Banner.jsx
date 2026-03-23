@@ -12,46 +12,24 @@ const bannerData = [
   {
     id: 1,
     title: "Conquer Any Trail",
-    subtitle: "Experience the ultimate performance with our rugged mountain bike collection.",
-    image: "/images/hero/bg-img (1).jpg",
+    subtitle: "Built for the roughest peaks. Experience the ultimate performance with our rugged mountain bike collection.",
+    image: "/images/hero/bg-img (9).jpg",
     accent: "text-blue-400"
   },
   {
     id: 2,
-    title: "Pure Speed",
-    subtitle: "Aerodynamic perfection meets carbon fiber excellence. Built for the podium.",
-    image: "/images/hero/bg-img (2).jpg",
-    accent: "text-blue-500"
+    title: "The Road Elite",
+    subtitle: "Pure speed. Aerodynamic perfection meets carbon fiber excellence. Engineered for the podium.",
+    image: "/images/hero/bg-img (4).jpg",
+    accent: "text-emerald-400"
   },
   {
     id: 3,
-    title: "Eco City Life",
-    subtitle: "Sustainable, fast, and remarkably stylish. The future of urban commuting.",
-    image: "/images/hero/bg-img (3).jpg",
-    accent: "text-cyan-400"
-  },
-  {
-    id: 4,
-    title: "Conquer Any Trail",
-    subtitle: "Experience the ultimate performance with our rugged mountain bike collection.",
-    image: "/images/hero/bg-img (4).jpg",
-    accent: "text-blue-400"
-  },
-  {
-    id: 5,
-    title: "Pure Speed",
-    subtitle: "Aerodynamic perfection meets carbon fiber excellence. Built for the podium.",
-    image: "/images/hero/bg-image (5).jpg",
-    accent: "text-blue-500"
-  },
-  {
-    id: 6,
-    title: "Eco City Life",
-    subtitle: "Sustainable, fast, and remarkably stylish. The future of urban commuting.",
-    image: "/images/hero/bg-image (2).jpg",
+    title: "Urban Evolution",
+    subtitle: "Eco City Life. Sustainable, fast, and remarkably stylish. The future of urban commuting.",
+    image: "/images/hero/bg-img (1).jpg",
     accent: "text-cyan-400"
   }
-
 ];
 
 export default function Banner() {
@@ -67,13 +45,13 @@ export default function Banner() {
           delay: 5000,
           disableOnInteraction: false,
         }}
-        pagination={{
-          clickable: true,
-          bulletClass:
-            'swiper-pagination-bullet bg-white/50 w-3 h-3 transition-all duration-300 mx-2 block rounded-full',
-          bulletActiveClass:
-            'bg-brand-500 w-8 rounded-full opacity-100 shadow-[0_0_15px_rgba(59,130,246,0.6)]',
-        }}
+        // pagination={{
+        //   clickable: true,
+        //   bulletClass:
+        //     'swiper-pagination-bullet bg-white/50 w-3 h-3 transition-all duration-300 mx-2 block rounded-full',
+        //   bulletActiveClass:
+        //     'bg-brand-500 w-8 rounded-full opacity-100 shadow-[0_0_15px_rgba(59,130,246,0.6)]',
+        // }}
         modules={[Autoplay, EffectFade, Pagination]}
         className="w-full h-full"
       >
@@ -85,7 +63,7 @@ export default function Banner() {
               <img
                 src={banner.image}
                 alt={banner.title}
-                className="absolute inset-0 w-full h-full object-cover scale-105 animate-[kenburns_20s_ease-in-out_infinite]"
+                className="absolute inset-0 w-full h-full object-cover scale-105 transition-transform duration-[5s] kenburns-img"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/60 to-slate-950/40"></div>
               <div className="absolute inset-0 bg-grid-white/5 opacity-20"></div>
@@ -98,7 +76,7 @@ export default function Banner() {
                   
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
                   >
                     <span className="inline-block px-4 py-1.5 mb-6 text-sm font-bold tracking-widest uppercase text-brand-400 border border-brand-400/30 bg-brand-400/10 rounded-full backdrop-blur-sm">
@@ -164,11 +142,33 @@ export default function Banner() {
           100% { transform: scale(1.05); }
         }
 
+        .swiper-slide-active .kenburns-img {
+          animation: kenburns 30s ease-in-out infinite;
+        }
+
+        /* Swiper Pagination Styling */
         .swiper-pagination {
           bottom: 40px !important;
           display: flex;
           justify-content: center;
           align-items: center;
+          gap: 4px;
+        }
+
+        .swiper-pagination-bullet {
+          width: 8px !important;
+          height: 8px !important;
+          background: white !important;
+          opacity: 0.3 !important;
+          border-radius: 99px !important;
+          transition: all 0.5s ease !important;
+        }
+
+        .swiper-pagination-bullet-active {
+          width: 40px !important;
+          opacity: 1 !important;
+          background: var(--color-brand-500) !important;
+          box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
         }
       `}</style>
     </div>
