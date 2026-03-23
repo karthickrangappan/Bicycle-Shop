@@ -1,5 +1,14 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Youtube, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+
+const supportLinks = [
+  { name: "Technical Help", path: "/technical-help" },
+  { name: "Service Center", path: "/service-center" },
+  { name: "Warranty Policy", path: "/warranty-policy" },
+  { name: "Sizing Guide", path: "/sizing-guide" },
+  { name: "Shipping Info", path: "/shipping-info" }
+];
 
 export default function Footer() {
   return (
@@ -57,12 +66,12 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-black uppercase text-sm tracking-widest mb-8">Rider Support</h4>
             <ul className="space-y-4">
-              {["Technical Help", "Service Center", "Warranty Policy", "Sizing Guide", "Shipping Info"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-slate-400 hover:text-white flex items-center justify-center md:justify-start gap-2 group transition-colors">
+              {supportLinks.map((item) => (
+                <li key={item.name}>
+                  <Link to={item.path} className="text-slate-400 hover:text-white flex items-center justify-center md:justify-start gap-2 group transition-colors">
                     <span className="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-brand-500 transition-colors"></span>
-                    {item}
-                  </a>
+                    {item.name}
+                  </Link>
                 </li>
               ))}
             </ul>

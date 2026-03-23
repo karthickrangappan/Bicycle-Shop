@@ -371,7 +371,7 @@ export default function Checkout() {
                         </div>
                         <div className="flex justify-between items-center pt-6">
                            <span className="text-xl font-black text-slate-900 tracking-tight">Total Investment</span>
-                           <span className="text-4xl lg:text-5xl font-black text-brand-600 font-space tracking-tighter">{formatCurrency(subtotal)}</span>
+                           <span className="text-2xl lg:text-3xl font-black text-brand-600 font-space tracking-tight">{formatCurrency(subtotal)}</span>
                         </div>
                      </div>
                   </div>
