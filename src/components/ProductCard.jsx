@@ -189,10 +189,20 @@ export const MOCK_PRODUCTS = [
 
 // 🔥 GRID COMPONENT
 export function ProductGrid() {
+  const { products, loading } = useShop();
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-20 flex justify-center">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8">
-        {MOCK_PRODUCTS.map((product) => (
+        {(products.length > 0 ? products : MOCK_PRODUCTS).map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
@@ -224,6 +234,15 @@ export default function ProductCard({ product }) {
     "E-Bikes": { gradient: "from-yellow-500/40", border: "bg-yellow-500", bg: "bg-yellow-50/30" },
     Gravel: { gradient: "from-indigo-500/40", border: "bg-indigo-500", bg: "bg-indigo-50/30" }
   }[product.category] || { gradient: "from-brand-500/40", border: "bg-brand-500", bg: "bg-slate-50" };
+
+  const formatCurrency = (amount) => {
+    const numericAmount = typeof amount === 'string' 
+      ? parseInt(amount.replace(/[^\d]/g, '')) 
+      : amount;
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency', currency: 'INR', maximumFractionDigits: 0
+    }).format(numericAmount);
+  };
 
   return (
     <motion.div
@@ -274,15 +293,15 @@ export default function ProductCard({ product }) {
                 key={i} 
                 size={12} 
                 className={`${
-                    i < Math.floor(product.rating) 
+                    i < Math.floor(product.rating || 5) 
                     ? "fill-brand-500 text-brand-500" 
                     : "fill-slate-200 text-slate-200"
                 }`} 
                />
              ))}
            </div>
-           <span className="text-[11px] font-black text-slate-400 font-space">{product.rating}</span>
-           <span className="text-[10px] font-bold text-slate-300 ml-auto uppercase tracking-tighter">({product.reviews} reviews)</span>
+           <span className="text-[11px] font-black text-slate-400 font-space">{product.rating || 5}</span>
+           <span className="text-[10px] font-bold text-slate-300 ml-auto uppercase tracking-tighter">({product.reviews || 0} reviews)</span>
         </div>
 
         <Link to={`/product/${product.id}`} className="block">
@@ -295,7 +314,7 @@ export default function ProductCard({ product }) {
           <div className="flex flex-col">
             <span className="text-[10px] font-black text-brand-500/60 uppercase tracking-widest leading-none mb-1">Price Outlet</span>
             <span className="text-xl font-black text-slate-950 tracking-tighter font-space">
-              {product.price}
+              {formatCurrency(product.price)}
             </span>
           </div>
 

@@ -3,14 +3,21 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProductCard, { MOCK_PRODUCTS } from '../ProductCard';
+import { useShop } from '../../context/ShopContext';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
 export default function NewArrivals() {
-  // Select latest products (IDs 15-20)
-  const newProducts = MOCK_PRODUCTS.filter(p => p.id >= 15 && p.id <= 20);
+  const { products } = useShop();
+  
+  // Select latest products from DB (or fallback to mock)
+  const newProducts = React.useMemo(() => {
+    const data = products.length > 0 ? products : MOCK_PRODUCTS;
+    // Sort by id descending or just take the last 6
+    return [...data].sort((a, b) => b.id - a.id).slice(0, 6);
+  }, [products]);
 
   return (
     <section className="py-24 bg-slate-50 relative overflow-hidden">

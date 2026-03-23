@@ -12,9 +12,11 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 const RecentlyViewed = () => {
-  const recentProducts = React.useMemo(() => 
-    [...MOCK_PRODUCTS].sort(() => 0.5 - Math.random()).slice(0, 8),
-  []);
+  const { products } = useShop();
+  const recentProducts = React.useMemo(() => {
+    const data = products.length > 0 ? products : MOCK_PRODUCTS;
+    return [...data].sort(() => 0.5 - Math.random()).slice(0, 8);
+  }, [products]);
   
   return (
     <section className="bg-slate-50 py-20 border-t border-slate-200/60 overflow-hidden">
@@ -208,7 +210,7 @@ export default function Cart() {
                     </div>
                     
                     <div className="flex items-center justify-center sm:justify-start gap-4">
-                       <p className="text-lg font-black text-slate-900 font-space">₹{item.price}</p>
+                       <p className="text-lg font-black text-slate-900 font-space">{formatCurrency(item.price)}</p>
                        <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
                        <p className="text-sm font-bold text-slate-400">Reserved</p>
                     </div>

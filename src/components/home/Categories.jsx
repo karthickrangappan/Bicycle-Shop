@@ -2,47 +2,24 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-
-const categories = [
-  {
-    id: 1,
-    title: "Electronics bicycles",
-    subtitle: "Conquer rugged terrain with precision.",
-    image: "/images/hero/bg-img (9).jpg", 
-    link: "/shop",
-    color: "from-blue-600/80"
-  },
-  {
-    id: 2,
-    title: "Kids Bicycles",
-    subtitle: "Engineered for speed and endurance.",
-    image: "/images/hero/bg-img (2).jpg",
-    link: "/shop",
-    color: "from-yellow-600/80"
-  },
-  {
-    id: 3,
-    title: "women Bicycles",
-    subtitle: "The ultimate city riding experience.",
-    image: "/images/hero/bg-img (5).jpg",
-    link: "/shop",
-    color: "from-cyan-600/80"
-  },
-  {
-    id: 4,
-    title: "Men Bicycles",
-    subtitle: "Professional accessories and apparel.",
-    image: "/images/hero/bg-img (4).jpg",
-    link: "/shop",
-    color: "from-indigo-600/80"
-  }
-];
-
-categories[0].image = "/images/cat_mountain.png";
-categories[1].image = "/images/cat_road.png";
+import { useShop } from '../../context/ShopContext';
 
 export default function Categories() {
   const navigate = useNavigate();
+  const { categories } = useShop();
+
+  if (categories.length === 0) return null;
+
+  const displayCategories = categories.map(cat => ({
+    ...cat,
+    id: cat.id,
+    title: cat.title || cat.name || cat.label,
+    subtitle: cat.subtitle || cat.desc || "Explore our premium collection",
+    image: cat.image || "/images/hero/bg-img (6).jpg",
+    link: cat.link || `/shop?category=${cat.title || cat.name || cat.label}`,
+    color: cat.color || "from-brand-600/80"
+  }));
+
   return (
     <section className="py-24 sm:py-32 bg-slate-50 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-brand-500/5 blur-[120px] rounded-full"></div>
@@ -80,7 +57,7 @@ export default function Categories() {
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {categories.map((category, idx) => (
+          {displayCategories.map((category, idx) => (
             <motion.div 
               key={category.id} 
               initial={{ opacity: 0, y: 30 }}

@@ -3,26 +3,19 @@ import { motion } from 'framer-motion';
 import { ArrowRight, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProductCard, { MOCK_PRODUCTS } from '../ProductCard';
+import { useShop } from '../../context/ShopContext';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 
 export default function Trending() {
-  // Select 2 products from each key category
-  const trendingProducts = [
-    // Mountain
-    MOCK_PRODUCTS.find(p => p.id === 1),
-    MOCK_PRODUCTS.find(p => p.id === 16),
-    // Road
-    MOCK_PRODUCTS.find(p => p.id === 2),
-    MOCK_PRODUCTS.find(p => p.id === 17),
-    // Urban/City
-    MOCK_PRODUCTS.find(p => p.id === 4),
-    MOCK_PRODUCTS.find(p => p.id === 15),
-    // Gear/Accessories
-    MOCK_PRODUCTS.find(p => p.id === 11),
-    MOCK_PRODUCTS.find(p => p.id === 12),
-  ].filter(Boolean); // Safety filter
+  const { products } = useShop();
+
+  // Select trending products (High rating or just random 8)
+  const trendingProducts = React.useMemo(() => {
+    const data = products.length > 0 ? products : MOCK_PRODUCTS;
+    return [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 8);
+  }, [products]);
 
   return (
     <section className="py-24 bg-white relative overflow-hidden">

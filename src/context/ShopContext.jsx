@@ -15,7 +15,18 @@ export const ShopProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [addresses, setAddresses] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [addresses, setAddresses] = useState([
+    {
+      id: "default-1",
+      name: "Arjun Sharma",
+      email: "arjun.sharma@performance.com",
+      street: "42, Elite Velocity Heights, Carbon Block",
+      cityState: "Mumbai, Maharashtra",
+      phone: "9876543210",
+      pincode: "400001"
+    }
+  ]);
 
   // Monitor products and handle "Back-in-Stock" triggers
   useEffect(() => {
@@ -39,6 +50,15 @@ export const ShopProvider = ({ children }) => {
     });
     return () => unsubProducts();
   }, [user, wishlist]);
+
+  // Monitor Categories
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, "categories"), (snap) => {
+      const cats = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+      setCategories(cats);
+    });
+    return () => unsub();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -343,7 +363,7 @@ export const ShopProvider = ({ children }) => {
       wishlist, addToWishlist, removeFromWishlist, isInWishlist,
       orders, placeOrder, cancelOrder, requestReturn,
       addresses, addAddress, removeAddress,
-      products, loading
+      products, loading, categories
     }}>
       {children}
     </ShopContext.Provider>

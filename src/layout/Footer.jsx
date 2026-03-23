@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Youtube, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+import { useShop } from "../context/ShopContext";
 
 const supportLinks = [
   { name: "Technical Help", path: "/technical-help" },
@@ -11,6 +12,13 @@ const supportLinks = [
 ];
 
 export default function Footer() {
+  const { categories } = useShop();
+
+  const displayCategories = categories.slice(0, 5).map(cat => ({
+    id: cat.id,
+    name: cat.title || cat.name || cat.label,
+    path: `/shop?category=${cat.title || cat.name || cat.label}`
+  }));
   return (
     <footer className="bg-slate-900 pt-24 pb-12 overflow-hidden relative">
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-500/50 to-transparent"></div>
@@ -49,19 +57,21 @@ export default function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div>
-            <h4 className="text-white font-black uppercase text-sm tracking-widest mb-8">Performance Shop</h4>
-            <ul className="space-y-4">
-              {["Mountain Bikes", "Road Racing", "Urban E-Bikes", "Smart Trainers", "Custom Components"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-slate-400 hover:text-white flex items-center justify-center md:justify-start gap-2 group transition-colors">
-                    <span className="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-brand-500 transition-colors"></span>
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {displayCategories.length > 0 && (
+            <div>
+              <h4 className="text-white font-black uppercase text-sm tracking-widest mb-8">Performance Shop</h4>
+              <ul className="space-y-4">
+                {displayCategories.map((item) => (
+                  <li key={item.id || item.name}>
+                    <Link to={item.path} className="text-slate-400 hover:text-white flex items-center justify-center md:justify-start gap-2 group transition-colors">
+                      <span className="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-brand-500 transition-colors"></span>
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div>
             <h4 className="text-white font-black uppercase text-sm tracking-widest mb-8">Rider Support</h4>

@@ -1,13 +1,18 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProductCard, { MOCK_PRODUCTS } from './ProductCard';
+import { useShop } from '../context/ShopContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Filter, ShoppingBag, Star, RefreshCcw, Search, X, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import PageHeader from '../layout/PageHeader';
 
-const CATEGORIES = ["All", "Mountain", "Road", "City", "E-Bikes", "Gravel"];
-
 export default function Shop() {
+  const { products, loading, categories } = useShop();
+  
+  const CATEGORIES = useMemo(() => {
+    return ["All", ...categories.map(cat => cat.title || cat.name || cat.label)];
+  }, [categories]);
+
   const [searchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get('category');
   const searchFromUrl = searchParams.get('search');
@@ -35,17 +40,18 @@ export default function Shop() {
   const parsePrice = (priceStr) => parseInt(priceStr.replace(/[^\d]/g, ''));
 
   const filteredProducts = useMemo(() => {
-    return MOCK_PRODUCTS.filter(product => {
-      const price = parsePrice(product.price);
+    const dataToFilter = products.length > 0 ? products : MOCK_PRODUCTS;
+    return dataToFilter.filter(product => {
+      const price = parsePrice(String(product.price));
       const categoryMatch = activeCategory === "All" || product.category === activeCategory;
       const priceMatch = price <= priceRange;
-      const ratingMatch = product.rating >= minRating;
+      const ratingMatch = (product.rating || 5) >= minRating;
       const searchMatch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           product.category.toLowerCase().includes(searchTerm.toLowerCase());
       
       return categoryMatch && priceMatch && ratingMatch && searchMatch;
     });
-  }, [activeCategory, priceRange, minRating, searchTerm]);
+  }, [products, activeCategory, priceRange, minRating, searchTerm]);
 
   const resetFilters = () => {
     setActiveCategory("All");
@@ -240,7 +246,11 @@ export default function Shop() {
 
           {/* Product Grid */}
           <div className="flex-1">
-            {filteredProducts.length > 0 ? (
+            {loading ? (
+              <div className="py-20 flex justify-center">
+                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full" />
+              </div>
+            ) : filteredProducts.length > 0 ? (
               <motion.div 
                 layout
                 className={`grid grid-cols-2 ${
