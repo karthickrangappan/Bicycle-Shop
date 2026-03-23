@@ -5,14 +5,14 @@ import { useAdmin } from '../context/AdminContext';
 const statusColors = { active: 'bg-emerald-500/10 text-emerald-400', inactive: 'bg-gray-700 text-gray-400' };
 
 export default function Products() {
-  const { products, deleteProduct, updateProduct } = useAdmin();
+  const { products, deleteProduct, updateProduct, categories: dynamicCategories } = useAdmin();
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [confirmDelete, setConfirmDelete] = useState(null);
   const navigate = useNavigate();
 
-  const categories = ['All', ...new Set(products.map(p => p.category))];
+  const categories = ['All', ...new Set(dynamicCategories.map(c => c.name))];
   const filtered = products.filter(p => {
     const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.sku.toLowerCase().includes(search.toLowerCase());
     const matchCat = categoryFilter === 'All' || p.category === categoryFilter;

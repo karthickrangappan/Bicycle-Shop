@@ -15,18 +15,8 @@ export const ShopProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [addresses, setAddresses] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [addresses, setAddresses] = useState([
-    {
-      id: "default-1",
-      name: "Arjun Sharma",
-      email: "arjun.sharma@performance.com",
-      street: "42, Elite Velocity Heights, Carbon Block",
-      cityState: "Mumbai, Maharashtra",
-      phone: "9876543210",
-      pincode: "400001"
-    }
-  ]);
 
   // Monitor products and handle "Back-in-Stock" triggers
   useEffect(() => {
@@ -48,17 +38,15 @@ export const ShopProvider = ({ children }) => {
       });
       setLoading(false);
     });
-    return () => unsubProducts();
-  }, [user, wishlist]);
-
-  // Monitor Categories
-  useEffect(() => {
-    const unsub = onSnapshot(collection(db, "categories"), (snap) => {
-      const cats = snap.docs.map(d => ({ ...d.data(), id: d.id }));
-      setCategories(cats);
+    const unsubCategories = onSnapshot(collection(db, "categories"), (snapshot) => {
+      setCategories(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
     });
-    return () => unsub();
-  }, []);
+
+    return () => {
+      unsubProducts();
+      unsubCategories();
+    };
+  }, [user, wishlist]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -66,11 +54,8 @@ export const ShopProvider = ({ children }) => {
         let role = 'user';
         let data = {};
 
-        if (currentUser.email === "admin@bicycleshop.com") {
-          role = 'admin';
-        }
-
-        const userRef = doc(db, 'users', currentUser.email);
+        // Use UID as primary key as per snippets
+        const userRef = doc(db, 'users', currentUser.uid);
         const userSnap = await getDoc(userRef).catch(() => null);
         
         if (userSnap?.exists()) {
@@ -79,17 +64,31 @@ export const ShopProvider = ({ children }) => {
           setCart(data.cart || []);
           setWishlist(data.wishlist || []);
           setAddresses(data.addresses || []);
-        } else if (currentUser.email !== "admin@bicycleshop.com") {
-          // Initialize new user profile
-          await setDoc(userRef, { 
-            name: currentUser.displayName || currentUser.email.split('@')[0],
-            email: currentUser.email,
-            cart: [], wishlist: [], addresses: [], role: 'user' 
-          }).catch(e => console.log(e));
+
+          // Update lastLogin as per snippet
+          await updateDoc(userRef, { lastLogin: new Date() }).catch(() => {});
+        } else {
+          // Initialize new user profile using UID
+          const email = currentUser.email;
+          if (email === "admin@bicycleshop.com") role = 'admin';
+
+          data = { 
+            uid: currentUser.uid,
+            name: currentUser.displayName || email?.split('@')[0] || "User",
+            email: email,
+            cart: [], 
+            wishlist: [], 
+            addresses: [], 
+            role: role,
+            createdAt: new Date(),
+            lastLogin: new Date()
+          };
+          await setDoc(userRef, data).catch(e => console.log(e));
         }
 
         setUser({
-          name: currentUser.displayName || (currentUser.email === "admin@bicycleshop.com" ? "Super Admin" : currentUser.email.split('@')[0]),
+          uid: currentUser.uid,
+          name: data.name || currentUser.displayName || (currentUser.email === "admin@bicycleshop.com" ? "Super Admin" : "User"),
           email: currentUser.email,
           role
         });
@@ -105,11 +104,11 @@ export const ShopProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (!user) {
+    if (!user?.uid) {
         setOrders([]);
         return;
     }
-    const unsub = onSnapshot(collection(db, 'users', user.email, 'orders'), (snapshot) => {
+    const unsub = onSnapshot(collection(db, 'users', user.uid, 'orders'), (snapshot) => {
         const userOrders = snapshot.docs.map(d => ({ ...d.data(), id: d.id }));
         setOrders(userOrders);
     });
@@ -117,8 +116,8 @@ export const ShopProvider = ({ children }) => {
   }, [user]);
 
   const updateUserData = async (updates) => {
-    if (user) {
-      await updateDoc(doc(db, 'users', user.email), updates).catch(e => console.log(e));
+    if (user?.uid) {
+      await updateDoc(doc(db, 'users', user.uid), updates).catch(e => console.log(e));
     }
   };
 
@@ -276,7 +275,7 @@ export const ShopProvider = ({ children }) => {
   };
 
   const placeOrder = async (orderData) => {
-    if (!user) return null;
+    if (!user?.uid) return null;
     
     // Final Inventory Check: Re-verify stock at the millisecond of "Place Order"
     // Since we did soft-reservation, we just need to ensure the cart items are still valid.
@@ -291,10 +290,11 @@ export const ShopProvider = ({ children }) => {
       status: orderData.status || 'Pending', // Pending → Processing → Assembling → Shipped → Delivered
       paymentStatus: orderData.paymentMethod === 'Razorpay' ? 'Paid' : 'Pending',
       isCancellable: true,
-      isReturnable: false
+      isReturnable: false,
+      userRefPath: `users/${user.uid}`
     };
     
-    await setDoc(doc(db, 'users', user.email, 'orders', newOrderId), newOrder);
+    await setDoc(doc(db, 'users', user.uid, 'orders', newOrderId), newOrder);
     
     // Clear cart without adding back to stock (since it's now an order)
     setCart([]); 
@@ -303,8 +303,8 @@ export const ShopProvider = ({ children }) => {
   };
 
   const cancelOrder = async (orderId) => {
-    if (!user) return;
-    const orderRef = doc(db, 'users', user.email, 'orders', orderId);
+    if (!user?.uid) return;
+    const orderRef = doc(db, 'users', user.uid, 'orders', orderId);
     const orderSnap = await getDoc(orderRef);
     const orderData = orderSnap.data();
 
@@ -328,8 +328,8 @@ export const ShopProvider = ({ children }) => {
   };
 
   const requestReturn = async (orderId, reason, isOpened) => {
-    if (!user) return;
-    const orderRef = doc(db, 'users', user.email, 'orders', orderId);
+    if (!user?.uid) return;
+    const orderRef = doc(db, 'users', user.uid, 'orders', orderId);
     const orderSnap = await getDoc(orderRef);
     const orderData = orderSnap.data();
 
@@ -363,7 +363,8 @@ export const ShopProvider = ({ children }) => {
       wishlist, addToWishlist, removeFromWishlist, isInWishlist,
       orders, placeOrder, cancelOrder, requestReturn,
       addresses, addAddress, removeAddress,
-      products, loading, categories
+      products, loading,
+      categories
     }}>
       {children}
     </ShopContext.Provider>
