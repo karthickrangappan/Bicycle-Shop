@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAdmin } from './context/AdminContext';
 import AdminLayout from './components/AdminLayout';
-import AdminLogin from './pages/AdminLogin';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import AddEditProduct from './pages/AddEditProduct';
@@ -13,7 +12,7 @@ import { Settings, Categories } from './pages/OtherPages';
 
 const ProtectedRoute = ({ children }) => {
   const { adminUser } = useAdmin();
-  if (!adminUser) return <Navigate to="/admin/login" replace />;
+  if (!adminUser) return <Navigate to="/login" replace />;
   return <AdminLayout>{children}</AdminLayout>;
 };
 
@@ -33,7 +32,6 @@ export default function AdminRouter() {
 
   return (
     <Routes>
-      <Route path="login" element={adminUser ? <Navigate to="/admin" replace /> : <AdminLogin />} />
       <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
       <Route path="products/add" element={<ProtectedRoute><AddEditProduct /></ProtectedRoute>} />
@@ -43,6 +41,7 @@ export default function AdminRouter() {
       <Route path="orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
       <Route path="customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
       <Route path="settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

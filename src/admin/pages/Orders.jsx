@@ -133,16 +133,18 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
 }
 
 export default function Orders() {
-  const { orders, updateOrderStatus } = useAdmin();
+  const { orders, updateOrderStatus, categories: dynamicCategories } = useAdmin();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [categoryFilter, setCategoryFilter] = useState('All');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [invoiceOrder, setInvoiceOrder] = useState(null);
 
   const filtered = orders.filter(o => {
     const matchSearch = o.id.toLowerCase().includes(search.toLowerCase()) || o.customer.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === 'All' || o.status === statusFilter;
-    return matchSearch && matchStatus;
+    const matchCat = categoryFilter === 'All' || o.items.some(item => item.category === categoryFilter);
+    return matchSearch && matchStatus && matchCat;
   });
 
   return (
@@ -167,8 +169,12 @@ export default function Orders() {
       {/* Filters */}
       <div className="flex gap-3">
         <input type="text" placeholder="Search by order ID or customer..." value={search} onChange={e => setSearch(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 flex-1" />
+        <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+          <option value="All">All Categories</option>
+          {dynamicCategories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+        </select>
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option>All</option>
+          <option>All Status</option>
           {statusFlow.map(s => <option key={s}>{s}</option>)}
           <option>Cancelled</option>
         </select>

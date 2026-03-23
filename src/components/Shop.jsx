@@ -1,17 +1,23 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import ProductCard, { MOCK_PRODUCTS } from './ProductCard';
+import ProductCard from './ProductCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Filter, ShoppingBag, Star, RefreshCcw, Search, X, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import PageHeader from '../layout/PageHeader';
-
-const CATEGORIES = ["All", "Mountain", "Road", "City", "E-Bikes", "Gravel"];
+import { useShop } from '../context/ShopContext';
 
 export default function Shop() {
   const [searchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get('category');
   const searchFromUrl = searchParams.get('search');
   
+  const { products: shopProducts, categories } = useShop();
+
+  // Dynamic category list from active categories in DB
+  const dynamicCategories = useMemo(() => {
+    const activeCats = categories.filter(c => c.active).sort((a,b) => (a.priority || 0) - (b.priority || 0)).map(c => c.name);
+    return ["All", ...activeCats];
+  }, [categories]);
   const [activeCategory, setActiveCategory] = useState(categoryFromUrl || "All");
   const [priceRange, setPriceRange] = useState(1200000);
   const [minRating, setMinRating] = useState(0);
@@ -20,7 +26,7 @@ export default function Shop() {
 
   // Update state if URL changes
   useEffect(() => {
-    if (categoryFromUrl && CATEGORIES.includes(categoryFromUrl)) {
+    if (categoryFromUrl && dynamicCategories.includes(categoryFromUrl)) {
       setActiveCategory(categoryFromUrl);
     } else if (!categoryFromUrl) {
       setActiveCategory("All");
@@ -29,23 +35,23 @@ export default function Shop() {
     if (searchFromUrl) {
       setSearchTerm(searchFromUrl);
     }
-  }, [categoryFromUrl, searchFromUrl]);
+  }, [categoryFromUrl, searchFromUrl, dynamicCategories]);
 
   // Parse price string to number for filtering
   const parsePrice = (priceStr) => parseInt(priceStr.replace(/[^\d]/g, ''));
 
   const filteredProducts = useMemo(() => {
-    return MOCK_PRODUCTS.filter(product => {
-      const price = parsePrice(product.price);
+    return shopProducts.filter(product => {
+      const price = parsePrice(String(product.price));
       const categoryMatch = activeCategory === "All" || product.category === activeCategory;
       const priceMatch = price <= priceRange;
-      const ratingMatch = product.rating >= minRating;
-      const searchMatch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          product.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const ratingMatch = (product.rating || 0) >= minRating;
+      const searchMatch = (product.name || "").toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          (product.category || "").toLowerCase().includes(searchTerm.toLowerCase());
       
       return categoryMatch && priceMatch && ratingMatch && searchMatch;
     });
-  }, [activeCategory, priceRange, minRating, searchTerm]);
+  }, [activeCategory, priceRange, minRating, searchTerm, shopProducts]);
 
   const resetFilters = () => {
     setActiveCategory("All");
@@ -159,7 +165,7 @@ export default function Shop() {
                     <div>
                       <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-5">Categories</h4>
                       <ul className="space-y-1.5">
-                        {CATEGORIES.map((category) => (
+                        {[...new Set(dynamicCategories)].map((category) => (
                           <li key={category}>
                             <button
                               onClick={() => setActiveCategory(category)}
