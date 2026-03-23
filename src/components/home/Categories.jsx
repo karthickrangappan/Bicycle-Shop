@@ -3,6 +3,10 @@ import { motion } from 'framer-motion';
 import { ArrowRight, ChevronRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, FreeMode } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/free-mode';
 
 export default function Categories() {
   const navigate = useNavigate();
@@ -10,20 +14,41 @@ export default function Categories() {
 
   if (categories.length === 0) return null;
 
-  const displayCategories = categories.map(cat => ({
-    ...cat,
-    id: cat.id,
-    title: cat.title || cat.name || cat.label,
-    subtitle: cat.subtitle || cat.desc || "Explore our premium collection",
-    image: cat.image || "/images/hero/bg-img (6).jpg",
-    link: cat.link || `/shop?category=${cat.title || cat.name || cat.label}`,
-    color: cat.color || "from-brand-600/80"
-  }));
+  const categoryThemes = {
+    Mountain: { color: "from-blue-600/90", accent: "bg-blue-600", secondary: "text-blue-400" },
+    Road: { color: "from-emerald-600/90", accent: "bg-emerald-600", secondary: "text-emerald-400" },
+    City: { color: "from-cyan-600/90", accent: "bg-cyan-600", secondary: "text-cyan-400" },
+    "E-Bikes": { color: "from-yellow-600/90", accent: "bg-yellow-600", secondary: "text-yellow-400" },
+    Gravel: { color: "from-orange-600/90", accent: "bg-orange-600", secondary: "text-orange-400" },
+    Hybrid: { color: "from-indigo-600/90", accent: "bg-indigo-600", secondary: "text-indigo-400" },
+    Kids: { color: "from-pink-600/90", accent: "bg-pink-600", secondary: "text-pink-400" },
+    Accessories: { color: "from-yellow-600/90", accent: "bg-yellow-600", secondary: "text-yellow-400" }
+  };
+
+  const fallbackThemes = [
+    { color: "from-brand-600/90", accent: "bg-brand-600", secondary: "text-brand-400" },
+    { color: "from-purple-600/90", accent: "bg-purple-600", secondary: "text-purple-400" },
+    { color: "from-rose-600/90", accent: "bg-rose-600", secondary: "text-rose-400" },
+    { color: "from-teal-600/90", accent: "bg-teal-600", secondary: "text-teal-400" }
+  ];
+
+  const displayCategories = categories.map((cat, idx) => {
+    const title = cat.title || cat.name || cat.label;
+    return {
+      ...cat,
+      id: cat.id,
+      title: title,
+      subtitle: cat.subtitle || cat.desc || "Explore our premium collection",
+      image: cat.image || "/images/hero/bg-img (6).jpg",
+      link: cat.link || `/shop?category=${title}`,
+      theme: categoryThemes[title] || fallbackThemes[idx % fallbackThemes.length]
+    };
+  });
 
   return (
-    <section className="py-24 sm:py-32 bg-slate-50 relative overflow-hidden">
+    <section className="py-24 sm:py-32 bg-[#fafbff] relative overflow-hidden">
       <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-brand-500/5 blur-[120px] rounded-full"></div>
-      <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-cyan-500/5 blur-[100px] rounded-full"></div>
+      <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-blue-500/3 blur-[100px] rounded-full"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
@@ -32,71 +57,100 @@ export default function Categories() {
             <motion.span 
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              className="text-brand-600 font-bold tracking-widest uppercase text-sm mb-3 block"
+              className="text-brand-600 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block"
             >
-              Our Collections
+              Master The Terrain
             </motion.span>
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight"
+              className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tighter leading-none"
             >
-              Browse by <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-cyan-500">Category</span>
+              Elite <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-500">Collections</span>
             </motion.h2>
           </div>
           <button 
             onClick={() => navigate('/shop')} 
-            className="flex items-center gap-2 text-slate-900 font-bold hover:text-brand-600 transition-colors group"
+            className="flex items-center gap-4 text-slate-900 font-black hover:text-brand-600 transition-all group uppercase tracking-widest text-xs"
           >
-            View All Categories
-            <div className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center transition-transform group-hover:translate-x-1">
-              <ArrowRight size={16} />
+            View All Series
+            <div className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center transition-all group-hover:bg-brand-500 group-hover:text-white group-hover:translate-x-2">
+              <ArrowRight size={18} />
             </div>
           </button>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        {/* Swiper Slider */}
+        <Swiper
+          modules={[Autoplay, FreeMode]}
+          spaceBetween={16}
+          slidesPerView={1.2}
+          freeMode={true}
+          grabCursor={true}
+          autoplay={{
+            delay: 3000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true
+          }}
+          breakpoints={{
+            640: { slidesPerView: 2.2 },
+            768: { slidesPerView: 3.2 },
+            1024: { slidesPerView: 4.2 },
+            1440: { slidesPerView: 5 }
+          }}
+          className="categories-swiper !pb-12 !px-1"
+        >
           {displayCategories.map((category, idx) => (
-            <motion.div 
-              key={category.id} 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-            >
-              <Link 
-                to={category.link}
-                className="group relative h-[320px] rounded-[2.5rem] overflow-hidden shadow-2xl block"
+            <SwiperSlide key={category.id}>
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.1 }}
+                className="h-full"
               >
-                {/* Background Image */}
-                <img 
-                  src={category.image} 
-                  alt={category.title} 
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
-                />
-                
-                {/* Gradient Overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-t ${category.color} via-slate-900/20 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90`}></div>
-                
-                {/* Content */}
-                <div className="absolute inset-x-0 bottom-0 p-8 text-white">
-                  <div className="mb-4 transform translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                     <p className="text-white/80 text-sm font-medium leading-tight">
-                      {category.subtitle}
-                     </p>
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl font-black mb-4 tracking-tight leading-none">{category.title}</h3>
-                  <div className="flex items-center gap-2 font-bold text-sm tracking-tighter uppercase">
-                    <span>Explore Now</span>
-                    <div className="w-6 h-6 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center group-hover:bg-white group-hover:text-slate-900 transition-all duration-300">
-                      <ChevronRight size={14} />
+                <Link 
+                  to={category.link}
+                  className="group relative h-[280px] rounded-[2rem] overflow-hidden shadow-xl block bg-slate-100 border border-slate-200/50"
+                >
+                  {/* Category Wise Half Div Styles - Simplified for cover look */}
+                  <div className={`absolute inset-0 w-1 ${category.theme.accent} z-20 group-hover:w-full transition-all duration-700 ease-in-out opacity-20`} />
+                  
+                  {/* Background Image - Now FULL COVER */}
+                  <img 
+                    src={category.image} 
+                    alt={category.title} 
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+                  />
+                  
+                  {/* Gradient Overlay for Text Visibility - CATEGORY SPECIFIC */}
+                  <div className={`absolute inset-0 bg-gradient-to-t ${category.theme.color} via-slate-900/40 to-transparent z-10 opacity-60 group-hover:opacity-80 transition-opacity duration-500`}></div>
+                  
+                  {/* Content Container */}
+                  <div className="absolute inset-x-0 bottom-0 p-6 z-30">
+                    <div className="flex items-center gap-2 mb-2">
+                       <div className={`w-2 h-2 rounded-full ${category.theme.accent}`} />
+                       <h3 className="text-xl font-black tracking-tighter text-white drop-shadow-md">
+                        {category.title}
+                       </h3>
+                    </div>
+
+                    <div className="flex items-center gap-2 font-black text-[9px] tracking-widest uppercase text-white/50 group-hover:text-brand-400 transition-colors">
+                      <span>Explore Collection</span>
+                      <ChevronRight size={12} className="group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
-                </div>
-              </Link>
-            </motion.div>
+
+                  {/* Top-Right Decorative Element */}
+                  <div className={`absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-all duration-500`}>
+                     <div className={`w-8 h-8 rounded-xl ${category.theme.accent} flex items-center justify-center text-white scale-50 group-hover:scale-100 transition-transform`}>
+                        <ChevronRight size={14} strokeWidth={3} />
+                     </div>
+                  </div>
+                </Link>
+              </motion.div>
+            </SwiperSlide>
           ))}
-        </div>
+        </Swiper>
         
       </div>
     </section>
