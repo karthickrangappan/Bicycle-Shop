@@ -98,17 +98,19 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
           </div>
         </div>
 
-        <div className="flex gap-3">
-          {nextStatus && order.status !== 'Cancelled' && (
-            <button onClick={() => { onUpdateStatus(order.id, nextStatus); onClose(); }} className="flex-1 bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold py-2.5 rounded-xl text-sm">
-              Mark as {nextStatus}
-            </button>
-          )}
-          {order.status !== 'Cancelled' && order.status !== 'Delivered' && (
-            <button onClick={() => { onUpdateStatus(order.id, 'Cancelled'); onClose(); }} className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-2.5 rounded-xl text-sm border border-red-500/20">
-              Cancel Order
-            </button>
-          )}
+        <div className="space-y-4 pt-4 border-t border-gray-800">
+            <label className="text-[10px] font-black uppercase tracking-widest text-amber-500/60">Transition Status</label>
+            <div className="grid grid-cols-3 gap-2">
+                {[...statusFlow, 'Cancelled'].map(s => (
+                    <button 
+                        key={s} 
+                        onClick={() => { onUpdateStatus(order.id, s); onClose(); }} 
+                        className={`px-3 py-2 rounded-xl text-[10px] font-bold transition-all border ${order.status === s ? 'bg-amber-500 border-amber-500 text-gray-900 shadow-xl shadow-amber-500/20' : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white'}`}
+                    >
+                        {s}
+                    </button>
+                ))}
+            </div>
         </div>
       </div>
     </div>
@@ -190,7 +192,13 @@ export default function Orders() {
                     <span className={`text-xs font-medium ${order.paymentStatus === 'Paid' ? 'text-emerald-400' : order.paymentStatus === 'Failed' ? 'text-red-400' : 'text-amber-400'}`}>{order.paymentStatus}</span>
                   </td>
                   <td className="px-5 py-3">
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-semibold border ${statusColors[order.status]}`}>{order.status}</span>
+                    <select 
+                        value={order.status} 
+                        onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                        className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl border appearance-none outline-none cursor-pointer transition-all ${statusColors[order.status] || 'bg-gray-800 border-gray-700 text-gray-400 focus:border-amber-500'}`}
+                    >
+                        {[...statusFlow, 'Cancelled'].map(s => <option key={s} value={s} className="bg-gray-900 font-bold">{s}</option>)}
+                    </select>
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex gap-2">
