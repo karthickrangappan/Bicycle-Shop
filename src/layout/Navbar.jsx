@@ -374,6 +374,16 @@ export default function Navbar() {
                         </div>
                         <ChevronRight size={12} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-all" />
                       </Link>
+
+                      {user.role === 'admin' && (
+                        <Link to="/admin" className="flex items-center justify-between gap-3 px-3 py-2.5 text-xs font-bold text-brand-600 bg-brand-50 hover:bg-brand-100 rounded-xl transition-all group mt-2">
+                           <div className="flex items-center gap-3">
+                              <Zap size={16} className="text-brand-500 fill-brand-500/20" />
+                              Admin Dashboard
+                           </div>
+                           <ChevronRight size={12} className="text-brand-500" />
+                        </Link>
+                      )}
                     </div>
 
                     <div className="h-px bg-slate-50 my-2 mx-2" />

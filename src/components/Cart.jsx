@@ -10,8 +10,9 @@ export default function Cart() {
   const navigate = useNavigate();
 
   const subtotal = cart.reduce((acc, item) => {
-    const price = parseInt(item.price.replace(/[^\d]/g, ''));
-    return acc + (price * item.quantity);
+    const priceStr = String(item.price || '0').replace(/[^\d.]/g, '');
+    const price = parseFloat(priceStr) || 0;
+    return acc + (price * (item.quantity || 1));
   }, 0);
 
   const formatCurrency = (amount) => {
@@ -73,7 +74,7 @@ export default function Cart() {
               {cart.map((item) => (
                 <motion.div
                   layout
-                  key={item.id}
+                  key={`${item.id}-${item.selectedSize}`}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
@@ -92,7 +93,7 @@ export default function Cart() {
                   <div className="flex-grow text-center sm:text-left">
                     <div className="mb-4">
                       <span className="text-[10px] uppercase font-black tracking-widest text-brand-500 mb-1 block">
-                        {item.category}
+                        {item.category} • Frame Size: {item.selectedSize}
                       </span>
                       <h3 className="text-xl font-black text-slate-900 tracking-tight group-hover:text-brand-600 transition-colors">
                         {item.name}
@@ -100,9 +101,9 @@ export default function Cart() {
                     </div>
                     
                     <div className="flex items-center justify-center sm:justify-start gap-4">
-                       <p className="text-lg font-black text-slate-900 font-space">{item.price}</p>
+                       <p className="text-lg font-black text-slate-900 font-space">₹{item.price}</p>
                        <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-                       <p className="text-sm font-bold text-slate-400">In Stock</p>
+                       <p className="text-sm font-bold text-slate-400">Reserved</p>
                     </div>
                   </div>
 
@@ -110,14 +111,14 @@ export default function Cart() {
                   <div className="flex flex-col items-center sm:items-end gap-6 flex-shrink-0">
                     <div className="flex items-center bg-slate-50 rounded-2xl p-1 border border-slate-100">
                       <button 
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.id, item.selectedSize, -1)}
                         className="p-2 text-slate-400 hover:text-brand-600 transition-colors"
                       >
                         <Minus size={18} />
                       </button>
                       <span className="w-12 text-center font-black text-slate-900">{item.quantity}</span>
                       <button 
-                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                         onClick={() => updateQuantity(item.id, item.selectedSize, 1)}
                          className="p-2 text-slate-400 hover:text-brand-600 transition-colors"
                       >
                         <Plus size={18} />
@@ -125,7 +126,7 @@ export default function Cart() {
                     </div>
 
                     <button 
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.id, item.selectedSize)}
                       className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-red-500 transition-colors group/del"
                     >
                       <Trash2 size={16} className="group-hover/del:scale-110 transition-transform" />
