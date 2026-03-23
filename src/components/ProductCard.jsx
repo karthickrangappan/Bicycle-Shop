@@ -234,17 +234,14 @@ export default function ProductCard({ product }) {
           />
         </Link>
 
-        {/* Wishlist Icon - Hidden by default, show on hover */}
+        {/* Quick Add To Cart Icon - Show on hover */}
         <div className="absolute top-4 right-4 z-20 opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
             <button
-            onClick={handleWishlist}
-            className={`w-10 h-10 rounded-2xl flex items-center justify-center backdrop-blur-xl transition-all duration-300 ${
-                isInWishlist(product.id)
-                ? "bg-red-500 text-white shadow-lg shadow-red-500/30 rotate-0"
-                : "bg-white/90 text-slate-400 hover:text-red-500 hover:bg-white shadow-xl hover:shadow-red-500/10"
-            }`}
+            onClick={handleAddToCart}
+            className="w-10 h-10 rounded-2xl flex items-center justify-center bg-white/90 backdrop-blur-xl text-slate-400 hover:text-brand-500 hover:bg-white shadow-xl hover:shadow-brand-500/10 transition-all duration-300 shadow-slate-200"
+            title="Add to Cart"
             >
-            <Heart size={18} className={isInWishlist(product.id) ? "fill-white" : "transition-transform duration-300 group-hover:scale-110"} />
+            <ShoppingCart size={18} className="transition-transform duration-300 group-hover:scale-110" />
             </button>
         </div>
 
@@ -301,13 +298,13 @@ export default function ProductCard({ product }) {
             >
               <Eye size={18} className="transition-transform duration-300 group-hover/btn:scale-110" />
             </Link>
-            <button
+            {/* <button
               onClick={handleAddToCart}
               className="w-11 h-11 bg-brand-500 text-white rounded-2xl flex items-center justify-center hover:bg-brand-500 transition-all shadow-[0_10px_20px_-5px_rgba(59,130,246,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(59,130,246,0.5)] active:scale-95 group/cart"
               title="Add to Cart"
             >
               <ShoppingCart size={18} className="transition-transform duration-300 group-hover/cart:rotate-[-12deg] group-hover/cart:scale-110" />
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

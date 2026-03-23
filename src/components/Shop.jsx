@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ProductCard, { MOCK_PRODUCTS } from './ProductCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Filter, ShoppingBag, Star, RefreshCcw, Search, X, SlidersHorizontal, ChevronDown } from 'lucide-react';
@@ -7,11 +8,28 @@ import PageHeader from '../layout/PageHeader';
 const CATEGORIES = ["All", "Mountain", "Road", "City", "E-Bikes", "Gravel"];
 
 export default function Shop() {
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [searchParams] = useSearchParams();
+  const categoryFromUrl = searchParams.get('category');
+  const searchFromUrl = searchParams.get('search');
+  
+  const [activeCategory, setActiveCategory] = useState(categoryFromUrl || "All");
   const [priceRange, setPriceRange] = useState(1200000);
   const [minRating, setMinRating] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(searchFromUrl || "");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Update state if URL changes
+  useEffect(() => {
+    if (categoryFromUrl && CATEGORIES.includes(categoryFromUrl)) {
+      setActiveCategory(categoryFromUrl);
+    } else if (!categoryFromUrl) {
+      setActiveCategory("All");
+    }
+
+    if (searchFromUrl) {
+      setSearchTerm(searchFromUrl);
+    }
+  }, [categoryFromUrl, searchFromUrl]);
 
   // Parse price string to number for filtering
   const parsePrice = (priceStr) => parseInt(priceStr.replace(/[^\d]/g, ''));
@@ -40,9 +58,9 @@ export default function Shop() {
     <div className="bg-slate-50 min-h-screen relative">
       <PageHeader 
         title="Premium Collection"
-        subtitle="Engineered for performance. Discover our curated selection of world-class bicycles for every terrain."
+        // subtitle="Engineered for performance. Discover our curated selection of world-class bicycles for every terrain."
         icon={ShoppingBag}
-        badge="Catalog 2026"
+        // badge="Catalog 2026"
       />
       <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
         
