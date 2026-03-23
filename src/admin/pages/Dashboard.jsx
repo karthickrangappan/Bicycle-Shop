@@ -15,7 +15,9 @@ import {
   IndianRupee,
   ShoppingBasket,
   Users,
-  Bike
+  Bike,
+  Box,
+  ArrowRight
 } from 'lucide-react';
 
 const StatCard = ({ icon: Icon, label, value, sub, color, trend }) => (
@@ -300,6 +302,3 @@ const DonutChart = ({ data }) => {
   );
 };
 
-function ArrowRight(props) {
-    return <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>;
-}
