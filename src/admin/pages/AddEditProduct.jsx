@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAdmin } from '../context/AdminContext';
 
-const categories = ['Mountain Bikes', 'Road Bikes', 'Hybrid Bikes', 'Kids Bikes', 'Helmets', 'Lights', 'Pumps'];
 const sizes = ['XS', 'S', 'M', 'L', 'XL'];
 const colors = ['Black', 'White', 'Red', 'Blue', 'Green', 'Orange', 'Yellow', 'Pink', 'Grey'];
 const gears = ['Single', '3-speed', '7-speed', '16-speed', '21-speed', '24-speed', '27-speed'];
 
 export default function AddEditProduct() {
   const { id } = useParams();
-  const { products, addProduct, updateProduct } = useAdmin();
+  const { products, categories: dynamicCategories, addProduct, updateProduct } = useAdmin();
   const navigate = useNavigate();
+
+  const categories = dynamicCategories.filter(c => c.active).map(c => c.name);
   const isEdit = !!id;
   const existing = products.find(p => p.id === parseInt(id));
 

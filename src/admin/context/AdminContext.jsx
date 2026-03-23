@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, auth } from '../../../firebase';
-import { collection, collectionGroup, onSnapshot, doc, deleteDoc, updateDoc, setDoc, addDoc, getDoc } from 'firebase/firestore';
+import { collection, collectionGroup, onSnapshot, doc, deleteDoc, updateDoc, setDoc, addDoc, getDoc, getDocs } from 'firebase/firestore';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { toast } from 'react-hot-toast';
 
@@ -62,33 +62,15 @@ export const AdminProvider = ({ children }) => {
     const unsubCategories = onSnapshot(collection(db, "categories"), (snapshot) => {
       const cats = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       setCategories(cats);
-      
-      // Auto-seed typical bicycle shop categories if the collection is empty
-      if (cats.length === 0) {
-        const defaults = [
-          { name: 'Mountain Bikes', icon: '⛰️', active: true },
-          { name: 'Road Bikes', icon: '🛣️', active: true },
-          { name: 'Hybrid Bikes', icon: '🔀', active: true },
-          { name: 'Kids Bikes', icon: '👶', active: true },
-          { name: 'Helmets', icon: '⛑️', active: true },
-          { name: 'Lights', icon: '💡', active: true },
-          { name: 'Pumps', icon: '🔧', active: true },
-        ];
-        defaults.forEach(async (c) => {
-          await addDoc(collection(db, "categories"), c);
-        });
-      }
     });
 
     const unsubAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        if (user.email === "admin@bicycleshop.com") {
-          setAdminUser({ name: "Super Admin", email: user.email, role: "super_admin" });
+        const userSnap = await getDoc(doc(db, "users", user.uid));
+        if (userSnap.exists() && userSnap.data().role === 'admin') {
+          setAdminUser({ name: userSnap.data().name || "Admin", email: user.email, role: "manager", uid: user.uid });
         } else {
-          const userSnap = await getDoc(doc(db, "users", user.email));
-          if (userSnap.exists() && userSnap.data().role === 'admin') {
-            setAdminUser({ name: userSnap.data().name || "Admin", email: user.email, role: "manager" });
-          }
+          setAdminUser(null);
         }
       } else {
         setAdminUser(null);
@@ -225,15 +207,70 @@ export const AdminProvider = ({ children }) => {
   const totalOrders = safeOrders.length;
   const pendingOrders = safeOrders.filter(o => o.status === "Pending").length;
 
+  const resetToDefaultCategories = async () => {
+    try {
+      // 1. Delete all existing categories
+      const catSnapshot = await getDocs(collection(db, "categories"));
+      for (const d of catSnapshot.docs) {
+        await deleteDoc(doc(db, "categories", d.id));
+      }
+
+      // 2. Add well-organized defaults
+      const defaults = [
+        { name: 'Mountain Bikes', image: 'https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&q=80&w=400', slug: 'mountain-bikes', description: 'Hardtail, Trail, and Full-Suspension performance machines.', color: '#ef4444', priority: 1, active: true },
+        { name: 'Road Bikes', image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&q=80&w=400', slug: 'road-bikes', description: 'Aerodynamic velocity for endurance and competitive racing.', color: '#3b82f6', priority: 2, active: true },
+        { name: 'Urban & City', image: 'https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&q=80&w=400', slug: 'urban-bikes', description: 'Elegant commuters, hybirds, and vintage leisure cycles.', color: '#10b981', priority: 3, active: true },
+        { name: 'Gravel & Adventure', image: 'https://images.unsplash.com/photo-1511994298241-608e28f14f66?auto=format&fit=crop&q=80&w=400', slug: 'gravel-bikes', description: 'Versatile all-terrain explorers for any surface.', color: '#8b5cf6', priority: 4, active: true },
+        { name: 'Kids Bicycles', image: 'https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?auto=format&fit=crop&q=80&w=400', slug: 'kids-bikes', description: 'The perfect start for young riders on their cycling journey.', color: '#ec4899', priority: 5, active: true },
+        { name: 'Spare Parts', image: 'https://images.unsplash.com/photo-1603565457134-8b64e6268807?auto=format&fit=crop&q=80&w=400', slug: 'spare-parts', description: 'Tires, tubes, chains, and precision components.', color: '#64748b', priority: 6, active: true },
+        { name: 'Accessories', image: 'https://images.unsplash.com/photo-1541625602330-2277a1cd13a1?auto=format&fit=crop&q=80&w=400', slug: 'accessories', description: 'Helmets, lights, locks, and essential cycling gear.', color: '#f59e0b', priority: 7, active: true },
+        { name: 'Performance Apparel', image: 'https://images.unsplash.com/photo-1521124610112-9c9ef47347a5?auto=format&fit=crop&q=80&w=400', slug: 'apparel', description: 'Techncial jerseys, bibs, and gloves for optimal comfort.', color: '#d946ef', priority: 8, active: true },
+      ];
+
+      for (const c of defaults) {
+        await addDoc(collection(db, "categories"), c);
+      }
+      toast.success("Categories reset to defaults!");
+      addLog("Reset Infrastructure", "Bulk category reset performed");
+    } catch (e) {
+      toast.error("Wipe failed: " + e.message);
+    }
+  };
+
+  const categorizeAllProducts = async () => {
+    let updatedCount = 0;
+    for (const prod of products) {
+      if (!prod.category || prod.category === 'Uncategorized' || !categories.some(c => c.name === prod.category)) {
+        let newCat = 'Accessories'; // Default
+        const name = (prod.name || '').toLowerCase();
+        
+        // Logical matching
+        if (name.includes('mountain') || name.includes('mtb') || name.includes('trail')) newCat = 'Mountain Bikes';
+        else if (name.includes('road') || name.includes('race') || name.includes('velocity')) newCat = 'Road Bikes';
+        else if (name.includes('city') || name.includes('urban') || name.includes('commute') || name.includes('hybrid')) newCat = 'Urban & City';
+        else if (name.includes('gravel') || name.includes('adventure') || name.includes('path')) newCat = 'Gravel & Adventure';
+        else if (name.includes('kids') || name.includes('child') || name.includes('junior')) newCat = 'Kids Bicycles';
+        else if (name.includes('tire') || name.includes('chain') || name.includes('pedal') || name.includes('brake')) newCat = 'Spare Parts';
+        else if (name.includes('jersey') || name.includes('short') || name.includes('glove')) newCat = 'Performance Apparel';
+        else if (name.includes('helmet') || name.includes('light') || name.includes('lock')) newCat = 'Accessories';
+        
+        await updateDoc(doc(db, "products", prod.id), { category: newCat });
+        updatedCount++;
+      }
+    }
+    toast.success(`Successfully categorized ${updatedCount} products!`);
+    addLog("Bulk Categorization", `Updated ${updatedCount} products`);
+  };
+
   return (
     <AdminContext.Provider value={{
       adminUser, login, logout,
-      products, addProduct, updateProduct, deleteProduct,
+      products, addProduct, updateProduct, deleteProduct, categorizeAllProducts,
       orders, updateOrderStatus,
       customers, toggleCustomerStatus,
       coupons, addCoupon, deleteCoupon,
       reviews, updateReviewStatus,
-      categories, addCategory, updateCategory, deleteCategory,
+      categories, addCategory, updateCategory, deleteCategory, resetToDefaultCategories,
       admins, setAdmins,
       logs, addLog,
       services, updateServiceStatus,
