@@ -98,17 +98,34 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
           </div>
         </div>
 
-        <div className="flex gap-3">
-          {nextStatus && order.status !== 'Cancelled' && (
-            <button onClick={() => { onUpdateStatus(order.id, nextStatus); onClose(); }} className="flex-1 bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold py-2.5 rounded-xl text-sm">
-              Mark as {nextStatus}
-            </button>
-          )}
+        <div className="space-y-3">
           {order.status !== 'Cancelled' && order.status !== 'Delivered' && (
-            <button onClick={() => { onUpdateStatus(order.id, 'Cancelled'); onClose(); }} className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-2.5 rounded-xl text-sm border border-red-500/20">
-              Cancel Order
-            </button>
+            <div className="grid grid-cols-1 gap-2">
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-1">Promote Status</p>
+                <div className="flex flex-wrap gap-2">
+                    {statusFlow.slice(statusFlow.indexOf(order.status) + 1).map(s => (
+                        <button 
+                            key={s}
+                            onClick={() => { onUpdateStatus(order.id, s); onClose(); }} 
+                            className="flex-1 bg-amber-500/10 hover:bg-amber-500 text-amber-500 hover:text-gray-900 border border-amber-500/20 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                        >
+                            {s}
+                        </button>
+                    ))}
+                </div>
+            </div>
           )}
+          
+          <div className="flex gap-3 pt-2">
+            {order.status !== 'Cancelled' && order.status !== 'Delivered' && (
+                <button onClick={() => { onUpdateStatus(order.id, 'Cancelled'); onClose(); }} className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-2.5 rounded-xl text-[10px] uppercase tracking-widest border border-red-500/20 transition-all">
+                    Void Order
+                </button>
+            )}
+            <button onClick={onClose} className="flex-1 bg-gray-800 text-gray-400 font-bold py-2.5 rounded-xl text-[10px] uppercase tracking-widest hover:bg-gray-700 transition-all">
+                Close
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -116,16 +133,18 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
 }
 
 export default function Orders() {
-  const { orders, updateOrderStatus } = useAdmin();
+  const { orders, updateOrderStatus, categories: dynamicCategories } = useAdmin();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [categoryFilter, setCategoryFilter] = useState('All');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [invoiceOrder, setInvoiceOrder] = useState(null);
 
   const filtered = orders.filter(o => {
     const matchSearch = o.id.toLowerCase().includes(search.toLowerCase()) || o.customer.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === 'All' || o.status === statusFilter;
-    return matchSearch && matchStatus;
+    const matchCat = categoryFilter === 'All' || o.items.some(item => item.category === categoryFilter);
+    return matchSearch && matchStatus && matchCat;
   });
 
   return (
@@ -150,8 +169,12 @@ export default function Orders() {
       {/* Filters */}
       <div className="flex gap-3">
         <input type="text" placeholder="Search by order ID or customer..." value={search} onChange={e => setSearch(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 flex-1" />
+        <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+          <option value="All">All Categories</option>
+          {dynamicCategories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+        </select>
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option>All</option>
+          <option>All Status</option>
           {statusFlow.map(s => <option key={s}>{s}</option>)}
           <option>Cancelled</option>
         </select>

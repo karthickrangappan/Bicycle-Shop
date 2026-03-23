@@ -6,10 +6,6 @@ import { useShop } from '../context/ShopContext';
 import { db } from '../../firebase';
 import { collection, query, where, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay } from 'swiper/modules';
-import 'swiper/css';
-import ProductCard from './ProductCard';
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -18,7 +14,6 @@ export default function ProductDetails() {
   
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState('');
-  const [selectedColor, setSelectedColor] = useState('');
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({ rating: 5, text: '', height: '', weight: '' });
   const [isVerified, setIsVerified] = useState(false);
@@ -57,10 +52,6 @@ export default function ProductDetails() {
   }
 
   const handleAddToCart = () => {
-    if (!selectedColor) {
-      toast.error('Please select a Paint color first');
-      return;
-    }
     if (!selectedSize) {
       toast.error('Please select a Frame Size first');
       return;
@@ -159,9 +150,9 @@ export default function ProductDetails() {
                         {['#000000', '#ffffff', '#ef4444', '#3b82f6', '#10b981'].map(color => (
                           <button
                             key={color}
-                            onClick={() => setSelectedColor(color)}
+                            onClick={() => setForm(f => ({ ...f, color }))}
                             className={`w-10 h-10 rounded-full border-2 transition-all hover:scale-110 ${
-                              selectedColor === color ? 'border-brand-500 ring-2 ring-brand-500/20 shadow-lg' : 'border-white shadow-sm'
+                              form.color === color ? 'border-brand-500 ring-2 ring-brand-500/20 shadow-lg' : 'border-white shadow-sm'
                             }`}
                             style={{ backgroundColor: color }}
                           />
@@ -326,44 +317,6 @@ export default function ProductDetails() {
               )}
             </div>
           </div>
-        </div>
-        {/* Related Products Section */}
-        <div className="mt-32 pt-24 border-t border-slate-100 overflow-hidden">
-           <div className="flex items-center justify-between mb-12">
-              <div>
-                 <span className="text-[10px] font-black uppercase tracking-widest text-brand-500 mb-2 block border-l-2 border-brand-500 pl-3">Recommended Gear</span>
-                 <h2 className="text-3xl font-black text-slate-900 tracking-tight">Explore Similar <span className="text-brand-600 font-space italic">Performance</span></h2>
-              </div>
-           </div>
-
-           <div className="-mx-4 px-4 sm:mx-0 sm:px-0">
-              <Swiper
-                modules={[Autoplay]}
-                spaceBetween={24}
-                slidesPerView={1.2}
-                loop={true}
-                autoplay={{
-                  delay: 3000,
-                  disableOnInteraction: false,
-                }}
-                breakpoints={{
-                  640: { slidesPerView: 2 },
-                  768: { slidesPerView: 2.5 },
-                  1024: { slidesPerView: 3 },
-                  1280: { slidesPerView: 4 },
-                }}
-                className="!pb-12"
-              >
-                {products
-                  .filter(p => p.category === product.category && p.id !== product.id)
-                  .map((relatedProd) => (
-                    <SwiperSlide key={relatedProd.id}>
-                      <ProductCard product={relatedProd} />
-                    </SwiperSlide>
-                  ))
-                }
-              </Swiper>
-           </div>
         </div>
       </div>
     </div>

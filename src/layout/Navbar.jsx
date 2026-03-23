@@ -21,7 +21,8 @@ import {
   Compass,
   Bike,
   Zap,
-  TrendingUp
+  TrendingUp,
+  ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useShop } from '../context/ShopContext';
@@ -38,7 +39,7 @@ export default function Navbar() {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout, cart, wishlist, products, categories } = useShop();
+  const { user, logout, cart, wishlist } = useShop();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -49,18 +50,9 @@ export default function Navbar() {
     }
   };
 
-  const formatCurrency = (amount) => {
-    const numericAmount = typeof amount === 'string' 
-      ? parseInt(amount.replace(/[^\d]/g, '')) 
-      : amount;
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency', currency: 'INR', maximumFractionDigits: 0
-    }).format(numericAmount);
-  };
-
   const filteredItems = searchQuery.trim() === "" 
     ? [] 
-    : (products.length > 0 ? products : MOCK_PRODUCTS).filter(product => 
+    : MOCK_PRODUCTS.filter(product => 
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
         product.category.toLowerCase().includes(searchQuery.toLowerCase())
       ).slice(0, 5);
@@ -84,21 +76,13 @@ export default function Navbar() {
     { label: "Contact Us", href: "/contact", icon: Mail, desc: "Get in touch with our experts" },
   ];
 
-  const categoryIconMap = {
-    Mountain: Mountain,
-    Road: Compass,
-    City: Bike,
-    "E-Bikes": Zap,
-    Gravel: TrendingUp,
-    Default: Bike
-  };
-
-  const categoryItems = categories.map(cat => ({
-    label: cat.title || cat.name || cat.label,
-    href: `/shop?category=${cat.title || cat.name || cat.label}`,
-    icon: categoryIconMap[cat.title || cat.name || cat.label] || categoryIconMap.Default,
-    desc: cat.subtitle || cat.desc || "Explore our premium collection"
-  }));
+  const categoryItems = [
+    { label: "Mountain", href: "/shop?category=Mountain", icon: Mountain, desc: "Rugged bikes for off-road trails" },
+    { label: "Road", href: "/shop?category=Road", icon: Compass, desc: "Built for speed on paved roads" },
+    { label: "City", href: "/shop?category=City", icon: Bike, desc: "Perfect for urban commuting" },
+    { label: "E-Bikes", href: "/shop?category=E-Bikes", icon: Zap, desc: "Electric power for easy riding" },
+    { label: "Gravel", href: "/shop?category=Gravel", icon: TrendingUp, desc: "Versatile bikes for all surfaces" },
+  ];
 
   const navbarBg = isHome
     ? (scrolled
@@ -142,50 +126,48 @@ export default function Navbar() {
             ))}
 
             {/* Categories Dropdown on Hover */}
-            {categoryItems.length > 0 && (
-              <div 
-                className="relative"
-                onMouseEnter={() => setCategoriesDropdown(true)}
-                onMouseLeave={() => setCategoriesDropdown(false)}
-              >
-                <button className={`px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-1.5 ${
-                  categoriesDropdown ? "text-brand-500 bg-white/5" : "text-white hover:text-brand-400"
-                }`}>
-                  Categories <ChevronDown size={14} className={`transition-transform duration-300 ${categoriesDropdown ? 'rotate-180' : ''}`} />
-                </button>
+            <div 
+              className="relative"
+              onMouseEnter={() => setCategoriesDropdown(true)}
+              onMouseLeave={() => setCategoriesDropdown(false)}
+            >
+              <button className={`px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-1.5 ${
+                categoriesDropdown ? "text-brand-500 bg-white/5" : "text-white hover:text-brand-400"
+              }`}>
+                Categories <ChevronDown size={14} className={`transition-transform duration-300 ${categoriesDropdown ? 'rotate-180' : ''}`} />
+              </button>
 
-                <AnimatePresence>
-                  {categoriesDropdown && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] border border-slate-100 p-2 overflow-hidden z-20"
-                    >
-                      <div className="p-3 border-b border-slate-50 mb-1">
-                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Featured Categories</p>
-                      </div>
-                      {categoryItems.map((item) => (
-                        <Link
-                          key={item.label}
-                          to={item.href}
-                          onClick={() => setCategoriesDropdown(false)}
-                          className="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 transition-all group"
-                        >
-                          <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all">
-                            <item.icon size={18} />
-                          </div>
-                          <div>
-                            <p className="text-sm font-black text-slate-900 group-hover:text-brand-600">{item.label}</p>
-                            <p className="text-[10px] font-bold text-slate-400 group-hover:text-slate-500">{item.desc}</p>
-                          </div>
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
+              <AnimatePresence>
+                {categoriesDropdown && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    className="absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] border border-slate-100 p-2 overflow-hidden z-20"
+                  >
+                    <div className="p-3 border-b border-slate-50 mb-1">
+                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Featured Categories</p>
+                    </div>
+                    {categoryItems.map((item) => (
+                      <Link
+                        key={item.label}
+                        to={item.href}
+                        onClick={() => setCategoriesDropdown(false)}
+                        className="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 transition-all group"
+                      >
+                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all">
+                          <item.icon size={18} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-black text-slate-900 group-hover:text-brand-600">{item.label}</p>
+                          <p className="text-[10px] font-bold text-slate-400 group-hover:text-slate-500">{item.desc}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             {/* Pages Dropdown on Hover */}
             <div 
@@ -235,87 +217,94 @@ export default function Navbar() {
           {/* Right Actions */}
           <div className="flex items-center gap-1">
 
-            {/* Search */}
-            <div className="relative flex items-center">
-              <AnimatePresence>
-                {isSearchOpen && (
-                  <motion.div
-                    initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: 280, opacity: 1 }}
-                    exit={{ width: 0, opacity: 0 }}
-                    className="absolute right-full mr-2"
-                  >
-                    <form onSubmit={handleSearch}>
-                      <input
-                        autoFocus
-                        type="text"
-                        placeholder="Search bikes..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-2 text-sm text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all shadow-2xl"
-                      />
-                    </form>
+             {/* Search */}
+             <div className="relative flex items-center">
+               <AnimatePresence>
+                 {isSearchOpen && (
+                   <motion.div
+                     initial={{ width: 0, opacity: 0 }}
+                     animate={{ width: 280, opacity: 1 }}
+                     exit={{ width: 0, opacity: 0 }}
+                     className="absolute right-full mr-2"
+                   >
+                     <form onSubmit={handleSearch}>
+                       <input
+                         autoFocus
+                         type="text"
+                         placeholder="Search bikes..."
+                         value={searchQuery}
+                         onChange={(e) => setSearchQuery(e.target.value)}
+                         className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-2 text-sm text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all shadow-2xl"
+                       />
+                     </form>
+ 
+                     {/* Live Results Dropdown */}
+                     <AnimatePresence>
+                       {searchQuery.trim() !== "" && (
+                         <motion.div
+                           initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                           animate={{ opacity: 1, y: 0, scale: 1 }}
+                           exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                           className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] border border-slate-100 p-2 overflow-hidden z-20"
+                         >
+                           <div className="p-2 border-b border-slate-50 mb-1">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Quick Results</p>
+                           </div>
+                           {filteredItems.length > 0 ? (
+                             <>
+                               {filteredItems.map((product) => (
+                                 <Link
+                                   key={product.id}
+                                   to={`/product/${product.id}`}
+                                   onClick={() => {
+                                     setIsSearchOpen(false);
+                                     setSearchQuery("");
+                                   }}
+                                   className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 transition-all group"
+                                 >
+                                   <div className="w-10 h-10 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
+                                     <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                   </div>
+                                   <div className="flex-1 min-w-0">
+                                     <p className="text-xs font-black text-slate-900 group-hover:text-brand-600 truncate">{product.name}</p>
+                                     <p className="text-[10px] font-bold text-slate-400">{product.price}</p>
+                                   </div>
+                                   <ChevronRight size={14} className="text-slate-300 group-hover:text-brand-500 transition-colors" />
+                                 </Link>
+                               ))}
+                               <button
+                                 onClick={handleSearch}
+                                 className="w-full mt-2 py-2 text-[10px] font-black uppercase tracking-widest text-brand-500 hover:bg-brand-50 rounded-lg transition-all"
+                               >
+                                 View all results
+                               </button>
+                             </>
+                           ) : (
+                             <div className="p-8 text-center bg-slate-50/50 rounded-xl">
+                                <Search size={24} className="mx-auto text-slate-200 mb-2" />
+                                <p className="text-xs font-bold text-slate-400">No bikes found for "{searchQuery}"</p>
+                             </div>
+                           )}
+                         </motion.div>
+                       )}
+                     </AnimatePresence>
+                   </motion.div>
+                 )}
+               </AnimatePresence>
+               <button 
+                 onClick={() => setIsSearchOpen(!isSearchOpen)}
+                 className={`p-2 rounded-lg transition-all group ${isSearchOpen ? 'bg-brand-500 text-white' : 'text-white hover:bg-white/10'}`}
+               >
+                 {isSearchOpen ? <X size={18} /> : <Search size={18} className="group-hover:scale-110" />}
+               </button>
+             </div>
 
-                    {/* Live Results Dropdown */}
-                    <AnimatePresence>
-                      {searchQuery.trim() !== "" && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                          className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] border border-slate-100 p-2 overflow-hidden z-20"
-                        >
-                          <div className="p-2 border-b border-slate-50 mb-1">
-                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Quick Results</p>
-                          </div>
-                          {filteredItems.length > 0 ? (
-                            <>
-                              {filteredItems.map((product) => (
-                                <Link
-                                  key={product.id}
-                                  to={`/product/${product.id}`}
-                                  onClick={() => {
-                                    setIsSearchOpen(false);
-                                    setSearchQuery("");
-                                  }}
-                                  className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 transition-all group"
-                                >
-                                  <div className="w-10 h-10 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
-                                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-xs font-black text-slate-900 group-hover:text-brand-600 truncate">{product.name}</p>
-                                    <p className="text-[10px] font-bold text-slate-400">{formatCurrency(product.price)}</p>
-                                  </div>
-                                  <ChevronRight size={14} className="text-slate-300 group-hover:text-brand-500 transition-colors" />
-                                </Link>
-                              ))}
-                              <button
-                                onClick={handleSearch}
-                                className="w-full mt-2 py-2 text-[10px] font-black uppercase tracking-widest text-brand-500 hover:bg-brand-50 rounded-lg transition-all"
-                              >
-                                View all results
-                              </button>
-                            </>
-                          ) : (
-                            <div className="p-8 text-center bg-slate-50/50 rounded-xl">
-                               <Search size={24} className="mx-auto text-slate-200 mb-2" />
-                               <p className="text-xs font-bold text-slate-400">No bikes found for "{searchQuery}"</p>
-                            </div>
-                          )}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              <button 
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className={`p-2 rounded-lg transition-all group ${isSearchOpen ? 'bg-brand-500 text-white' : 'text-white hover:bg-white/10'}`}
-              >
-                {isSearchOpen ? <X size={18} /> : <Search size={18} className="group-hover:scale-110" />}
-              </button>
-            </div>
+             {/* Admin Shortcut */}
+             {user?.role === 'admin' && (
+                <Link to="/admin" className="p-2 text-white hover:bg-white/10 rounded-lg transition-all group" title="Admin Dashboard">
+                    <ShieldCheck size={18} className="group-hover:scale-110 text-brand-500" />
+                </Link>
+             )}
 
             {/* Wishlist */}
             {/* <Link to="/wishlist" className="relative p-2 text-white hover:bg-white/10 rounded-lg transition-all group">
@@ -500,27 +489,23 @@ export default function Navbar() {
                   </Link>
                 ))}
 
-                {categoryItems.length > 0 && (
-                  <>
-                    <div className="pt-4 pb-2">
-                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-300 ml-4 mb-2">Categories</p>
-                    </div>
+                <div className="pt-4 pb-2">
+                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-300 ml-4 mb-2">Categories</p>
+                </div>
 
-                    {categoryItems.map((item) => (
-                      <Link
-                        key={item.href}
-                        to={item.href}
-                        onClick={() => setOpen(false)}
-                        className="flex items-center gap-4 p-4 rounded-2xl text-slate-600 font-bold hover:bg-slate-50 transition-all"
-                      >
-                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
-                           <item.icon size={18} />
-                        </div>
-                        {item.label}
-                      </Link>
-                    ))}
-                  </>
-                )}
+                {categoryItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-4 p-4 rounded-2xl text-slate-600 font-bold hover:bg-slate-50 transition-all"
+                  >
+                    <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
+                       <item.icon size={18} />
+                    </div>
+                    {item.label}
+                  </Link>
+                ))}
               </div>
 
               <div className="pt-6 border-t border-slate-100">

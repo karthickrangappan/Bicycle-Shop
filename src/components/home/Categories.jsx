@@ -1,25 +1,17 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
 
 export default function Categories() {
+  const { categories: dynamicCategories } = useShop();
   const navigate = useNavigate();
-  const { categories } = useShop();
-
-  if (categories.length === 0) return null;
-
-  const displayCategories = categories.map(cat => ({
-    ...cat,
-    id: cat.id,
-    title: cat.title || cat.name || cat.label,
-    subtitle: cat.subtitle || cat.desc || "Explore our premium collection",
-    image: cat.image || "/images/hero/bg-img (6).jpg",
-    link: cat.link || `/shop?category=${cat.title || cat.name || cat.label}`,
-    color: cat.color || "from-brand-600/80"
-  }));
-
+  
+  const activeCategories = useMemo(() => 
+    dynamicCategories.filter(c => c.active).sort((a,b) => (a.priority || 0) - (b.priority || 0)),
+    [dynamicCategories]
+  );
   return (
     <section className="py-24 sm:py-32 bg-slate-50 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-brand-500/5 blur-[120px] rounded-full"></div>
@@ -57,7 +49,7 @@ export default function Categories() {
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {displayCategories.map((category, idx) => (
+          {activeCategories.slice(0, 4).map((category, idx) => (
             <motion.div 
               key={category.id} 
               initial={{ opacity: 0, y: 30 }}
@@ -65,27 +57,27 @@ export default function Categories() {
               transition={{ delay: idx * 0.1 }}
             >
               <Link 
-                to={category.link}
+                to={`/shop?category=${encodeURIComponent(category.name)}`}
                 className="group relative h-[320px] rounded-[2.5rem] overflow-hidden shadow-2xl block"
               >
                 {/* Background Image */}
                 <img 
                   src={category.image} 
-                  alt={category.title} 
+                  alt={category.name} 
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
                 />
                 
                 {/* Gradient Overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-t ${category.color} via-slate-900/20 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-t via-slate-900/20 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90`} style={{backgroundImage: `linear-gradient(to top, ${category.color || '#000'}cc, transparent)`}}></div>
                 
                 {/* Content */}
                 <div className="absolute inset-x-0 bottom-0 p-8 text-white">
                   <div className="mb-4 transform translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                      <p className="text-white/80 text-sm font-medium leading-tight">
-                      {category.subtitle}
+                      {category.description || "Explore our premium selection."}
                      </p>
                   </div>
-                  <h3 className="text-2xl sm:text-3xl font-black mb-4 tracking-tight leading-none">{category.title}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black mb-4 tracking-tight leading-none uppercase">{category.name}</h3>
                   <div className="flex items-center gap-2 font-bold text-sm tracking-tighter uppercase">
                     <span>Explore Now</span>
                     <div className="w-6 h-6 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center group-hover:bg-white group-hover:text-slate-900 transition-all duration-300">

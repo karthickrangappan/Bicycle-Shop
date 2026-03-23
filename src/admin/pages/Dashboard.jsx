@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 // Admin Context hook for dashboard operations
 import { useAdmin } from '../context/AdminContext';
-import { salesData, categoryData } from '../data/mockData';
 import { 
   PlusCircle, 
   ShoppingBag, 
@@ -59,8 +58,59 @@ const QuickAction = ({ icon: Icon, label, path, color }) => (
 export default function Dashboard() {
   const { totalRevenue, totalOrders, pendingOrders, orders, products, customers, lowStockProducts } = useAdmin();
   const [period, setPeriod] = useState('monthly');
-  const recentOrders = orders.slice(0, 5);
-  const topProducts = [...products].sort((a,b) => b.sold - a.sold).slice(0,4);
+  
+  const recentOrders = useMemo(() => {
+    return [...orders].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+  }, [orders]);
+
+  const topProducts = useMemo(() => {
+    return [...products].sort((a,b) => b.sold - a.sold).slice(0,4);
+  }, [products]);
+
+  // Dynamic Sales Data Generation
+  const dynamicSalesData = useMemo(() => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const now = new Date();
+    const last6Months = [];
+    
+    for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        last6Months.push({
+            month: months[d.getMonth()],
+            monthIdx: d.getMonth(),
+            year: d.getFullYear(),
+            revenue: 0,
+            orders: 0
+        });
+    }
+
+    orders.forEach(order => {
+        if (!order.date) return;
+        const oDate = new Date(order.date);
+        const match = last6Months.find(m => m.monthIdx === oDate.getMonth() && m.year === oDate.getFullYear());
+        if (match) {
+            match.revenue += parseFloat(String(order.total).replace(/[^\d.]/g, '')) || 0;
+            match.orders += 1;
+        }
+    });
+
+    return last6Months;
+  }, [orders]);
+
+  // Dynamic Category Data Generation
+  const dynamicCategoryData = useMemo(() => {
+    const catMap = {};
+    products.forEach(p => {
+        const cat = p.category || 'Uncategorized';
+        catMap[cat] = (catMap[cat] || 0) + 1;
+    });
+
+    const total = products.length || 1;
+    return Object.entries(catMap).map(([name, count]) => ({
+        name,
+        value: Math.round((count / total) * 100)
+    })).sort((a, b) => b.value - a.value).slice(0, 5);
+  }, [products]);
 
   return (
     <div className="space-y-10">
@@ -141,7 +191,7 @@ export default function Dashboard() {
                 <TrendingUp size={20} />
             </div>
           </div>
-          <BarChart data={salesData} />
+          <BarChart data={dynamicSalesData} />
         </div>
 
         {/* Category Donut */}
@@ -149,7 +199,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-xl font-black text-white tracking-tight">Segmentation</h2>
           </div>
-          <DonutChart data={categoryData} />
+          <DonutChart data={dynamicCategoryData} />
         </div>
       </div>
 
@@ -167,12 +217,12 @@ export default function Dashboard() {
             {recentOrders.map(order => (
               <div key={order.id} className="flex items-center gap-4 p-5 bg-gray-800/30 rounded-2xl border border-gray-800/50 hover:border-amber-500/20 transition-all group">
                 <div className="w-12 h-12 bg-gray-900 border border-gray-700 rounded-xl flex items-center justify-center text-lg font-black text-amber-500 group-hover:scale-110 transition-transform">
-                    {order.name?.[0] || 'G'}
+                    {order.customer?.[0] || 'G'}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-[9px] font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full uppercase tracking-widest">{order.id}</span>
-                    <span className="text-sm font-bold text-white truncate">{order.name || order.customer || 'Guest'}</span>
+                    <span className="text-sm font-bold text-white truncate">{order.customer || 'Guest'}</span>
                   </div>
                   <p className="text-[10px] font-medium text-gray-600 mt-1 line-clamp-1">{order.items?.map(i=>i.name).join(', ') || 'No items listed'}</p>
                 </div>
@@ -182,6 +232,7 @@ export default function Dashboard() {
                 </div>
               </div>
             ))}
+            {recentOrders.length === 0 && <div className="text-center py-12 text-gray-500 text-sm">No recent orders</div>}
           </div>
         </div>
 
@@ -195,11 +246,12 @@ export default function Dashboard() {
                   <span className="text-2xl font-black text-gray-800 group-hover:text-amber-500/20 transition-colors duration-500 italic">0{i+1}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-white truncate">{p.name}</p>
-                    <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{p.sold} Units Sold</p>
+                    <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{p.sold || 0} Units Sold</p>
                   </div>
-                  <span className="text-xs font-black text-emerald-400">₹{(p.price/1000).toFixed(0)}k</span>
+                  <span className="text-xs font-black text-emerald-400">₹{((p.price || 0)/1000).toFixed(0)}k</span>
                 </div>
               ))}
+              {topProducts.length === 0 && <div className="text-center py-4 text-gray-500 text-xs">No product data</div>}
             </div>
           </div>
 
@@ -224,7 +276,7 @@ export default function Dashboard() {
               ))}
               {lowStockProducts.length === 0 && (
                   <div className="py-4 text-center">
-                      <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest uppercase">Inventory Optimal</p>
+                      <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest">Inventory Optimal</p>
                   </div>
               )}
             </div>
@@ -245,7 +297,7 @@ const statusColors = {
 
 // Simple bar chart using SVG
 const BarChart = ({ data }) => {
-  const max = Math.max(...data.map(d => d.revenue));
+  const max = Math.max(...data.map(d => d.revenue), 1);
   const w = 700, h = 200, barW = 70, gap = 30;
   return (
     <svg viewBox={`0 0 ${w} ${h + 40}`} className="w-full">
@@ -254,7 +306,7 @@ const BarChart = ({ data }) => {
         const barH = (d.revenue / max) * h;
         const y = h - barH;
         return (
-          <g key={d.month} className="group/bar">
+          <g key={`${d.month}-${d.year}`} className="group/bar">
             <rect x={x} y={y} width={barW} height={barH} rx="12" fill={i === data.length - 1 ? '#f59e0b' : '#1f2937'} className="transition-all duration-300 group-hover/bar:fill-amber-500/50"/>
             <text x={x + barW / 2} y={h + 30} textAnchor="middle" fill="#6b7280" fontSize="10" fontWeight="bold" className="uppercase tracking-widest">{d.month}</text>
             <text x={x + barW / 2} y={y - 12} textAnchor="middle" fill={i === data.length - 1 ? '#f59e0b' : '#9ca3af'} fontSize="11" fontWeight="black">₹{(d.revenue/1000).toFixed(0)}k</text>
@@ -268,7 +320,7 @@ const BarChart = ({ data }) => {
 // Donut chart
 const DonutChart = ({ data }) => {
   const colors = ['#f59e0b','#3b82f6','#8b5cf6','#10b981','#ef4444'];
-  const total = data.reduce((a, b) => a + b.value, 0);
+  const total = data.reduce((a, b) => a + b.value, 0) || 1;
   let cumulative = 0;
   const cx = 80, cy = 80, r = 60, innerR = 40;
   const slices = data.map((d, i) => {
@@ -280,20 +332,24 @@ const DonutChart = ({ data }) => {
     const ix1 = cx + innerR * Math.cos(endAngle), iy1 = cy + innerR * Math.sin(endAngle);
     const ix2 = cx + innerR * Math.cos(startAngle), iy2 = cy + innerR * Math.sin(startAngle);
     const large = (endAngle - startAngle) > Math.PI ? 1 : 0;
-    return { path: `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} L ${ix1} ${iy1} A ${innerR} ${innerR} 0 ${large} 0 ${ix2} ${iy2} Z`, color: colors[i], ...d };
+    return { path: `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} L ${ix1} ${iy1} A ${innerR} ${innerR} 0 ${large} 0 ${ix2} ${iy2} Z`, color: colors[i % colors.length], ...d };
   });
   return (
     <div className="flex flex-col items-center gap-8">
       <svg viewBox="0 0 160 160" className="w-48 h-48 flex-shrink-0 drop-shadow-2xl">
-        {slices.map((s, i) => <path key={i} d={s.path} fill={s.color} className="hover:opacity-80 transition-opacity cursor-pointer" />)}
+        {slices.length === 0 ? (
+            <circle cx="80" cy="80" r="60" fill="#1f2937" />
+        ) : (
+            slices.map((s, i) => <path key={i} d={s.path} fill={s.color} className="hover:opacity-80 transition-opacity cursor-pointer" />)
+        )}
         <text x="80" y="78" textAnchor="middle" fill="white" fontSize="10" fontWeight="black" className="uppercase tracking-widest">Growth</text>
         <text x="80" y="92" textAnchor="middle" fill="#f59e0b" fontSize="8" fontWeight="bold" className="uppercase tracking-widest">Trajectory</text>
       </svg>
       <div className="grid grid-cols-2 gap-x-8 gap-y-3 w-full">
         {data.map((d, i) => (
           <div key={d.name} className="flex items-center gap-3 group">
-            <div className="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-lg" style={{background: colors[i]}}></div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">{d.name}</span>
+            <div className="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-lg" style={{background: colors[i % colors.length]}}></div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors truncate max-w-[80px]">{d.name}</span>
             <span className="text-xs font-black text-white ml-auto">{d.value}%</span>
           </div>
         ))}

@@ -1,22 +1,23 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import ProductCard, { MOCK_PRODUCTS } from './ProductCard';
-import { useShop } from '../context/ShopContext';
+import ProductCard from './ProductCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Filter, ShoppingBag, Star, RefreshCcw, Search, X, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import PageHeader from '../layout/PageHeader';
+import { useShop } from '../context/ShopContext';
 
 export default function Shop() {
-  const { products, loading, categories } = useShop();
-  
-  const CATEGORIES = useMemo(() => {
-    return ["All", ...categories.map(cat => cat.title || cat.name || cat.label)];
-  }, [categories]);
-
   const [searchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get('category');
   const searchFromUrl = searchParams.get('search');
   
+  const { products: shopProducts, categories } = useShop();
+
+  // Dynamic category list from active categories in DB
+  const dynamicCategories = useMemo(() => {
+    const activeCats = categories.filter(c => c.active).sort((a,b) => (a.priority || 0) - (b.priority || 0)).map(c => c.name);
+    return ["All", ...activeCats];
+  }, [categories]);
   const [activeCategory, setActiveCategory] = useState(categoryFromUrl || "All");
   const [priceRange, setPriceRange] = useState(1200000);
   const [minRating, setMinRating] = useState(0);
@@ -25,7 +26,7 @@ export default function Shop() {
 
   // Update state if URL changes
   useEffect(() => {
-    if (categoryFromUrl && CATEGORIES.includes(categoryFromUrl)) {
+    if (categoryFromUrl && dynamicCategories.includes(categoryFromUrl)) {
       setActiveCategory(categoryFromUrl);
     } else if (!categoryFromUrl) {
       setActiveCategory("All");
@@ -34,24 +35,23 @@ export default function Shop() {
     if (searchFromUrl) {
       setSearchTerm(searchFromUrl);
     }
-  }, [categoryFromUrl, searchFromUrl]);
+  }, [categoryFromUrl, searchFromUrl, dynamicCategories]);
 
   // Parse price string to number for filtering
   const parsePrice = (priceStr) => parseInt(priceStr.replace(/[^\d]/g, ''));
 
   const filteredProducts = useMemo(() => {
-    const dataToFilter = products.length > 0 ? products : MOCK_PRODUCTS;
-    return dataToFilter.filter(product => {
+    return shopProducts.filter(product => {
       const price = parsePrice(String(product.price));
       const categoryMatch = activeCategory === "All" || product.category === activeCategory;
       const priceMatch = price <= priceRange;
-      const ratingMatch = (product.rating || 5) >= minRating;
-      const searchMatch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          product.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const ratingMatch = (product.rating || 0) >= minRating;
+      const searchMatch = (product.name || "").toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          (product.category || "").toLowerCase().includes(searchTerm.toLowerCase());
       
       return categoryMatch && priceMatch && ratingMatch && searchMatch;
     });
-  }, [products, activeCategory, priceRange, minRating, searchTerm]);
+  }, [activeCategory, priceRange, minRating, searchTerm, shopProducts]);
 
   const resetFilters = () => {
     setActiveCategory("All");
@@ -142,22 +142,13 @@ export default function Shop() {
                         <Filter size={20} className="text-brand-500" />
                         <h3 className="font-black text-xl tracking-tight uppercase">Filters</h3>
                     </div>
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={resetFilters}
-                        className="p-2 text-slate-400 hover:text-brand-500 hover:bg-brand-50 rounded-xl transition-all"
-                        title="Reset Filters"
-                      >
-                        <RefreshCcw size={18} />
-                      </button>
-                      <button 
-                        onClick={() => setShowFilters(false)}
-                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                        title="Close Filters"
-                      >
-                        <X size={20} />
-                      </button>
-                    </div>
+                    <button 
+                      onClick={resetFilters}
+                      className="p-2 text-slate-400 hover:text-brand-500 hover:bg-brand-50 rounded-xl transition-all"
+                      title="Reset Filters"
+                    >
+                      <RefreshCcw size={18} />
+                    </button>
                   </div>
                   
                   <div className="space-y-10">
@@ -165,7 +156,7 @@ export default function Shop() {
                     <div>
                       <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-5">Categories</h4>
                       <ul className="space-y-1.5">
-                        {CATEGORIES.map((category) => (
+                        {[...new Set(dynamicCategories)].map((category) => (
                           <li key={category}>
                             <button
                               onClick={() => setActiveCategory(category)}
@@ -230,14 +221,6 @@ export default function Shop() {
                         ))}
                       </div>
                     </div>
-
-                    {/* Apply Filters (Mobile only usually, but good for all) */}
-                    <button 
-                      onClick={() => setShowFilters(false)}
-                      className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black shadow-lg shadow-slate-900/10 hover:bg-brand-500 transition-all active:scale-95"
-                    >
-                      Show Results
-                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -246,11 +229,7 @@ export default function Shop() {
 
           {/* Product Grid */}
           <div className="flex-1">
-            {loading ? (
-              <div className="py-20 flex justify-center">
-                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full" />
-              </div>
-            ) : filteredProducts.length > 0 ? (
+            {filteredProducts.length > 0 ? (
               <motion.div 
                 layout
                 className={`grid grid-cols-2 ${
