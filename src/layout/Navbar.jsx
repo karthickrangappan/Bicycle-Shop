@@ -342,10 +342,10 @@ export default function Navbar() {
                   >
                     <div className="p-4 bg-slate-50 rounded-xl mb-2 flex items-center gap-3">
                        <div className="w-10 h-10 bg-brand-500 text-white rounded-xl flex items-center justify-center font-black">
-                          {user.name[0].toUpperCase()}
+                          {(user.name || 'U')[0].toUpperCase()}
                        </div>
                        <div className="overflow-hidden">
-                          <p className="font-black text-sm text-slate-900 truncate">{user.name}</p>
+                          <p className="font-black text-sm text-slate-900 truncate">{user.name || 'Unknown User'}</p>
                           <p className="text-[10px] font-bold text-slate-400 truncate">{user.email}</p>
                        </div>
                     </div>
@@ -512,10 +512,10 @@ export default function Navbar() {
                 ) : (
                   <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl">
                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand-500 shadow-sm font-black">
-                      {user.name[0].toUpperCase()}
+                      {(user.name || 'U')[0].toUpperCase()}
                     </div>
                     <div className="overflow-hidden">
-                      <p className="text-xs font-black text-slate-950 truncate">{user.name}</p>
+                      <p className="text-xs font-black text-slate-950 truncate">{user.name || 'Unknown User'}</p>
                       <button onClick={logout} className="text-[10px] font-bold text-red-500 uppercase tracking-widest">Sign Out</button>
                     </div>
                   </div>
