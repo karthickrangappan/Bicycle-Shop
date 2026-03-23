@@ -136,13 +136,22 @@ export default function Shop() {
                         <Filter size={20} className="text-brand-500" />
                         <h3 className="font-black text-xl tracking-tight uppercase">Filters</h3>
                     </div>
-                    <button 
-                      onClick={resetFilters}
-                      className="p-2 text-slate-400 hover:text-brand-500 hover:bg-brand-50 rounded-xl transition-all"
-                      title="Reset Filters"
-                    >
-                      <RefreshCcw size={18} />
-                    </button>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={resetFilters}
+                        className="p-2 text-slate-400 hover:text-brand-500 hover:bg-brand-50 rounded-xl transition-all"
+                        title="Reset Filters"
+                      >
+                        <RefreshCcw size={18} />
+                      </button>
+                      <button 
+                        onClick={() => setShowFilters(false)}
+                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                        title="Close Filters"
+                      >
+                        <X size={20} />
+                      </button>
+                    </div>
                   </div>
                   
                   <div className="space-y-10">
@@ -215,6 +224,14 @@ export default function Shop() {
                         ))}
                       </div>
                     </div>
+
+                    {/* Apply Filters (Mobile only usually, but good for all) */}
+                    <button 
+                      onClick={() => setShowFilters(false)}
+                      className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black shadow-lg shadow-slate-900/10 hover:bg-brand-500 transition-all active:scale-95"
+                    >
+                      Show Results
+                    </button>
                   </div>
                 </div>
               </motion.div>

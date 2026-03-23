@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Heart, ShoppingCart, Star, ArrowLeft, Shield, Truck, RotateCcw } from 'lucide-react';
-import { MOCK_PRODUCTS } from './ProductCard';
+import { Heart, ShoppingCart, Star, ArrowLeft, Shield, Truck, RotateCcw, ArrowRight } from 'lucide-react';
+import ProductCard, { MOCK_PRODUCTS } from './ProductCard';
 import { useShop } from '../context/ShopContext';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper/modules';
+import 'swiper/css';
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -15,6 +18,11 @@ export default function ProductDetails() {
     const found = MOCK_PRODUCTS.find(p => p.id === parseInt(id));
     setProduct(found);
   }, [id]);
+
+  const relatedProducts = React.useMemo(() => {
+    if (!product) return [];
+    return MOCK_PRODUCTS.filter(p => p.category === product.category && p.id !== product.id);
+  }, [product]);
 
   if (!product) {
     return (
@@ -149,6 +157,64 @@ export default function ProductDetails() {
         </div>
 
       </div>
+
+      {/* Related Products Section */}
+      {relatedProducts.length > 0 && (
+        <section className="bg-white py-24 border-t border-slate-100 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+              <div className="max-w-2xl">
+                <span className="text-[10px] font-black uppercase tracking-widest text-brand-500 mb-2 block">Top Recommendations</span>
+                <h2 className="text-4xl font-black text-slate-900 tracking-tighter">
+                  More <span className="text-brand-600">{product.category}</span> Masterpieces
+                </h2>
+              </div>
+              <Link 
+                to={`/shop?category=${product.category}`} 
+                className="flex items-center gap-3 text-slate-900 font-black hover:text-brand-600 transition-all group px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100"
+              >
+                View Category
+                <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
+
+            <div className="-mx-4 px-4 sm:mx-0 sm:px-0">
+              <Swiper
+                modules={[Autoplay]}
+                spaceBetween={20}
+                slidesPerView={1.2}
+                loop={relatedProducts.length > 4}
+                speed={800}
+                autoplay={{
+                  delay: 3000,
+                  disableOnInteraction: false,
+                  pauseOnMouseEnter: true,
+                }}
+                breakpoints={{
+                  640: { slidesPerView: 2, spaceBetween: 24 }, // sm
+                  768: { slidesPerView: 2.5, spaceBetween: 28 }, // md
+                  1024: { slidesPerView: 3, spaceBetween: 32 }, // lg
+                  1280: { slidesPerView: 4, spaceBetween: 32 }, // xl
+                }}
+                className="!pb-8 !pt-4"
+              >
+                {relatedProducts.map((p, idx) => (
+                  <SwiperSlide key={p.id}>
+                    <motion.div
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      viewport={{ once: true }}
+                    >
+                      <ProductCard product={p} />
+                    </motion.div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
