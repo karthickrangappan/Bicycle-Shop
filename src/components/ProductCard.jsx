@@ -26,7 +26,7 @@ export function ProductGrid() {
   );
 }
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, disableMotion = false }) {
   const { addToCart } = useShop();
   const navigate = useNavigate();
 
@@ -36,18 +36,18 @@ export default function ProductCard({ product }) {
     navigate(`/product/${product.id}`);
   };
 
-  // Dynamic themes based on product category
-  const getCategoryTheme = (category) => {
-    const cat = (category || "").toLowerCase();
-    if (cat.includes('mountain')) return { gradient: "from-blue-600", border: "bg-blue-600", bg: "bg-blue-50/40", text: "text-blue-600", light: "bg-blue-50" };
-    if (cat.includes('road')) return { gradient: "from-emerald-600", border: "bg-emerald-600", bg: "bg-emerald-50/40", text: "text-emerald-600", light: "bg-emerald-50" };
-    if (cat.includes('urban') || cat.includes('city')) return { gradient: "from-cyan-500", border: "bg-cyan-500", bg: "bg-cyan-50/40", text: "text-cyan-600", light: "bg-cyan-50" };
-    if (cat.includes('electric') || cat.includes('e-bike')) return { gradient: "from-amber-500", border: "bg-amber-500", bg: "bg-amber-50/40", text: "text-amber-600", light: "bg-amber-50" };
-    if (cat.includes('gravel')) return { gradient: "from-indigo-500", border: "bg-indigo-500", bg: "bg-indigo-50/40", text: "text-indigo-600", light: "bg-indigo-50" };
-    return { gradient: "from-brand-600", border: "bg-brand-600", bg: "bg-slate-50", text: "text-brand-600", light: "bg-brand-50" };
+  // Theme configuration for product cards
+  const getCategoryTheme = () => {
+    return { 
+      gradient: "from-brand-600", 
+      border: "bg-brand-600", 
+      bg: "bg-slate-50", 
+      text: "text-brand-600", 
+      light: "bg-slate-100" 
+    };
   };
 
-  const theme = getCategoryTheme(product.category);
+  const theme = getCategoryTheme();
 
   const formatCurrency = (amount) => {
     const numericAmount = typeof amount === 'string' 
@@ -58,15 +58,17 @@ export default function ProductCard({ product }) {
     }).format(numericAmount);
   };
 
-
+  const motionProps = disableMotion ? {} : {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+    viewport: { once: true }
+  };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      viewport={{ once: true }}
-      className={`group relative ${theme.light} rounded-[2rem] border border-slate-100 overflow-hidden shadow-lg shadow-slate-200/40 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_30px_60px_-15px_rgba(15,23,42,0.1)] hover:border-brand-100/50`}
+      {...motionProps}
+      className={`group relative ${theme.light} rounded-[2rem] border border-slate-300 overflow-hidden shadow-lg shadow-slate-200/40 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_30px_60px_-15px_rgba(15,23,42,0.1)] hover:border-brand-100/50`}
     >
       {/* IMAGE CONTAINER */}
       <div className={`relative aspect-video sm:aspect-[4/3] overflow-hidden ${theme.bg} transition-colors duration-500`}>

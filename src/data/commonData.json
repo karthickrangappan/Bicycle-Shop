@@ -1,42 +1,5 @@
 {
-  "categories": [
-    {
-      "id": 1,
-      "name": "Mountain Bikes",
-      "slug": "mountain-bikes",
-      "subtitle": "Conquer rugged terrain with precision-engineered handling.",
-      "image": "/images/cat_mountain.png",
-      "link": "/shop?category=mountain-bikes",
-      "color": "from-blue-600/90"
-    },
-    {
-      "id": 2,
-      "name": "Road Performance",
-      "slug": "road-bikes",
-      "subtitle": "Engineered for pure speed and relentless endurance.",
-      "image": "/images/cat_road.png",
-      "link": "/shop?category=road-bikes",
-      "color": "from-emerald-600/90"
-    },
-    {
-      "id": 3,
-      "name": "Urban Commuters",
-      "slug": "urban-bikes",
-      "subtitle": "The ultimate city riding experience for modern life.",
-      "image": "/images/hero/hero_city.png",
-      "link": "/shop?category=urban-bikes",
-      "color": "from-cyan-600/90"
-    },
-    {
-      "id": 4,
-      "name": "Elite Gear",
-      "slug": "accessories",
-      "subtitle": "Professional grade accessories for every journey.",
-      "image": "/images/hero/hero_mtb.png",
-      "link": "/shop?category=accessories",
-      "color": "from-indigo-600/90"
-    }
-  ],
+  "categories": [],
   "mockProducts": [
     {
       "id": 1,
