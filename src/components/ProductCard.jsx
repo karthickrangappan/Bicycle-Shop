@@ -3,6 +3,11 @@ import { motion } from "framer-motion";
 import { useShop } from "../context/ShopContext";
 import { Link, useNavigate } from "react-router-dom";
 
+export const MOCK_PRODUCTS = [
+  { id: 1, name: "Premium Road Bike", price: "₹45,000", image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e", category: "Men", rating: 5, status: "active" },
+  { id: 2, name: "Mountain Extreme", price: "₹38,000", image: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7", category: "Electric", rating: 4, status: "active" }
+];
+
 // 🔥 GRID COMPONENT
 export function ProductGrid() {
   const { products, loading } = useShop();
