@@ -16,7 +16,6 @@ export default function Checkout() {
    const [selectedAddressId, setSelectedAddressId] = useState(null);
    
    // New Shipping Logic states
-   const [assemblyTier, setAssemblyTier] = useState('Standard'); 
    const [addressType, setAddressType] = useState('Residential');
    const [mechanicAvailable, setMechanicAvailable] = useState(null);
    const [isValidatingAddress, setIsValidatingAddress] = useState(false);
@@ -105,26 +104,22 @@ export default function Checkout() {
    // Dimensional Weight Logic & Bulky Factor
    const shippingCosts = useMemo(() => {
       let totalDimWeightCost = 0;
-      let assemblyFee = assemblyTier === 'ReadyToRide' ? 1499 : 499;
 
       activeItems.forEach(item => {
-         // Default bicycle box dimensions if not provided (LxWxH in cm)
          const L = item.length || 150;
          const W = item.width || 25;
          const H = item.height || 80;
-         const dimWeight = (L * W * H) / 5000; // standard factor
-         totalDimWeightCost += dimWeight * 20; // ₹20 per dim kg
+         const dimWeight = (L * W * H) / 5000;
+         totalDimWeightCost += dimWeight * 20;
       });
 
-      // Commercial surcharge
       const surcharge = addressType === 'Commercial' ? 250 : 0;
 
       return {
          freight: Math.round(totalDimWeightCost),
-         assembly: assemblyFee,
-         total: Math.round(totalDimWeightCost + assemblyFee + surcharge)
+         total: Math.round(totalDimWeightCost + surcharge)
       };
-   }, [activeItems, assemblyTier, addressType]);
+   }, [activeItems, addressType]);
 
    const totalInvestment = subtotal + shippingCosts.total;
 
@@ -181,7 +176,6 @@ export default function Checkout() {
          ...formData,
          items: activeItems,
          shippingCost: shippingCosts.total,
-         assemblyTier,
          addressType,
          subtotal,
          total: totalInvestment,
@@ -292,37 +286,7 @@ export default function Checkout() {
                            </AnimatePresence>
                         </div>
 
-                        {/* Assembly Tiers Overlay */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                           <button
-                              type="button"
-                              onClick={() => setAssemblyTier('Standard')}
-                              className={`p-4 lg:p-6 rounded-3xl border-2 transition-all flex flex-col gap-2 lg:gap-3 text-left ${assemblyTier === 'Standard' ? 'border-slate-900 bg-slate-900 text-white shadow-xl' : 'border-slate-50 bg-slate-50 text-slate-400 hover:border-slate-200'}`}
-                           >
-                              <Box size={22} />
-                              <div>
-                                 <p className="font-black text-base lg:text-lg">Standard Boxed</p>
-                                 <p className="text-[9px] font-bold uppercase tracking-widest opacity-60">Factory Packaging</p>
-                                 <p className="mt-2 text-xs lg:text-sm font-black">₹499</p>
-                              </div>
-                           </button>
-
-                           <button
-                              type="button"
-                              onClick={() => setAssemblyTier('ReadyToRide')}
-                              className={`p-4 lg:p-6 rounded-3xl border-2 transition-all flex flex-col gap-2 lg:gap-3 text-left relative overflow-hidden ${assemblyTier === 'ReadyToRide' ? 'border-brand-500 bg-brand-500 text-white shadow-xl' : 'border-slate-50 bg-slate-50 text-slate-400 hover:border-slate-200'}`}
-                           >
-                              <Wrench size={22} />
-                              <div>
-                                 <p className="font-black text-base lg:text-lg">Ready-to-Ride</p>
-                                 <p className="text-[9px] font-bold uppercase tracking-widest opacity-60">White-Glove Delivery</p>
-                                 <p className="text-[9px] font-black opacity-80 uppercase mt-1">Available across India</p>
-                                 <p className="mt-2 text-xs lg:text-sm font-black">₹1,499</p>
-                              </div>
-                           </button>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-50">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-0">
                            <div className="space-y-2">
                                <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Full Name</label>
                               <input type="text" name="name" value={formData.name} className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-brand-500 transition-all" onChange={handleChange} />
@@ -411,10 +375,7 @@ export default function Checkout() {
                            <span>Bulky Freight Fee</span>
                            <span className="text-slate-950 font-black tracking-tight">{formatCurrency(shippingCosts.freight)}</span>
                         </div>
-                        <div className="flex justify-between text-slate-500 font-bold text-xs uppercase tracking-widest">
-                           <span>Assembly Tier ({assemblyTier})</span>
-                           <span className="text-slate-950 font-black tracking-tight">{formatCurrency(shippingCosts.assembly)}</span>
-                        </div>
+
                         {addressType === 'Commercial' && (
                            <div className="flex justify-between text-orange-500 font-bold text-xs uppercase tracking-widest">
                               <span>Comm. Surcharge</span>
