@@ -56,8 +56,9 @@ export default function Shop() {
                           (product.category || "").toLowerCase().includes(searchTerm.toLowerCase());
       
       const stockMatch = stockStatus === "all" || (stockStatus === "in-stock" && (product.stock || 0) > 0);
+      const statusMatch = product.status !== 'inactive';
       
-      return categoryMatch && priceMatch && ratingMatch && searchMatch && stockMatch;
+      return categoryMatch && priceMatch && ratingMatch && searchMatch && stockMatch && statusMatch;
     });
 
     // Apply Sorting

@@ -13,7 +13,7 @@ export default function Trending() {
 
   // Select trending products (High rating or just random 8)
   const trendingProducts = React.useMemo(() => {
-    const data = products.length > 0 ? products : MOCK_PRODUCTS;
+    const data = products.length > 0 ? products.filter(p => p.status !== 'inactive') : MOCK_PRODUCTS;
     return [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 8);
   }, [products]);
 

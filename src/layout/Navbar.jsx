@@ -54,8 +54,9 @@ export default function Navbar() {
   const filteredItems = searchQuery.trim() === "" 
     ? [] 
     : shopProducts.filter(product => 
+        product.status !== 'inactive' && (
         (product.name || '').toLowerCase().includes(searchQuery.toLowerCase()) || 
-        (product.category || '').toLowerCase().includes(searchQuery.toLowerCase())
+        (product.category || '').toLowerCase().includes(searchQuery.toLowerCase()))
       ).slice(0, 5);
 
   const isHome = location.pathname === "/";

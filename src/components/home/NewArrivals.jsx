@@ -14,7 +14,7 @@ export default function NewArrivals() {
   
   // Select latest products from DB (or fallback to mock)
   const newProducts = React.useMemo(() => {
-    const data = products.length > 0 ? products : MOCK_PRODUCTS;
+    const data = products.length > 0 ? products.filter(p => p.status !== 'inactive') : MOCK_PRODUCTS;
     // Sort by id descending or just take the last 6
     return [...data].sort((a, b) => b.id - a.id).slice(0, 6);
   }, [products]);

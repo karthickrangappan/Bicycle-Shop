@@ -253,9 +253,30 @@ export default function ProductDetails() {
               </p>
 
               {isVerified ? (
-                <form onSubmit={submitReview} className="p-8 bg-slate-900 rounded-[2rem] text-white space-y-4 shadow-2xl">
-                  <h3 className="text-lg font-black tracking-tight mb-2">Leave a Review</h3>
+                <form onSubmit={submitReview} className="p-8 bg-slate-900 rounded-[2rem] text-white space-y-6 shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-bl-full pointer-events-none" />
+                  <h3 className="text-lg font-black tracking-tight mb-2">Leave a Performance Review</h3>
                   
+                  {/* Star Rating Input */}
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Rate your experience</label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setNewReview({ ...newReview, rating: star })}
+                          className="transition-transform active:scale-90"
+                        >
+                          <Star 
+                            size={24} 
+                            className={`${star <= newReview.rating ? "fill-brand-500 text-brand-500" : "text-slate-700"} transition-all`} 
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Height (cm)</label>
@@ -266,7 +287,7 @@ export default function ProductDetails() {
                           required
                           value={newReview.height}
                           onChange={e => setNewReview({...newReview, height: e.target.value})}
-                          className="w-full pl-9 pr-3 py-3 bg-slate-800 border-none rounded-xl text-xs font-bold focus:ring-1 focus:ring-brand-500" 
+                          className="w-full pl-9 pr-3 py-3 bg-slate-800 border-none rounded-xl text-xs font-bold focus:ring-1 focus:ring-brand-500 transition-all" 
                           placeholder="180" 
                         />
                       </div>
@@ -280,7 +301,7 @@ export default function ProductDetails() {
                           required
                           value={newReview.weight}
                           onChange={e => setNewReview({...newReview, weight: e.target.value})}
-                          className="w-full pl-9 pr-3 py-3 bg-slate-800 border-none rounded-xl text-xs font-bold focus:ring-1 focus:ring-brand-500" 
+                          className="w-full pl-9 pr-3 py-3 bg-slate-800 border-none rounded-xl text-xs font-bold focus:ring-1 focus:ring-brand-500 transition-all" 
                           placeholder="75" 
                         />
                       </div>
@@ -288,14 +309,14 @@ export default function ProductDetails() {
                   </div>
 
                   <textarea 
-                    placeholder="Your experience..." 
+                    placeholder="Tell us about the handling, comfort, and speed..." 
                     required
                     value={newReview.text}
                     onChange={e => setNewReview({...newReview, text: e.target.value})}
-                    className="w-full p-4 bg-slate-800 border-none rounded-xl text-xs font-bold min-h-[100px] focus:ring-1 focus:ring-brand-500"
+                    className="w-full p-4 bg-slate-800 border-none rounded-xl text-xs font-bold min-h-[100px] focus:ring-1 focus:ring-brand-500 transition-all"
                   />
-                  <button className="w-full py-3 bg-brand-500 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-brand-600 transition-colors">
-                    Post Review
+                  <button className="w-full py-4 bg-brand-500 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-brand-600 transition-all shadow-lg shadow-brand-500/20 active:scale-95">
+                    Post My Review
                   </button>
                 </form>
               ) : (
@@ -324,16 +345,24 @@ export default function ProductDetails() {
                         <div>
                           <h4 className="text-sm font-black text-slate-900 flex items-center gap-1.5">
                             {review.userName}
-                            {review.isVerified && <CheckCircle2 size={14} className="text-brand-500" />}
+                            {review.isVerified && <CheckCircle2 size={12} className="text-brand-500" />}
                           </h4>
                           <div className="flex gap-2 text-[10px] font-black text-slate-400 uppercase tracking-tight mt-0.5">
                              <span>{review.height}cm</span>
                              <span>•</span>
                              <span>{review.weight}kg</span>
+                             {review.createdAt && (
+                               <>
+                                 <span>•</span>
+                                 <span className="text-slate-300">
+                                   {review.createdAt.toDate ? review.createdAt.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recent'}
+                                 </span>
+                               </>
+                             )}
                           </div>
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-0.5">
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} size={12} className={i < review.rating ? "fill-brand-500 text-brand-500" : "text-slate-100"} />
                         ))}
