@@ -308,6 +308,14 @@ export const ShopProvider = ({ children }) => {
     };
     
     await setDoc(doc(db, 'users', user.uid, 'orders', newOrderId), newOrder);
+
+    // Dynamic Notification for Admin
+    await addDoc(collection(db, "notifications"), {
+      msg: `New order placed by ${newOrder.name || user.name} (${newOrderId})`,
+      time: new Date().toLocaleTimeString(),
+      read: false,
+      timestamp: new Date().toISOString()
+    }).catch(e => console.error(e));
     
     // Partially clear cart: Only remove items that were actually in the order
     const remainingCart = cart.filter(cartItem => 

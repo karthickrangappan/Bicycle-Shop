@@ -40,7 +40,7 @@ function List(props) {
 }
 
 export default function AdminLayout({ children }) {
-  const { sidebarOpen, setSidebarOpen, adminUser, logout, notifications, lowStockProducts, pendingOrders } = useAdmin();
+  const { sidebarOpen, setSidebarOpen, adminUser, logout, notifications, lowStockProducts, pendingOrders, markAsRead, markAllAsRead } = useAdmin();
   const location = useLocation();
   const navigate = useNavigate();
   const [expandedMenu, setExpandedMenu] = useState('Cycles');
@@ -209,8 +209,12 @@ export default function AdminLayout({ children }) {
                     <span className="text-[10px] font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full">{unread} New</span>
                   </div>
                   <div className="max-h-[70vh] overflow-y-auto p-2 scrollbar-thin">
-                    {notifications.length > 0 ? notifications.map(n => (
-                      <div key={n.id} className={`p-4 mx-2 my-1 rounded-2xl transition-all ${!n.read ? 'bg-amber-500/5 border border-amber-500/10' : 'opacity-60 hover:opacity-100 hover:bg-gray-800/40'}`}>
+                    {(notifications || []).length > 0 ? [...notifications].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)).map(n => (
+                      <div 
+                        key={n.id} 
+                        onClick={() => !n.read && markAsRead(n.id)}
+                        className={`p-4 mx-2 my-1 rounded-2xl transition-all cursor-pointer ${!n.read ? 'bg-amber-500/5 border border-amber-500/10' : 'opacity-60 hover:opacity-100 hover:bg-gray-800/40'}`}
+                      >
                         <div className="flex gap-4">
                             <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${!n.read ? 'bg-amber-500' : 'bg-gray-700'}`} />
                             <div>
@@ -227,7 +231,12 @@ export default function AdminLayout({ children }) {
                     )}
                   </div>
                   <div className="p-4 bg-gray-950/50 border-t border-gray-800 text-center">
-                     <button className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 hover:text-white transition-all">Clear all alerts</button>
+                     <button 
+                        onClick={() => markAllAsRead()}
+                        className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 hover:text-white transition-all"
+                     >
+                        Clear all alerts
+                     </button>
                   </div>
                 </div>
               )}

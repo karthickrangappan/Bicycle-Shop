@@ -112,6 +112,27 @@ export const AdminProvider = ({ children }) => {
     await addDoc(collection(db, "logs"), newLog).catch(e => console.error(e));
   };
 
+  const addNotification = async (msg) => {
+    const newNotif = { 
+      msg, 
+      time: new Date().toLocaleTimeString(), 
+      read: false, 
+      timestamp: new Date().toISOString() 
+    };
+    await addDoc(collection(db, "notifications"), newNotif).catch(e => console.error(e));
+  };
+
+  const markAsRead = async (id) => {
+    await updateDoc(doc(db, "notifications", id), { read: true }).catch(e => console.error(e));
+  };
+
+  const markAllAsRead = async () => {
+    const unread = notifications.filter(n => !n.read);
+    for (const n of unread) {
+        await updateDoc(doc(db, "notifications", n.id), { read: true }).catch(e => console.error(e));
+    }
+  };
+
   const updateOrderStatus = async (orderId, status, userRefPath) => {
     try {
       if (userRefPath) {
@@ -120,6 +141,7 @@ export const AdminProvider = ({ children }) => {
         await updateDoc(doc(db, "orders", orderId), { status });
       }
       addLog("Order status updated", `${orderId} → ${status}`);
+      addNotification(`Order ${orderId} is now ${status}`);
     } catch(e) {
       console.error(e);
       toast.error('Failed to update order status');
@@ -132,6 +154,7 @@ export const AdminProvider = ({ children }) => {
       if (customer) {
         const newStatus = customer.status === 'active' ? 'blocked' : 'active';
         await updateDoc(doc(db, "users", id), { status: newStatus });
+        addNotification(`Buyer ${customer.name || id} is now ${newStatus === 'active' ? 'Allowed' : 'Stopped'}`);
       }
     } catch(e) { console.error(e); }
   };
@@ -152,6 +175,7 @@ export const AdminProvider = ({ children }) => {
     const newProd = { ...product, sold: 0, rating: 0 };
     await addDoc(collection(db, "products"), newProd).catch(e => console.error(e));
     addLog("Product added", product.name);
+    addNotification(`New cycle added: ${product.name}`);
   };
 
   const updateProduct = async (id, data) => {
@@ -159,6 +183,9 @@ export const AdminProvider = ({ children }) => {
       let docId = id.toString();
       await updateDoc(doc(db, "products", docId), data);
       addLog("Product updated", data.name || `ID: ${id}`);
+      if (data.stock !== undefined) {
+         addNotification(`Stock updated for ${data.name || id}: ${data.stock} left`);
+      }
     } catch(e) { console.error(e); }
   };
 
@@ -334,7 +361,7 @@ export const AdminProvider = ({ children }) => {
       banners, setBanners,
       spareParts, setSpareParts,
       sidebarOpen, setSidebarOpen,
-      notifications,
+      notifications, markAsRead, markAllAsRead,
       lowStockProducts, totalRevenue, totalOrders, pendingOrders, loading
     }}>
       {children}
