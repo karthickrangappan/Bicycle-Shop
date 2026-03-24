@@ -2,7 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAdmin } from "../context/AdminContext";
 
-const sizes = ["XS", "S", "M", "L", "XL"];
+const sizes = [
+  "Age 2-4 (12\")", 
+  "Age 5-8 (16\")", 
+  "Age 10-14 (24\")", 
+  "Age 18-25 (Adult)", 
+  "Universal"
+];
 const colors = [
   "Black",
   "White",

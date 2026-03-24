@@ -207,7 +207,7 @@ export default function Checkout() {
                ...orderPayload,
                paymentMethod: "Razorpay",
                paymentId: response.razorpay_payment_id,
-               status: "Paid",
+               status: "Processing", // Valid fulfillment status, "Paid" is a payment state, not a fulfillment state
             });
             if(res) {
                toast.success("Payment successful ✅");

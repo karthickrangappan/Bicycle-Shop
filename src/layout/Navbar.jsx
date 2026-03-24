@@ -27,6 +27,8 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useShop } from '../context/ShopContext';
 
+// navbar edit 
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);

@@ -291,8 +291,10 @@ export const ShopProvider = ({ children }) => {
     // Final Inventory Check: Re-verify stock at the millisecond of "Place Order"
     // Since we did soft-reservation, we just need to ensure the cart items are still valid.
     
-    const orderNum = (orders.length + 1).toString().padStart(5, '0');
-    const newOrderId = `ORD${orderNum}`;
+    // Use a combination of timestamp and a random string to guarantee uniqueness across users
+    const uniqueSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const orderNum = Date.now().toString().slice(-6); // last 6 digits of timestamp
+    const newOrderId = `ORD-${orderNum}-${uniqueSuffix}`;
     const newOrder = {
       date: new Date().toISOString(),
       items: [...cart],

@@ -3,7 +3,7 @@ import { useAdmin } from '../context/AdminContext';
 
 export function Settings() {
   const [tab, setTab] = useState('general');
-  const { categorizeAllProducts, resetToDefaultCategories, resetAllStocks } = useAdmin();
+  const { categorizeAllProducts, resetToDefaultCategories, resetAllStocks, resetAndSeedProducts } = useAdmin();
   const tabs = ['general', 'payment', 'tax', 'notifications', 'maintenance'];
 
   return (
@@ -75,6 +75,18 @@ export function Settings() {
         {tab === 'maintenance' && (
           <div className="space-y-6">
             <h2 className="font-bold text-white text-xl">Data Maintenance</h2>
+
+            <div className="bg-purple-500/5 border border-purple-500/10 rounded-2xl p-6">
+              <h3 className="font-bold text-purple-500 mb-2">Hard Reset Catalog (Wipe & Seed)</h3>
+              <p className="text-gray-400 text-sm mb-4">CRITICAL: This will irreversibly DELETE every single product in your store and deploy a brand new set of premium, high-quality cycle products complete with generated SKUs and clean images.</p>
+              <button 
+                type="button"
+                onClick={() => { if(confirm('EXTREME WARNING: Do you want to wipe the entire catalog and seed new products?')) resetAndSeedProducts() }}
+                className="bg-purple-500 hover:bg-purple-400 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all"
+              >
+                Execute Catalog Protocol
+              </button>
+            </div>
             
             <div className="bg-red-500/5 border border-red-500/10 rounded-2xl p-6">
               <h3 className="font-bold text-red-500 mb-2">Full Category Wipe & Re-seed</h3>
