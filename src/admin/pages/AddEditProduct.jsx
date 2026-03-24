@@ -3,10 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAdmin } from "../context/AdminContext";
 
 const sizes = [
-  "Age 2-4 (12\")", 
-  "Age 5-8 (16\")", 
-  "Age 10-14 (24\")", 
-  "Age 18-25 (Adult)", 
+  "Age 2-5 (12\")", 
+  "Age 6-10 (20\")", 
+  "Age 11-14 (24\")", 
+  "Age 14-18 (26\")", 
+  "Age 18-20 (Adult S)",
+  "Age 20-25 (Adult M)",
+  "Age 25+ (Adult L)",
   "Universal"
 ];
 const colors = [
@@ -70,8 +73,13 @@ export default function AddEditProduct() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (isEdit && existing) setForm({ ...existing });
-  }, [id]);
+    if (isEdit && existing) {
+      setForm({ 
+        ...existing,
+        variants: existing.variants || []
+      });
+    }
+  }, [id, existing]);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -357,7 +365,7 @@ export default function AddEditProduct() {
           >
             + Add Variant
           </button>
-          {form.variants.length > 0 && (
+          {form.variants?.length > 0 && (
             <div className="space-y-2">
               {form.variants.map((v, i) => (
                 <div

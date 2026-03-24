@@ -146,18 +146,25 @@ export default function ProductDetails() {
 
                    {/* Color Selection */}
                    <div className="space-y-4 mb-8">
-                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Select Paint <span className="text-red-500">*</span></label>
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Select Variant <span className="text-red-500">*</span></label>
                       <div className="flex flex-wrap gap-3">
-                        {['#000000', '#ffffff', '#ef4444', '#3b82f6', '#10b981'].map(color => (
-                          <button
-                            key={color}
-                            onClick={() => setForm(f => ({ ...f, color }))}
-                            className={`w-10 h-10 rounded-full border-2 transition-all hover:scale-110 ${
-                              form.color === color ? 'border-brand-500 ring-2 ring-brand-500/20 shadow-lg' : 'border-white shadow-sm'
-                            }`}
-                            style={{ backgroundColor: color }}
-                          />
-                        ))}
+                        {(product.colors || ['#000000', '#ffffff', '#ef4444', '#3b82f6', '#10b981']).map(color => {
+                          const isHex = color.startsWith('#');
+                          return (
+                            <button
+                              key={color}
+                              onClick={() => setForm(f => ({ ...f, color }))}
+                              className={`px-4 py-2 rounded-xl text-xs font-black transition-all border-2 ${
+                                form.color === color ? 'border-brand-500 bg-brand-50' : 'border-slate-100 bg-white text-slate-400'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2">
+                                {isHex && <div className="w-3 h-3 rounded-full border border-slate-200" style={{ backgroundColor: color }} />}
+                                <span>{color}</span>
+                              </div>
+                            </button>
+                          );
+                        })}
                       </div>
                    </div>
 
@@ -165,7 +172,7 @@ export default function ProductDetails() {
                    <div className="space-y-4 mb-8">
                       <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Select Frame Size <span className="text-red-500">*</span></label>
                       <div className="flex flex-wrap gap-3">
-                        {sizes.map(size => (
+                        {(product.sizes || ['XS', 'S', 'M', 'L', 'XL']).map(size => (
                           <button
                             key={size}
                             onClick={() => setSelectedSize(size)}
@@ -186,14 +193,31 @@ export default function ProductDetails() {
                <button 
                  onClick={handleAddToCart}
                  disabled={product.stock <= 0 || !selectedSize}
-                 className={`flex-grow py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95 ${
+                 className={`flex-1 py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95 ${
+                   product.stock > 0 && selectedSize
+                   ? "bg-slate-100 text-slate-900 shadow-slate-200 border border-slate-200 hover:bg-white hover:-translate-y-1"
+                   : "bg-slate-100 text-slate-400 cursor-not-allowed shadow-none"
+                 }`}
+               >
+                 <ShoppingCart size={20} />
+                 {product.stock <= 0 ? "Out of Stock" : !selectedSize ? "Select Size" : "Add to Bag"}
+               </button>
+
+               <button 
+                 onClick={() => { 
+                    handleAddToCart(); 
+                    if(selectedSize) navigate('/checkout', { 
+                       state: { product, selectedSize, selectedColor: form.color } 
+                    }); 
+                 }}
+                 disabled={product.stock <= 0 || !selectedSize}
+                 className={`flex-[1.5] py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95 ${
                    product.stock > 0 && selectedSize
                    ? "bg-brand-500 text-white shadow-brand-500/20 hover:bg-brand-600 hover:-translate-y-1"
                    : "bg-slate-100 text-slate-400 cursor-not-allowed shadow-none"
                  }`}
                >
-                 <ShoppingCart size={20} />
-                 {product.stock <= 0 ? "Out of Stock" : !selectedSize ? "Select Size to Add" : "Add to Bag"}
+                 {product.stock <= 0 ? "Out of Stock" : !selectedSize ? "Select Variant" : "Buy It Now"}
                </button>
             </div>
 

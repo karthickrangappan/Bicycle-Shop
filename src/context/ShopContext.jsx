@@ -297,10 +297,10 @@ export const ShopProvider = ({ children }) => {
     const newOrderId = `ORD-${orderNum}-${uniqueSuffix}`;
     const newOrder = {
       date: new Date().toISOString(),
-      items: [...cart],
+      items: orderData.items || [...cart],
       ...orderData,
-      total: orderData.total || cart.reduce((acc, item) => acc + (parseFloat(String(item.price).replace(/[^\d.]/g, '')) * (item.quantity || 1)), 0),
-      status: orderData.status || 'Pending', // Pending → Processing → Assembling → Shipped → Delivered
+      total: orderData.total || (orderData.items || cart).reduce((acc, item) => acc + (parseFloat(String(item.price).replace(/[^\d.]/g, '')) * (item.quantity || 1)), 0),
+      status: orderData.status || 'Pending', 
       paymentStatus: orderData.paymentMethod === 'Razorpay' ? 'Paid' : 'Pending',
       isCancellable: true,
       isReturnable: false,
@@ -309,9 +309,16 @@ export const ShopProvider = ({ children }) => {
     
     await setDoc(doc(db, 'users', user.uid, 'orders', newOrderId), newOrder);
     
-    // Clear cart without adding back to stock (since it's now an order)
-    setCart([]); 
-    updateUserData({ cart: [] });
+    // Partially clear cart: Only remove items that were actually in the order
+    const remainingCart = cart.filter(cartItem => 
+      !newOrder.items.some(orderItem => 
+        orderItem.id === cartItem.id && 
+        orderItem.selectedSize === cartItem.selectedSize && 
+        orderItem.selectedColor === cartItem.selectedColor
+      )
+    );
+    setCart(remainingCart); 
+    updateUserData({ cart: remainingCart });
     return { ...newOrder, id: newOrderId };
   };
 
