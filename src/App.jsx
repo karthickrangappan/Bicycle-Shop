@@ -11,7 +11,7 @@ import { useShop } from "./context/ShopContext";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import Cart from "./components/Cart";
-import Wishlist from "./components/Wishlist";
+import CategoryPage from "./components/CategoryPage";
 import ProductDetails from "./components/ProductDetails";
 import Checkout from "./components/Checkout";
 import MyOrders from "./components/MyOrders";
@@ -61,6 +61,9 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
+        {/* Category Route */}
+        <Route path="/category/:name" element={<CategoryPage />} />
+
         {/* Product Routes */}
         <Route path="/product/:id" element={<ProductDetails />} />
 
@@ -78,14 +81,6 @@ function AppContent() {
           element={
             <PrivateRoute>
               <Cart />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/wishlist"
-          element={
-            <PrivateRoute>
-              <Wishlist />
             </PrivateRoute>
           }
         />

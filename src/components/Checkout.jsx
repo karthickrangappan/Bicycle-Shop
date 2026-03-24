@@ -385,15 +385,19 @@ export default function Checkout() {
 
                      <div className="space-y-6 mb-12">
                         {activeItems.map(item => (
-                           <div key={item.id} className="flex gap-4 items-center">
-                              <div className="w-16 h-16 rounded-xl bg-slate-50 overflow-hidden border border-slate-100 p-2">
-                                 <img src={item.image} className="w-full h-full object-contain" />
+                           <div key={item.id} className="flex gap-6 items-center bg-slate-50/50 p-4 rounded-3xl border border-slate-100/50 hover:bg-white transition-all group">
+                              <div className="w-28 h-28 rounded-2xl bg-white overflow-hidden border border-slate-100 p-0 shadow-sm flex-shrink-0 group-hover:scale-105 transition-transform duration-500">
+                                 <img src={item.image} className="w-full h-full object-cover" alt={item.name} />
                               </div>
                               <div className="flex-grow">
-                                 <p className="text-slate-900 font-black text-xs line-clamp-1">{item.name}</p>
-                                 <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5">{item.selectedSize} × {item.quantity}</p>
+                                 <p className="text-slate-900 font-black text-sm line-clamp-2 leading-tight mb-1">{item.name}</p>
+                                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-2">
+                                    <span className="px-2 py-0.5 bg-slate-100 rounded text-slate-500">{item.selectedSize}</span>
+                                    <span>×</span>
+                                    <span className="font-black text-slate-600">{item.quantity} units</span>
+                                 </p>
                               </div>
-                              <p className="text-slate-900 font-black text-xs">₹{item.price}</p>
+                              <p className="text-slate-900 font-black text-sm whitespace-nowrap">₹{item.price}</p>
                            </div>
                         ))}
                      </div>

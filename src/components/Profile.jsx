@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  User, Package, MapPin, LogOut, ChevronRight, Mail, Phone, ShieldCheck, Heart, ShoppingCart, Calendar, ArrowRight
+  User, Package, MapPin, LogOut, ChevronRight, Mail, Phone, ShieldCheck, ShoppingCart, Calendar, ArrowRight
 } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PageHeader from '../layout/PageHeader';
 
 export default function Profile() {
-  const { user, logout, orders, cart, wishlist, addresses, addAddress, removeAddress } = useShop();
+  const { user, logout, orders, cart, addresses, addAddress, removeAddress } = useShop();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -159,14 +159,7 @@ export default function Profile() {
                            </button>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                           <ProfileStat 
-                              to="/wishlist" 
-                              icon={Heart} 
-                              value={wishlist.length} 
-                              label="Wishlist Items" 
-                              active={wishlist.length > 0} 
-                           />
+                        <div className="grid grid-cols-1 gap-4">
                            <ProfileStat 
                               to="/cart" 
                               icon={ShoppingCart} 

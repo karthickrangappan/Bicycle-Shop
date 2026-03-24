@@ -1,43 +1,10 @@
 {
-  "categories": [
-    {
-      "id": 1,
-      "title": "Mountain Bikes",
-      "subtitle": "Conquer rugged terrain with precision-engineered handling.",
-      "image": "/images/cat_mountain.png",
-      "link": "/shop?category=Mountain",
-      "color": "from-blue-600/90"
-    },
-    {
-      "id": 2,
-      "title": "Road Performance",
-      "subtitle": "Engineered for pure speed and relentless endurance.",
-      "image": "/images/cat_road.png",
-      "link": "/shop?category=Road",
-      "color": "from-emerald-600/90"
-    },
-    {
-      "id": 3,
-      "title": "Urban Commuters",
-      "subtitle": "The ultimate city riding experience for modern life.",
-      "image": "/images/hero/hero_city.png",
-      "link": "/shop?category=City",
-      "color": "from-cyan-600/90"
-    },
-    {
-      "id": 4,
-      "title": "Elite Gear",
-      "subtitle": "Professional grade accessories for every journey.",
-      "image": "/images/hero/hero_mtb.png",
-      "link": "/shop?category=Accessories",
-      "color": "from-indigo-600/90"
-    }
-  ],
+  "categories": [],
   "mockProducts": [
     {
       "id": 1,
       "name": "Firefox Viper 21S",
-      "category": "Mountain",
+      "category": "Mountain Bikes",
       "price": "₹24,999",
       "rating": 4.8,
       "reviews": 124,
@@ -46,7 +13,7 @@
     {
       "id": 2,
       "name": "Giant TCR Advanced",
-      "category": "Road",
+      "category": "Road Performance",
       "price": "₹1,85,000",
       "rating": 4.9,
       "reviews": 89,
@@ -64,7 +31,7 @@
     {
       "id": 4,
       "name": "Btwin Riverside 120",
-      "category": "City",
+      "category": "Urban Commuters",
       "price": "₹12,999",
       "rating": 4.5,
       "reviews": 342,
@@ -73,7 +40,7 @@
     {
       "id": 5,
       "name": "Hercules Roadeo A50",
-      "category": "Mountain",
+      "category": "Mountain Bikes",
       "price": "₹18,500",
       "rating": 4.6,
       "reviews": 156,
@@ -82,7 +49,7 @@
     {
       "id": 6,
       "name": "Trek Domane AL 2",
-      "category": "Road",
+      "category": "Road Performance",
       "price": "₹82,299",
       "rating": 4.8,
       "reviews": 92,
@@ -91,7 +58,7 @@
     {
       "id": 7,
       "name": "Merida Big Nine 20",
-      "category": "Mountain",
+      "category": "Mountain Bikes",
       "price": "₹45,500",
       "rating": 4.7,
       "reviews": 78,
@@ -118,7 +85,7 @@
     {
       "id": 10,
       "name": "Scott Speedster 40",
-      "category": "Road",
+      "category": "Road Performance",
       "price": "₹75,000",
       "rating": 4.6,
       "reviews": 112,
@@ -127,7 +94,7 @@
     {
       "id": 11,
       "name": "Kona Lava Dome",
-      "category": "Mountain",
+      "category": "Mountain Bikes",
       "price": "₹58,000",
       "rating": 4.7,
       "reviews": 54,
@@ -145,7 +112,7 @@
     {
       "id": 13,
       "name": "Brompton C Line",
-      "category": "City",
+      "category": "Urban Commuters",
       "price": "₹1,65,000",
       "rating": 4.9,
       "reviews": 32,
@@ -154,7 +121,7 @@
     {
       "id": 14,
       "name": "Santa Cruz Blur",
-      "category": "Mountain",
+      "category": "Mountain Bikes",
       "price": "₹4,50,000",
       "rating": 5.0,
       "reviews": 28,
@@ -163,7 +130,7 @@
     {
       "id": 15,
       "name": "Pinarello Dogma F12",
-      "category": "Road",
+      "category": "Road Performance",
       "price": "₹12,00,000",
       "rating": 5.0,
       "reviews": 15,
@@ -181,7 +148,7 @@
     {
       "id": 17,
       "name": "Canyon Spectral",
-      "category": "Mountain",
+      "category": "Mountain Bikes",
       "price": "₹2,90,000",
       "rating": 4.9,
       "reviews": 42,
@@ -190,7 +157,7 @@
     {
       "id": 18,
       "name": "Bianchi Aria",
-      "category": "Road",
+      "category": "Road Performance",
       "price": "₹2,30,000",
       "rating": 4.8,
       "reviews": 76,
@@ -208,7 +175,7 @@
     {
       "id": 20,
       "name": "Dahon Mariner",
-      "category": "City",
+      "category": "Urban Commuters",
       "price": "₹62,000",
       "rating": 4.7,
       "reviews": 84,
