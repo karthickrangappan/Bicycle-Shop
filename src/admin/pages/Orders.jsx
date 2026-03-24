@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import { useAdmin } from '../context/AdminContext';
 
 const statusColors = {
-  Done: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-  Sent: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  Building: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
-  Preparing: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-  Waiting: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  Delivered: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  Shipped: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  Assembling: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+  Processing: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+  Pending: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
   Cancelled: 'bg-red-500/10 text-red-400 border-red-500/20',
 };
 
 // Perfectly synced with MyOrders.jsx live tracking flow
-const statusFlow = ['Waiting', 'Preparing', 'Building', 'Sent', 'Done'];
+const statusFlow = ['Pending', 'Processing', 'Assembling', 'Shipped', 'Delivered'];
 
 function InvoiceModal({ order, onClose }) {
   return (
@@ -101,7 +101,7 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
         </div>
 
         <div className="space-y-3">
-          {order.status !== 'Cancelled' && order.status !== 'Done' && (
+          {order.status !== 'Cancelled' && order.status !== 'Delivered' && (
             <div className="grid grid-cols-1 gap-2">
                 <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-1">Move to Next Step</p>
                 <div className="flex flex-wrap gap-2">
@@ -119,7 +119,7 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
           )}
           
           <div className="flex gap-3 pt-2">
-            {order.status !== 'Cancelled' && order.status !== 'Done' && (
+            {order.status !== 'Cancelled' && order.status !== 'Delivered' && (
                 <button onClick={() => { onUpdateStatus(order.id, 'Cancelled', order.userRefPath); onClose(); }} className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-2.5 rounded-xl text-[10px] uppercase tracking-widest border border-red-500/20 transition-all">
                     Stop Order
                 </button>

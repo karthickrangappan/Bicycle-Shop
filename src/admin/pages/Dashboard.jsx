@@ -228,14 +228,9 @@ export default function Dashboard() {
                 </div>
                 <div className="text-right flex-shrink-0">
                   <p className="text-sm font-black text-white">₹{(order.total || 0).toLocaleString()}</p>
-                  <span className={`text-[9px] px-3 py-1 rounded-full font-black uppercase tracking-widest mt-1 inline-block ${statusColors[order.status] || 'bg-gray-700 text-gray-400'}`}>{
-                    order.status === 'Delivered' ? 'Done' : 
-                    order.status === 'Shipped' ? 'Sent' : 
-                    order.status === 'Assembling' ? 'Building' : 
-                    order.status === 'Processing' ? 'Preparing' : 
-                    order.status === 'Pending' ? 'Waiting' : 
-                    order.status
-                  }</span>
+                  <span className={`text-[9px] px-3 py-1 rounded-full font-black uppercase tracking-widest mt-1 inline-block ${statusColors[order.status] || 'bg-gray-700 text-gray-400'}`}>
+                    {order.status || 'Pending'}
+                  </span>
                 </div>
               </div>
             ))}
@@ -295,10 +290,11 @@ export default function Dashboard() {
 }
 
 const statusColors = {
-  Done: 'bg-emerald-500/10 text-emerald-400',
-  Sent: 'bg-blue-500/10 text-blue-400',
-  Building: 'bg-purple-500/10 text-purple-400',
-  Waiting: 'bg-amber-500/10 text-amber-400',
+  Delivered: 'bg-emerald-500/10 text-emerald-400',
+  Shipped: 'bg-blue-500/10 text-blue-400',
+  Assembling: 'bg-indigo-500/10 text-indigo-400',
+  Processing: 'bg-purple-500/10 text-purple-400',
+  Pending: 'bg-amber-500/10 text-amber-400',
   Cancelled: 'bg-red-500/10 text-red-400',
 };
 

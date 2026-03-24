@@ -185,6 +185,10 @@ export const ShopProvider = ({ children }) => {
     // 1. Validation: Check inventory_count > 0
     const prodRef = doc(db, 'products', product.id);
     const prodSnap = await getDoc(prodRef);
+    if (!prodSnap.exists()) {
+      toast.error("This product is no longer available.");
+      return;
+    }
     const currentStock = prodSnap.data()?.stock || 0;
 
     if (currentStock <= 0) {
@@ -226,8 +230,12 @@ export const ShopProvider = ({ children }) => {
   const removeFromCart = async (productId, size, color) => {
     const itemToRemove = cart.find(item => item.id === productId && item.selectedSize === size && item.selectedColor === color);
     if (itemToRemove) {
-      // Increment stock back
-      await updateDoc(doc(db, 'products', productId), { stock: increment(itemToRemove.quantity) });
+      // Increment stock back (Safely handle deleted products)
+      try {
+        await updateDoc(doc(db, 'products', productId), { stock: increment(itemToRemove.quantity) });
+      } catch (e) {
+        console.warn(`Product ${productId} not found in catalog. Removing from cart without stock update.`);
+      }
     }
     const newCart = cart.filter(item => !(item.id === productId && item.selectedSize === size && item.selectedColor === color));
     setCart(newCart);
@@ -241,6 +249,11 @@ export const ShopProvider = ({ children }) => {
     if (delta > 0) {
       // Check stock before increasing
       const prodSnap = await getDoc(doc(db, 'products', productId));
+      if (!prodSnap.exists()) {
+        toast.error("This product is no longer in our catalog.");
+        removeFromCart(productId, size, color); // Auto-cleanup
+        return;
+      }
       if ((prodSnap.data()?.stock || 0) <= 0) {
         toast.error("No more items in stock!");
         return;
@@ -248,10 +261,14 @@ export const ShopProvider = ({ children }) => {
       await updateDoc(doc(db, 'products', productId), { stock: increment(-1) });
     } else {
       if (item.quantity <= 1) {
-        removeFromCart(productId, size);
+        removeFromCart(productId, size, color);
         return;
       }
-      await updateDoc(doc(db, 'products', productId), { stock: increment(1) });
+      try {
+        await updateDoc(doc(db, 'products', productId), { stock: increment(1) });
+      } catch (e) {
+        console.warn(`Stock update failed for ${productId}: Product gone.`);
+      }
     }
 
     const newCart = cart.map(i => 
@@ -341,9 +358,13 @@ export const ShopProvider = ({ children }) => {
       return;
     }
 
-    // Restore Inventory
+    // Restore Inventory (Safely)
     for (const item of orderData.items) {
-      await updateDoc(doc(db, 'products', item.id), { stock: increment(item.quantity || 1) });
+      try {
+        await updateDoc(doc(db, 'products', item.id), { stock: increment(item.quantity || 1) });
+      } catch (e) {
+        console.warn(`Inventory restoration skipped for ${item.id}: Item removed from catalog.`);
+      }
     }
 
     await updateDoc(orderRef, { 
