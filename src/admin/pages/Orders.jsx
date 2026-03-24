@@ -4,12 +4,14 @@ import { useAdmin } from '../context/AdminContext';
 const statusColors = {
   Delivered: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
   Shipped: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  Confirmed: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+  Assembling: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+  Processing: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
   Pending: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
   Cancelled: 'bg-red-500/10 text-red-400 border-red-500/20',
 };
 
-const statusFlow = ['Pending', 'Confirmed', 'Shipped', 'Delivered'];
+// Perfectly synced with MyOrders.jsx live tracking flow
+const statusFlow = ['Pending', 'Processing', 'Assembling', 'Shipped', 'Delivered'];
 
 function InvoiceModal({ order, onClose }) {
   return (
@@ -106,7 +108,7 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
                     {statusFlow.slice(statusFlow.indexOf(order.status) + 1).map(s => (
                         <button 
                             key={s}
-                            onClick={() => { onUpdateStatus(order.id, s); onClose(); }} 
+                            onClick={() => { onUpdateStatus(order.id, s, order.userRefPath); onClose(); }} 
                             className="flex-1 bg-amber-500/10 hover:bg-amber-500 text-amber-500 hover:text-gray-900 border border-amber-500/20 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
                         >
                             {s}
@@ -118,7 +120,7 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
           
           <div className="flex gap-3 pt-2">
             {order.status !== 'Cancelled' && order.status !== 'Delivered' && (
-                <button onClick={() => { onUpdateStatus(order.id, 'Cancelled'); onClose(); }} className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-2.5 rounded-xl text-[10px] uppercase tracking-widest border border-red-500/20 transition-all">
+                <button onClick={() => { onUpdateStatus(order.id, 'Cancelled', order.userRefPath); onClose(); }} className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-2.5 rounded-xl text-[10px] uppercase tracking-widest border border-red-500/20 transition-all">
                     Void Order
                 </button>
             )}
@@ -159,8 +161,8 @@ export default function Orders() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-3">
-        {['Pending','Confirmed','Shipped','Delivered'].map(s => (
+      <div className="grid grid-cols-5 gap-3">
+        {statusFlow.map(s => (
           <button key={s} onClick={() => setStatusFilter(statusFilter === s ? 'All' : s)} className={`bg-gray-900 border rounded-xl p-3 text-left transition-all ${statusFilter === s ? 'border-amber-500/50' : 'border-gray-800 hover:border-gray-700'}`}>
             <p className={`text-xl font-black ${statusColors[s]?.includes('emerald') ? 'text-emerald-400' : statusColors[s]?.includes('blue') ? 'text-blue-400' : statusColors[s]?.includes('purple') ? 'text-purple-400' : 'text-amber-400'}`}>{orders.filter(o => o.status === s).length}</p>
             <p className="text-xs text-gray-500 mt-0.5">{s}</p>
@@ -198,8 +200,8 @@ export default function Orders() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
-              {filtered.map(order => (
-                <tr key={order.id} className="hover:bg-gray-800/30 transition-all">
+              {filtered.map((order, idx) => (
+                <tr key={`${order.id}-${idx}`} className="hover:bg-gray-800/30 transition-all">
                   <td className="px-5 py-3">
                     <p className="text-xs font-mono text-amber-400">{order.id}</p>
                     <p className="text-xs text-gray-500">{order.date ? new Date(order.date).toLocaleDateString() : 'N/A'}</p>

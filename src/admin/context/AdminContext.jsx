@@ -3,6 +3,7 @@ import { db, auth } from '../../../firebase';
 import { collection, collectionGroup, onSnapshot, doc, deleteDoc, updateDoc, setDoc, addDoc, getDoc, getDocs } from 'firebase/firestore';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { toast } from 'react-hot-toast';
+import { generateRealCatalog } from '../../data/seedCatalog';
 
 const AdminContext = createContext();
 export const useAdmin = () => useContext(AdminContext);
@@ -111,11 +112,10 @@ export const AdminProvider = ({ children }) => {
     await addDoc(collection(db, "logs"), newLog).catch(e => console.error(e));
   };
 
-  const updateOrderStatus = async (orderId, status) => {
+  const updateOrderStatus = async (orderId, status, userRefPath) => {
     try {
-      const order = orders.find(o => o.id === orderId);
-      if (order && order.userRefPath) {
-        await updateDoc(doc(db, order.userRefPath, 'orders', orderId), { status });
+      if (userRefPath) {
+        await updateDoc(doc(db, userRefPath, 'orders', orderId), { status });
       } else {
         await updateDoc(doc(db, "orders", orderId), { status });
       }
@@ -288,10 +288,41 @@ export const AdminProvider = ({ children }) => {
     addLog("Bulk Categorization", `Updated ${updatedCount} products`);
   };
 
+  const resetAndSeedProducts = async () => {
+    try {
+      setLoading(true);
+      toast.loading("Purging existing catalog...");
+      
+      // Delete existing products
+      for (const prod of products) {
+        await deleteDoc(doc(db, "products", prod.id.toString()));
+      }
+      
+      const seedProducts = generateRealCatalog();
+
+      toast.loading("Deploying 50 hyper-clean catalog models...");
+      let seeded = 0;
+      for (const p of seedProducts) {
+        const generatedSku = `SKU-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+        await addDoc(collection(db, "products"), { ...p, sku: generatedSku, id: generatedSku });
+        seeded++;
+      }
+      
+      toast.dismiss();
+      toast.success(`Successfully uploaded ${seeded} pristine models with generated SKUs!`);
+      addLog("Catalog Reset", `Factory reset with ${seeded} models.`);
+    } catch (e) {
+      toast.dismiss();
+      toast.error("Process failed: " + e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AdminContext.Provider value={{
       adminUser, logout,
-      products, addProduct, updateProduct, deleteProduct, categorizeAllProducts, resetAllStocks,
+      products, addProduct, updateProduct, deleteProduct, categorizeAllProducts, resetAllStocks, resetAndSeedProducts,
       orders, updateOrderStatus,
       customers, toggleCustomerStatus,
       coupons, addCoupon, deleteCoupon,
