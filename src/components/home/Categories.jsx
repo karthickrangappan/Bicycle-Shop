@@ -2,41 +2,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import commonData from '../../data/commonData.json';
 
-const categories = [
-  {
-    id: 1,
-    title: "Mountain Bikes",
-    subtitle: "Conquer rugged terrain with precision-engineered handling.",
-    image: "/images/cat_mountain.png", 
-    link: "/shop?category=Mountain",
-    color: "from-blue-600/90"
-  },
-  {
-    id: 2,
-    title: "Road Performance",
-    subtitle: "Engineered for pure speed and relentless endurance.",
-    image: "/images/cat_road.png",
-    link: "/shop?category=Road",
-    color: "from-emerald-600/90"
-  },
-  {
-    id: 3,
-    title: "Urban Commuters",
-    subtitle: "The ultimate city riding experience for modern life.",
-    image: "/images/hero/hero_city.png",
-    link: "/shop?category=City",
-    color: "from-cyan-600/90"
-  },
-  {
-    id: 4,
-    title: "Elite Gear",
-    subtitle: "Professional grade accessories for every journey.",
-    image: "/images/hero/hero_mtb.png",
-    link: "/shop?category=Accessories",
-    color: "from-indigo-600/90"
-  }
-];
+const categories = commonData.categories;
 
 export default function Categories() {
   const navigate = useNavigate();
