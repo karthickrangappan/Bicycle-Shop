@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import Navbar from "./layout/Navbar";
 import Footer from "./layout/Footer";
 import Home from "./components/home/Home";
@@ -6,7 +7,7 @@ import Shop from "./components/Shop";
 import Contact from "./components/Contact";
 import Services from "./components/Services";
 import "./App.css";
-import { BrowserRouter, Route, Routes, Navigate, useLocation} from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { useShop } from "./context/ShopContext";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -24,14 +25,28 @@ import ShippingInfo from "./components/support/ShippingInfo";
 import WarrantyClaimForm from "./components/support/WarrantyClaimForm";
 import AdminRouter from "./admin/AdminRouter";
 import { AdminProvider } from "./admin/context/AdminContext";
+import ScrollToTop from "./layout/ScrollToTop";
+import { Toaster, useToasterStore, toast } from "react-hot-toast";
+
+// Toast Limiter component to ensure only 1 toast is visible
+const ToastLimiter = () => {
+  const { toasts } = useToasterStore();
+  const TOAST_LIMIT = 1;
+
+  useEffect(() => {
+    toasts
+      .filter((t) => t.visible)
+      .filter((_, i) => i >= TOAST_LIMIT)
+      .forEach((t) => toast.dismiss(t.id));
+  }, [toasts]);
+
+  return null;
+};
 
 const PrivateRoute = ({ children }) => {
   const { user } = useShop();
   return user ? children : <Navigate to="/login" />;
 };
-
-import ScrollToTop from "./layout/ScrollToTop";
-import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
@@ -47,7 +62,29 @@ function AppContent() {
 
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        containerStyle={{
+          top: 80,
+          right: 20,
+        }}
+        toastOptions={{
+          duration: 2500,
+          style: {
+            background: '#0f172a',
+            color: '#fff',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            borderRadius: '12px',
+            padding: '12px 20px',
+            border: '1px solid rgba(255,255,255,0.1)',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+          },
+        }}
+        gutter={8}
+      />
+      <ToastLimiter />
       <ScrollToTop />
       {!isAdmin && <Navbar />}
       <Routes>

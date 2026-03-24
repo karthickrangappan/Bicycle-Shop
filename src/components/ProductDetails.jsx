@@ -17,7 +17,7 @@ export default function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { products, addToCart, addToWishlist, isInWishlist, removeFromWishlist, user, orders } = useShop();
-  
+
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState('');
   const [reviews, setReviews] = useState([]);
@@ -32,7 +32,14 @@ export default function ProductDetails() {
       navigate('/shop', { replace: true });
       return;
     }
-    setProduct(found);
+    if (found) {
+      setProduct(found);
+      // Auto-select first variant and size
+      const initialColor = found.colors?.length > 0 ? found.colors[0] : '#000000';
+      const initialSize = found.sizes?.length > 0 ? found.sizes[0] : 'S';
+      setForm({ color: initialColor });
+      setSelectedSize(initialSize);
+    }
   }, [id, products, navigate]);
 
   useEffect(() => {
@@ -47,8 +54,8 @@ export default function ProductDetails() {
 
   useEffect(() => {
     if (user && product) {
-      const bought = orders.some(o => 
-        o.status === "Delivered" && 
+      const bought = orders.some(o =>
+        o.status === "Delivered" &&
         o.items.some(item => item.id === product.id)
       );
       setIsVerified(bought);
@@ -106,189 +113,189 @@ export default function ProductDetails() {
 
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-28 pb-12">
+    <div className="min-h-screen bg-slate-50 pt-24 sm:pt-28 pb-12 sm:pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <button 
+
+        <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-slate-500 font-bold hover:text-brand-600 transition-colors mb-6 group text-xs uppercase tracking-widest"
+          className="flex items-center gap-2 text-slate-500 font-bold hover:text-brand-600 transition-colors mb-6 sm:mb-8 group text-[10px] sm:text-xs uppercase tracking-widest"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
           <span>Back to Catalog</span>
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-[2.5rem] p-3 shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden h-fit"
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-16 items-start">
+          {/* Image Gallery Column */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="lg:col-span-7 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-2 sm:p-3 shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden"
           >
-            <div className="aspect-[16/11] sm:aspect-video rounded-[2rem] overflow-hidden bg-slate-50 relative flex items-center justify-center">
-               <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-               <div className="absolute top-6 left-6">
-                  <span className="px-4 py-2 bg-white/90 backdrop-blur-md text-slate-900 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg border border-white">
-                    {product.category}
-                  </span>
-               </div>
+            <div className="aspect-[4/3] sm:aspect-video rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden bg-slate-50 relative flex items-center justify-center">
+              <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+              <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
+                <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-white/90 backdrop-blur-md text-slate-900 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest shadow-lg border border-white">
+                  {product.category}
+                </span>
+              </div>
             </div>
           </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, x: 50 }} 
-            animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-[2rem] p-5 sm:p-7 shadow-xl shadow-slate-200/50 border border-slate-100 h-fit"
+          {/* Details Column */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="lg:col-span-5 bg-white rounded-[2rem] p-6 sm:p-8 xl:p-10 shadow-xl shadow-slate-200/50 border border-slate-100"
           >
-            <div className="mb-4">
-               <div className="flex items-center gap-1 mb-2">
-                  <div className="flex gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={10} className={i < Math.floor(product.rating || 5) ? "fill-brand-500 text-brand-500" : "text-slate-100"} />
-                    ))}
-                  </div>
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{reviews.length} Performance Records</span>
-               </div>
-               
-               <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tighter mb-1.5 leading-tight">
-                 {product.name}
-               </h1>
-               
-               <p className="text-[11px] text-slate-500 font-medium max-w-sm mb-4 leading-relaxed">
-                 {product.description || "Engineered for elite performance. Masterpiece carbon fiber frame and high-precision gears for the perfect ride."}
-               </p>
-               
-               <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-2xl font-black text-slate-900 tracking-tighter">
-                    ₹{product.price}
+            <div className="mb-6 sm:mb-8">
+              <div className="flex items-center gap-1.5 mb-3 sm:mb-4">
+                <div className="flex gap-0.5">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={11} className={i < Math.floor(product.rating || 5) ? "fill-brand-500 text-brand-500" : "text-slate-100"} />
+                  ))}
+                </div>
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{reviews.length} Performance Records</span>
+              </div>
+
+              <h1 className="text-2xl sm:text-3xl xl:text-4xl font-black text-slate-950 tracking-tighter mb-2 sm:mb-3 leading-tight">
+                {product.name}
+              </h1>
+
+              <p className="text-[11px] sm:text-xs text-slate-500 font-medium mb-6 sm:mb-8 leading-relaxed">
+                {product.description || "Engineered for elite performance. Masterpiece carbon fiber frame and high-precision gears for the perfect ride."}
+              </p>
+
+              <div className="flex items-center gap-3 mb-8 sm:mb-10">
+                <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tighter">
+                  ₹{product.price}
+                </span>
+                {product.stock > 0 ? (
+                  <span className="px-2 py-1 bg-green-50 text-green-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-green-100/50">
+                    {product.stock} In Stock
                   </span>
-                  {product.stock > 0 ? (
-                    <span className="px-1.5 py-0.5 bg-green-50 text-green-600 rounded-md text-[8px] font-black uppercase tracking-widest border border-green-100/50">
-                      {product.stock} In Stock
-                    </span>
-                  ) : (
-                    <span className="px-1.5 py-0.5 bg-red-50 text-red-600 rounded-md text-[8px] font-black uppercase tracking-widest border border-red-100/50">
-                      Sold Out
-                    </span>
-                  )}
-               </div>
+                ) : (
+                  <span className="px-2 py-1 bg-red-50 text-red-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-red-100/50">
+                    Sold Out
+                  </span>
+                )}
+              </div>
 
-                   {/* Variant Selection */}
-                   <div className="space-y-3 mb-5">
-                      <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-0.5 flex items-center gap-1.5">
-                        <div className="w-1 h-1 bg-slate-300 rounded-full" />
-                        Color Variant <span className="text-red-500">*</span>
-                      </label>
-                      <div className="flex flex-wrap gap-2">
-                        {(product.colors || ['#000000', '#ffffff', '#ef4444', '#3b82f6', '#10b981']).map(color => {
-                          const isHex = color.startsWith('#');
-                          return (
-                            <button
-                              key={color}
-                              onClick={() => setForm(f => ({ ...f, color }))}
-                              className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all border ${
-                                form.color === color ? 'border-brand-500 bg-brand-50 text-brand-600 shadow-sm' : 'border-slate-100 bg-white text-slate-400'
-                              }`}
-                            >
-                              <div className="flex items-center gap-1.5">
-                                {isHex && <div className="w-2 h-2 rounded-full border border-slate-200" style={{ backgroundColor: color }} />}
-                                <span>{color}</span>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                   </div>
+              {/* Variant Selection */}
+              <div className="space-y-4 mb-6 sm:mb-8">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-pulse" />
+                  Color Variant <span className="text-red-500">*</span>
+                </label>
+                <div className="flex flex-wrap gap-2.5">
+                  {(product.colors || ['#000000', '#ffffff', '#ef4444', '#3b82f6', '#10b981']).map(color => {
+                    const isHex = color.startsWith('#');
+                    return (
+                      <button
+                        key={color}
+                        onClick={() => setForm(f => ({ ...f, color }))}
+                        className={`px-4 py-2 rounded-xl text-[10px] font-black transition-all border ${form.color === color 
+                          ? 'border-brand-500 bg-brand-50 text-brand-600 shadow-md scale-[1.02]' 
+                          : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {isHex && <div className="w-2.5 h-2.5 rounded-full border border-slate-200" style={{ backgroundColor: color }} />}
+                          <span>{color}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
-                   {/* Size Selection */}
-                   <div className="space-y-3 mb-6">
-                      <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-0.5 flex items-center gap-1.5">
-                        <div className="w-1 h-1 bg-slate-300 rounded-full" />
-                        Precision Fit <span className="text-red-500">*</span>
-                      </label>
-                      <div className="flex flex-wrap gap-2">
-                        {(product.sizes || ['XS', 'S', 'M', 'L', 'XL']).map(size => (
-                          <button
-                            key={size}
-                            onClick={() => setSelectedSize(size)}
-                            className={`px-4 py-2 rounded-lg font-black text-[10px] tracking-widest transition-all ${
-                              selectedSize === size
-                              ? "bg-slate-900 text-white shadow-md shadow-slate-900/10"
-                              : "bg-white text-slate-400 border border-slate-50 hover:border-slate-200"
-                            }`}
-                          >
-                            {size}
-                          </button>
-                        ))}
-                      </div>
-                   </div>
+              {/* Size Selection */}
+              <div className="space-y-4 mb-8 sm:mb-10">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-pulse" />
+                  Precision Fit <span className="text-red-500">*</span>
+                </label>
+                <div className="grid grid-cols-3 sm:flex sm:flex-wrap gap-2.5">
+                  {(product.sizes || ['XS', 'S', 'M', 'L', 'XL']).map(size => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`py-2.5 px-3 sm:px-6 rounded-xl font-black text-[10px] tracking-widest transition-all ${selectedSize === size
+                        ? "bg-slate-900 text-white shadow-xl shadow-slate-900/20 scale-[1.02]"
+                        : "bg-white text-slate-400 border border-slate-100 hover:border-slate-200 hover:shadow-sm"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-2 mb-6">
-               <button 
-                 onClick={handleAddToCart}
-                 disabled={product.stock <= 0 || !selectedSize}
-                 className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 ${
-                   product.stock > 0 && selectedSize
-                   ? "bg-slate-50 text-slate-900 border border-slate-200 hover:bg-white hover:shadow-sm"
-                   : "bg-slate-50 text-slate-300 cursor-not-allowed border-transparent"
-                 }`}
-               >
-                 <ShoppingCart size={14} />
-                 {product.stock <= 0 ? "Out" : !selectedSize ? "Size?" : "To Bag"}
-               </button>
+            <div className="flex flex-col gap-3 mb-8">
+              <button
+                onClick={handleAddToCart}
+                disabled={product.stock <= 0 || !selectedSize}
+                className={`w-full py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all active:scale-[0.98] ${product.stock > 0 && selectedSize
+                  ? "bg-slate-50 text-slate-900 border border-slate-200 hover:bg-white hover:shadow-md"
+                  : "bg-slate-50 text-slate-300 cursor-not-allowed border-transparent"
+                }`}
+              >
+                <ShoppingCart size={16} />
+                {product.stock <= 0 ? "Reservation Closed" : !selectedSize ? "Select Precision Fit" : "Add To Bag"}
+              </button>
 
-               <button 
-                 onClick={() => { 
-                    handleAddToCart(); 
-                    if(selectedSize) navigate('/checkout', { 
-                       state: { product, selectedSize, selectedColor: form.color } 
-                    }); 
-                 }}
-                 disabled={product.stock <= 0 || !selectedSize}
-                 className={`flex-[1.5] py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 shadow-sm ${
-                   product.stock > 0 && selectedSize
-                   ? "bg-brand-500 text-white shadow-brand-500/10 hover:bg-brand-600"
-                   : "bg-slate-50 text-slate-200 cursor-not-allowed shadow-none"
-                 }`}
-               >
-                 {product.stock <= 0 ? "No Stock" : !selectedSize ? "Variant?" : "Buy It Now"}
-               </button>
+              <button
+                onClick={() => {
+                  handleAddToCart();
+                  if (selectedSize) navigate('/checkout', {
+                    state: { product, selectedSize, selectedColor: form.color }
+                  });
+                }}
+                disabled={product.stock <= 0 || !selectedSize}
+                className={`w-full py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg ${product.stock > 0 && selectedSize
+                  ? "bg-brand-500 text-white shadow-brand-500/20 hover:bg-brand-600 hover:shadow-brand-500/30"
+                  : "bg-slate-100 text-slate-300 cursor-not-allowed shadow-none"
+                }`}
+              >
+                {product.stock <= 0 ? "Out of Stock" : !selectedSize ? "Finalize Variant" : "Buy It Now"}
+              </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 pt-5 border-t border-slate-50">
-               <div className="flex flex-col items-center text-center gap-1">
-                  <Shield size={14} className="text-slate-300" />
-                  <h4 className="text-[7px] font-black text-slate-400 uppercase tracking-widest">Warranty</h4>
-               </div>
-               <div className="flex flex-col items-center text-center gap-1 border-x border-slate-50">
-                  <Truck size={14} className="text-slate-300" />
-                  <h4 className="text-[7px] font-black text-slate-400 uppercase tracking-widest">Express</h4>
-               </div>
-               <div className="flex flex-col items-center text-center gap-1">
-                  <RotateCcw size={14} className="text-slate-300" />
-                  <h4 className="text-[7px] font-black text-slate-400 uppercase tracking-widest">30 Day</h4>
-               </div>
+            <div className="grid grid-cols-3 gap-4 pt-6 sm:pt-8 border-t border-slate-50">
+              <div className="flex flex-col items-center text-center gap-2">
+                <Shield size={18} className="text-slate-300" />
+                <h4 className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Lifetime Warranty</h4>
+              </div>
+              <div className="flex flex-col items-center text-center gap-2 border-x border-slate-100">
+                <Truck size={18} className="text-slate-300" />
+                <h4 className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Global Express</h4>
+              </div>
+              <div className="flex flex-col items-center text-center gap-2">
+                <RotateCcw size={18} className="text-slate-300" />
+                <h4 className="text-[8px] font-black text-slate-400 uppercase tracking-widest">30-Day Return</h4>
+              </div>
             </div>
           </motion.div>
         </div>
 
         {/* Reviews Section */}
-        <div className="mt-16 pt-16 border-t border-slate-100">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div>
-              <h2 className="text-2xl font-black text-slate-900 tracking-tighter mb-4">Customer Experience</h2>
-              <p className="text-slate-500 text-sm font-medium mb-8">
-                Read how others are performing with their {product.name}.
+        <div className="mt-20 pt-20 border-t border-slate-100">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-20">
+            <div className="lg:col-span-4">
+              <h2 className="text-3xl font-black text-slate-900 tracking-tighter mb-4">Rider Experience</h2>
+              <p className="text-slate-500 text-sm font-medium mb-10 leading-relaxed">
+                Authentic performance records from the global community. Read how others are dominating their terrain with the {product.name}.
               </p>
 
               {isVerified ? (
-                <form onSubmit={submitReview} className="p-8 bg-slate-900 rounded-[2rem] text-white space-y-6 shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-bl-full pointer-events-none" />
-                  <h3 className="text-lg font-black tracking-tight mb-2">Leave a Performance Review</h3>
-                  
-                  {/* Star Rating Input */}
-                  <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Rate your experience</label>
-                    <div className="flex gap-2">
+                <form onSubmit={submitReview} className="p-8 sm:p-10 bg-slate-900 rounded-[2.5rem] text-white space-y-6 shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-40 h-40 bg-brand-500/10 rounded-bl-full pointer-events-none" />
+                  <h3 className="text-xl font-black tracking-tight mb-2">Submit Record</h3>
+
+                  <div className="flex flex-col gap-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Overall Rating</label>
+                    <div className="flex gap-2.5">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
                           key={star}
@@ -296,111 +303,114 @@ export default function ProductDetails() {
                           onClick={() => setNewReview({ ...newReview, rating: star })}
                           className="transition-transform active:scale-90"
                         >
-                          <Star 
-                            size={24} 
-                            className={`${star <= newReview.rating ? "fill-brand-500 text-brand-500" : "text-slate-700"} transition-all`} 
+                          <Star
+                            size={28}
+                            className={`${star <= newReview.rating ? "fill-brand-500 text-brand-500" : "text-slate-700 hover:text-slate-500"} transition-all`}
                           />
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
+                  <div className="grid grid-cols-2 gap-4 sm:gap-6">
+                    <div className="space-y-2">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Height (cm)</label>
                       <div className="relative">
-                        <Ruler className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={14} />
-                        <input 
-                          type="number" 
+                        <Ruler className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                        <input
+                          type="number"
                           required
                           value={newReview.height}
-                          onChange={e => setNewReview({...newReview, height: e.target.value})}
-                          className="w-full pl-9 pr-3 py-3 bg-slate-800 border-none rounded-xl text-xs font-bold focus:ring-1 focus:ring-brand-500 transition-all" 
-                          placeholder="180" 
+                          onChange={e => setNewReview({ ...newReview, height: e.target.value })}
+                          className="w-full pl-11 pr-4 py-3.5 bg-slate-800 border-none rounded-2xl text-xs font-bold focus:ring-2 focus:ring-brand-500 transition-all text-white"
+                          placeholder="180"
                         />
                       </div>
                     </div>
-                    <div className="space-y-1">
+                    <div className="space-y-2">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Weight (kg)</label>
                       <div className="relative">
-                        <Weight className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={14} />
-                        <input 
-                          type="number" 
+                        <Weight className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                        <input
+                          type="number"
                           required
                           value={newReview.weight}
-                          onChange={e => setNewReview({...newReview, weight: e.target.value})}
-                          className="w-full pl-9 pr-3 py-3 bg-slate-800 border-none rounded-xl text-xs font-bold focus:ring-1 focus:ring-brand-500 transition-all" 
-                          placeholder="75" 
+                          onChange={e => setNewReview({ ...newReview, weight: e.target.value })}
+                          className="w-full pl-11 pr-4 py-3.5 bg-slate-800 border-none rounded-2xl text-xs font-bold focus:ring-2 focus:ring-brand-500 transition-all text-white"
+                          placeholder="75"
                         />
                       </div>
                     </div>
                   </div>
 
-                  <textarea 
-                    placeholder="Tell us about the handling, comfort, and speed..." 
-                    required
-                    value={newReview.text}
-                    onChange={e => setNewReview({...newReview, text: e.target.value})}
-                    className="w-full p-4 bg-slate-800 border-none rounded-xl text-xs font-bold min-h-[100px] focus:ring-1 focus:ring-brand-500 transition-all"
-                  />
-                  <button className="w-full py-4 bg-brand-500 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-brand-600 transition-all shadow-lg shadow-brand-500/20 active:scale-95">
-                    Post My Review
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Experience Details</label>
+                    <textarea
+                      placeholder="Share details on handling, suspension, and speed..."
+                      required
+                      value={newReview.text}
+                      onChange={e => setNewReview({ ...newReview, text: e.target.value })}
+                      className="w-full p-5 bg-slate-800 border-none rounded-2xl text-xs font-bold min-h-[120px] focus:ring-2 focus:ring-brand-500 transition-all text-white leading-relaxed"
+                    />
+                  </div>
+
+                  <button className="w-full py-4.5 bg-brand-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-brand-600 transition-all shadow-xl shadow-brand-500/30 active:scale-[0.98]">
+                    Post Final Review
                   </button>
                 </form>
               ) : (
-                <div className="p-8 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2rem] text-center">
-                  <Shield size={32} className="mx-auto text-slate-300 mb-4" />
-                  <p className="text-xs font-black text-slate-400 uppercase tracking-widest leading-relaxed">
-                    Only verified riders who have purchased this bike can submit a performance review.
+                <div className="p-10 bg-white border border-slate-100 rounded-[2.5rem] text-center shadow-sm">
+                  <Shield size={42} className="mx-auto text-slate-200 mb-6" />
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] leading-relaxed max-w-[240px] mx-auto">
+                    Verification Required: Only authenticated riders can contribute to performance records.
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-8 space-y-6">
               {reviews.length === 0 ? (
-                <div className="text-center py-20">
-                  <p className="text-slate-400 font-bold">No performance reviews yet. Be the first to share your journey.</p>
+                <div className="text-center py-24 bg-white rounded-[2.5rem] border border-slate-100 border-dashed">
+                  <Bike size={48} className="mx-auto text-slate-200 mb-6" />
+                  <p className="text-slate-400 font-bold tracking-tight">Zero records found. Be the pioneer and share your first ride.</p>
                 </div>
               ) : (
-                reviews.map(review => (
-                  <div key={review.id} className="p-8 bg-white rounded-[2rem] border border-slate-100 shadow-sm transition-all hover:shadow-md">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 font-black">
-                          {review.userName?.[0] || 'R'}
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-black text-slate-900 flex items-center gap-1.5">
-                            {review.userName}
-                            {review.isVerified && <CheckCircle2 size={12} className="text-brand-500" />}
-                          </h4>
-                          <div className="flex gap-2 text-[10px] font-black text-slate-400 uppercase tracking-tight mt-0.5">
-                             <span>{review.height}cm</span>
-                             <span>•</span>
-                             <span>{review.weight}kg</span>
-                             {review.createdAt && (
-                               <>
-                                 <span>•</span>
-                                 <span className="text-slate-300">
-                                   {review.createdAt.toDate ? review.createdAt.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recent'}
-                                 </span>
-                               </>
-                             )}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
+                  {reviews.map(review => (
+                    <div key={review.id} className="p-8 sm:p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 group">
+                      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-slate-50 text-brand-600 rounded-2xl flex items-center justify-center text-lg font-black shadow-inner">
+                            {review.userName?.[0] || 'R'}
+                          </div>
+                          <div>
+                            <h4 className="text-base font-black text-slate-900 flex items-center gap-2">
+                              {review.userName}
+                              {review.isVerified && <CheckCircle2 size={14} className="text-brand-500" />}
+                            </h4>
+                            <div className="flex flex-wrap gap-2.5 text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                              <span className="flex items-center gap-1"><Ruler size={10} /> {review.height}cm</span>
+                              <span>•</span>
+                              <span className="flex items-center gap-1"><Weight size={10} /> {review.weight}kg</span>
+                              <span className="hidden sm:inline-block opacity-30">|</span>
+                              <span className="text-slate-300">
+                                {review.createdAt?.toDate ? review.createdAt.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Verified Record'}
+                              </span>
+                            </div>
                           </div>
                         </div>
+                        <div className="flex gap-0.5 bg-slate-50 px-3 py-1.5 rounded-full">
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} size={14} className={i < review.rating ? "fill-brand-500 text-brand-500" : "text-slate-200"} />
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex gap-0.5">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} size={12} className={i < review.rating ? "fill-brand-500 text-brand-500" : "text-slate-100"} />
-                        ))}
-                      </div>
+                      <p className="text-sm border-l-4 border-slate-50 pl-6 text-slate-600 font-medium leading-[1.8] italic">
+                        "{review.text}"
+                      </p>
                     </div>
-                    <p className="text-sm text-slate-500 font-medium leading-relaxed">
-                      {review.text}
-                    </p>
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -408,37 +418,49 @@ export default function ProductDetails() {
 
         {/* Related Products Section */}
         {relatedProducts.length > 0 && (
-          <div className="mt-16 pt-16 border-t border-slate-100 pb-12">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
-               <div>
-                  <h2 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tighter leading-none mb-2">Explore <span className="text-brand-600">Similar</span> Gear</h2>
-                  <p className="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px]">High precision alternatives in {product.category}</p>
-               </div>
-               <Link to="/shop" className="group flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-600 transition-all shrink-0">
-                  Full Catalog <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-all"><ChevronRight size={16} /></div>
-               </Link>
+          <div className="mt-24 pt-24 border-t border-slate-100 pb-12 sm:pb-20">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-8 px-2">
+              <div className="max-w-xl">
+                <h2 className="text-3xl sm:text-4xl xl:text-5xl font-black text-slate-950 tracking-tighter leading-none mb-3 sm:mb-4">
+                  Explore <span className="text-brand-600">Similar</span> Gear
+                </h2>
+                <p className="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px] sm:text-xs opacity-70">
+                  Precision-engineered alternatives for {product.category} territory.
+                </p>
+              </div>
+
+              <Link
+                to="/shop"
+                className="group inline-flex items-center gap-4 text-xs font-black uppercase tracking-widest text-slate-900 hover:text-brand-600 transition-all shrink-0"
+              >
+                Browse Catalog
+                <div className="w-12 h-12 rounded-2xl bg-white shadow-lg flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-all transform group-hover:rotate-12">
+                  <ChevronRight size={20} />
+                </div>
+              </Link>
             </div>
 
-            <div className="relative overflow-visible">
-               <Swiper
-                  modules={[Autoplay]}
-                  spaceBetween={16}
-                  slidesPerView={1}
-                  autoplay={{ delay: 3500, disableOnInteraction: false }}
-                  breakpoints={{
-                    480: { slidesPerView: 1.5, spaceBetween: 20 },
-                    768: { slidesPerView: 2.5, spaceBetween: 24 },
-                    1024: { slidesPerView: 3.5, spaceBetween: 30 },
-                    1280: { slidesPerView: 4, spaceBetween: 32 }
-                  }}
-                  className="!overflow-visible"
-               >
-                  {relatedProducts.map((p) => (
-                    <SwiperSlide key={p.id} className="pb-8">
-                      <ProductCard product={p} />
-                    </SwiperSlide>
-                  ))}
-               </Swiper>
+            <div className="relative -mx-4 sm:-mx-6 lg:-mx-8">
+              <Swiper
+                modules={[Autoplay]}
+                spaceBetween={20}
+                slidesPerView={1}
+                autoplay={true}
+                loop={true}
+                breakpoints={{
+                  480: { slidesPerView: 1.3, spaceBetween: 20 },
+                  640: { slidesPerView: 2.2, spaceBetween: 24 },
+                  1024: { slidesPerView: 3.2, spaceBetween: 30 },
+                  1280: { slidesPerView: 4, spaceBetween: 32 }
+                }}
+                className="px-4 sm:px-6 lg:px-8 py-8"
+              >
+                {relatedProducts.map((p) => (
+                  <SwiperSlide key={p.id}>
+                    <ProductCard product={p} />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
             </div>
           </div>
         )}

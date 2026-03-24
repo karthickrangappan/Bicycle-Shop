@@ -33,7 +33,12 @@ export default function ProductCard({ product, disableMotion = false }) {
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    navigate(`/product/${product.id}`);
+    
+    // Select default values for quick-add
+    const defaultColor = product.colors?.length > 0 ? product.colors[0] : 'Standard';
+    const defaultSize = product.sizes?.length > 0 ? product.sizes[0] : 'S';
+    
+    addToCart(product, defaultSize, defaultColor);
   };
 
   // Theme configuration for product cards
