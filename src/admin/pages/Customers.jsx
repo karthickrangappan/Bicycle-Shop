@@ -7,16 +7,34 @@ export default function Customers() {
   const [selected, setSelected] = useState(null);
   const [customerSort, setCustomerSort] = useState('Newest First');
 
-  let filtered = customers.filter(c => {
+  // Calculate dynamic stats for each customer based on real orders
+  const enrichedCustomers = customers.map(c => {
+      const userOrders = orders.filter(o => {
+          const userIdFromPath = o.userRefPath?.split('/')[1];
+          return userIdFromPath === c.id || (o.email && o.email === c.email) || (o.customerEmail && o.customerEmail === c.email);
+      });
+      // We only count money from PAID orders as "Total Paid"
+      const totalSpent = userOrders
+          .filter(o => o.paymentStatus === 'Paid')
+          .reduce((acc, o) => acc + (parseFloat(String(o.total).replace(/[^\d.]/g, '')) || 0), 0);
+          
+      return { 
+          ...c, 
+          ordersCount: userOrders.length, 
+          totalSpent 
+      };
+  });
+
+  let filtered = enrichedCustomers.filter(c => {
     return (c.name || '').toLowerCase().includes(search.toLowerCase()) || 
            (c.email || '').toLowerCase().includes(search.toLowerCase());
   });
 
   if (customerSort === 'Big Buyers') filtered = [...filtered].sort((a,b) => (b.totalSpent || 0) - (a.totalSpent || 0));
-  if (customerSort === 'Top Fans') filtered = [...filtered].sort((a,b) => (b.orders || 0) - (a.orders || 0));
+  if (customerSort === 'Top Fans') filtered = [...filtered].sort((a,b) => (b.ordersCount || 0) - (a.ordersCount || 0));
   if (customerSort === 'Recent Buyers') filtered = [...filtered].sort((a,b) => new Date(b.joined || 0) - new Date(a.joined || 0));
 
-  const getCustomerOrders = (email) => orders.filter(o => o.email === email);
+  const getCustomerOrders = (email) => orders.filter(o => (o.email === email || o.customerEmail === email));
 
   return (
     <div className="space-y-5">
@@ -70,9 +88,13 @@ export default function Customers() {
                   <p className="text-sm text-gray-300">{c.email}</p>
                   <p className="text-xs text-gray-500">{c.phone || 'No Phone'}</p>
                 </td>
-                <td className="px-5 py-3"><span className="text-sm font-bold text-white">{c.orders || 0}</span></td>
+                <td className="px-5 py-3"><span className="text-sm font-bold text-white">{c.ordersCount || 0}</span></td>
                 <td className="px-5 py-3"><span className="text-sm font-bold text-emerald-400">₹{(c.totalSpent || 0).toLocaleString()}</span></td>
-                <td className="px-5 py-3"><span className="text-xs text-gray-400">{c.joined}</span></td>
+                <td className="px-5 py-3">
+                  <span className="text-xs text-gray-400">
+                    {c.joined ? (c.joined.toDate ? c.joined.toDate().toLocaleDateString() : new Date(c.joined).toLocaleDateString()) : 'N/A'}
+                  </span>
+                </td>
                 <td className="px-5 py-3">
                   <div className="flex gap-2">
                     <button onClick={() => setSelected(c)} className="text-xs bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 px-2.5 py-1 rounded-lg">View Info</button>
@@ -101,7 +123,7 @@ export default function Customers() {
             </div>
             <div className="grid grid-cols-3 gap-3 mb-5">
               <div className="bg-gray-800 rounded-xl p-3 text-center">
-                <p className="text-xl font-black text-white">{selected.orders || 0}</p>
+                <p className="text-xl font-black text-white">{selected.ordersCount || 0}</p>
                 <p className="text-xs text-gray-500">Bought</p>
               </div>
               <div className="bg-gray-800 rounded-xl p-3 text-center">

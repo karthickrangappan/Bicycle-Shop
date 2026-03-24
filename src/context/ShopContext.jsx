@@ -90,7 +90,7 @@ export const ShopProvider = ({ children }) => {
             wishlist: [], 
             addresses: [], 
             role: role,
-            createdAt: new Date(),
+            joined: new Date(),
             lastLogin: new Date()
           };
           await setDoc(userRef, data).catch(e => console.log(e));
