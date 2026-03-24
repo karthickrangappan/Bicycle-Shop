@@ -14,24 +14,24 @@ export default function Products() {
   const [confirmDelete, setConfirmDelete] = useState(null);
   const navigate = useNavigate();
 
-  const categories = ['All', ...new Set(dynamicCategories.map(c => c.name))];
-  const brands = ['All', ...new Set(products.map(p => p.brand).filter(Boolean))];
+  const categories = ['All Types', ...new Set(products.map(p => p.category).filter(Boolean))];
+  const brands = ['All Companies', ...new Set(products.map(p => p.brand).filter(Boolean))];
 
   let filtered = products.filter(p => {
     const matchSearch = (p.name || '').toLowerCase().includes(search.toLowerCase()) || (p.sku || '').toLowerCase().includes(search.toLowerCase()) || (p.brand || '').toLowerCase().includes(search.toLowerCase());
-    const matchCat = categoryFilter === 'All' || p.category === categoryFilter;
+    const matchCat = categoryFilter === 'All' || categoryFilter === 'All Types' || p.category === categoryFilter;
     const matchStatus = statusFilter === 'All' || p.status === statusFilter;
     
     let matchStock = true;
-    if (stockFilter === 'In Stock') matchStock = p.stock > 3;
-    if (stockFilter === 'Low Stock') matchStock = p.stock > 0 && p.stock <= 3;
-    if (stockFilter === 'Out of Stock') matchStock = p.stock === 0;
+    if (stockFilter === 'Available') matchStock = p.stock > 3;
+    if (stockFilter === 'Almost Gone') matchStock = p.stock > 0 && p.stock <= 3;
+    if (stockFilter === 'Sold Out') matchStock = p.stock === 0;
 
     return matchSearch && matchCat && matchStatus && matchStock;
   });
 
-  if (priceSort === 'Low to High') filtered = [...filtered].sort((a,b) => a.price - b.price);
-  if (priceSort === 'High to Low') filtered = [...filtered].sort((a,b) => b.price - a.price);
+  if (priceSort === 'Cheap First') filtered = [...filtered].sort((a,b) => a.price - b.price);
+  if (priceSort === 'Costly First') filtered = [...filtered].sort((a,b) => b.price - a.price);
 
   const handleDelete = (id) => {
     deleteProduct(id);
@@ -46,35 +46,35 @@ export default function Products() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-black text-white">Products</h1>
-          <p className="text-gray-500 text-sm">{products.length} total products • {filtered.length} filtered</p>
+          <h1 className="text-2xl font-black text-white">All Cycles</h1>
+          <p className="text-gray-500 text-sm">{products.length} total cycles • {filtered.length} shown</p>
         </div>
-        <Link to="/admin/products/add" className="bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold px-4 py-2 rounded-xl text-sm transition-all">+ Add Product</Link>
+        <Link to="/admin/products/add" className="bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold px-4 py-2 rounded-xl text-sm transition-all">+ Add New Cycle</Link>
       </div>
 
       {/* Filters */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
         <input
           type="text"
-          placeholder="Search name, brand, SKU..."
+          placeholder="Search name, company, or ID Number..."
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 w-full col-span-1 md:col-span-2"
         />
         <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option value="All">All Categories</option>
-          {categories.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
+          <option value="All Types">All Types</option>
+          {categories.filter(c => c !== 'All Types').map(c => <option key={c} value={c}>{c}</option>)}
         </select>
         <select value={stockFilter} onChange={e => setStockFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option>All Stock</option>
-          <option>In Stock</option>
-          <option>Low Stock</option>
-          <option>Out of Stock</option>
+          <option>In Shop</option>
+          <option>Available</option>
+          <option>Almost Gone</option>
+          <option>Sold Out</option>
         </select>
         <select value={priceSort} onChange={e => setPriceSort(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option>Price Sort</option>
-          <option>Low to High</option>
-          <option>High to Low</option>
+          <option>Sort by Price</option>
+          <option>Cheap First</option>
+          <option>Costly First</option>
         </select>
       </div>
 
@@ -84,13 +84,13 @@ export default function Products() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-800">
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Product</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">SKU</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Category</th>
+                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Cycle Info</th>
+                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">ID Number</th>
+                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Type</th>
                 <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Price</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Stock</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Status</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Actions</th>
+                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Available</th>
+                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Show/Hide</th>
+                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Options</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
@@ -137,11 +137,11 @@ export default function Products() {
       {confirmDelete && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-sm w-full mx-4">
-            <h3 className="font-bold text-white text-lg mb-2">Delete Product?</h3>
-            <p className="text-gray-400 text-sm mb-5">This action cannot be undone. The product will be permanently removed.</p>
+            <h3 className="font-bold text-white text-lg mb-2">Delete this Cycle?</h3>
+            <p className="text-gray-400 text-sm mb-5">Are you sure? This cycle will be gone from the shop forever.</p>
             <div className="flex gap-3">
-              <button onClick={() => setConfirmDelete(null)} className="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-xl text-sm font-semibold transition-all">Cancel</button>
-              <button onClick={() => handleDelete(confirmDelete)} className="flex-1 bg-red-500 hover:bg-red-400 text-white py-2 rounded-xl text-sm font-semibold transition-all">Delete</button>
+              <button onClick={() => setConfirmDelete(null)} className="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-xl text-sm font-semibold transition-all">No, Go Back</button>
+              <button onClick={() => handleDelete(confirmDelete)} className="flex-1 bg-red-500 hover:bg-red-400 text-white py-2 rounded-xl text-sm font-semibold transition-all">Yes, Delete</button>
             </div>
           </div>
         </div>

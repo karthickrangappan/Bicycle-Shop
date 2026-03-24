@@ -8,17 +8,19 @@ export function Settings() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-2xl font-black text-white">Settings ⚙️</h1>
+      <h1 className="text-2xl font-black text-white">Shop Admin Setup ⚙️</h1>
       <div className="flex gap-2 border-b border-gray-800 pb-0">
-        {tabs.map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 capitalize text-sm font-semibold border-b-2 transition-all -mb-px ${tab === t ? 'border-amber-500 text-amber-400' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>{t}</button>
+        {['general', 'payment', 'tax', 'notifications', 'maintenance'].map(t => (
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 capitalize text-sm font-semibold border-b-2 transition-all -mb-px ${tab === t ? 'border-amber-500 text-amber-400' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
+            {t === 'general' ? 'Shop Info' : t === 'payment' ? 'Payment' : t === 'tax' ? 'Tax' : t === 'notifications' ? 'Alerts' : 'Big Reset'}
+          </button>
         ))}
       </div>
       
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-5">
         {tab === 'general' && (
           <>
-            <h2 className="font-bold text-white">General Settings</h2>
+            <h2 className="font-bold text-white">Shop Basics</h2>
             <div className="grid grid-cols-2 gap-4">
               {[['Store Name', 'VeloCycle Bicycle Shop'], ['Tagline', 'Ride Your Dream'], ['Support Email', 'support@velocycle.in'], ['Phone', '+91 98765 43210'], ['Address', '12 Bike Street, Madurai - 625001'], ['Currency', 'INR (₹)']].map(([label, placeholder]) => (
                 <div key={label}>
@@ -74,53 +76,53 @@ export function Settings() {
         )}
         {tab === 'maintenance' && (
           <div className="space-y-6">
-            <h2 className="font-bold text-white text-xl">Data Maintenance</h2>
+            <h2 className="font-bold text-white text-xl">Reset Shop Data</h2>
 
             <div className="bg-purple-500/5 border border-purple-500/10 rounded-2xl p-6">
-              <h3 className="font-bold text-purple-500 mb-2">Hard Reset Catalog (Wipe & Seed)</h3>
-              <p className="text-gray-400 text-sm mb-4">CRITICAL: This will irreversibly DELETE every single product in your store and deploy a brand new set of premium, high-quality cycle products complete with generated SKUs and clean images.</p>
+              <h3 className="font-bold text-purple-500 mb-2">Delete and Add 80 New Bikes</h3>
+              <p className="text-gray-400 text-sm mb-4">WARNING: This will delete everything and add 80 new bikes for testing. This cannot be undone.</p>
               <button 
                 type="button"
                 onClick={() => { if(confirm('EXTREME WARNING: Do you want to wipe the entire catalog and seed new products?')) resetAndSeedProducts() }}
                 className="bg-purple-500 hover:bg-purple-400 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all"
               >
-                Execute Catalog Protocol
+                Start Fresh (Add 80 Bikes)
               </button>
             </div>
             
             <div className="bg-red-500/5 border border-red-500/10 rounded-2xl p-6">
-              <h3 className="font-bold text-red-500 mb-2">Full Category Wipe & Re-seed</h3>
-              <p className="text-gray-400 text-sm mb-4">This will delete ALL existing categories and create a new set of highly organized, industry-standard categories for a premium bicycle shop.</p>
+              <h3 className="font-bold text-red-500 mb-2">Reset All Bike Types</h3>
+              <p className="text-gray-400 text-sm mb-4">This will delete all current categories and create a clean, standard set of bike types.</p>
               <button 
                 type="button"
                 onClick={() => { if(confirm('IRREVERSIBLE: Wipe all current categories and reset to defaults?')) resetToDefaultCategories() }}
                 className="bg-red-500 hover:bg-red-400 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all"
               >
-                Reset Infrastructure
+                Reset Bike Types
               </button>
             </div>
 
             <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-6">
-              <h3 className="font-bold text-emerald-500 mb-2">Reset Inventory Stock</h3>
-              <p className="text-gray-400 text-sm mb-4">Set the stock count of EVERY product and variant in the store to exactly 50 units. Use this to quickly prepare the store for a fresh launch or demo.</p>
+              <h3 className="font-bold text-emerald-500 mb-2">Set All stock to 50</h3>
+              <p className="text-gray-400 text-sm mb-4">Quickly set the count of every bike in the shop to 50. Good for shop demos.</p>
               <button 
                 type="button"
                 onClick={() => { if(confirm('IRREVERSIBLE: Set current stock for ALL products to 50?')) resetAllStocks() }}
                 className="bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-lg shadow-emerald-500/10"
               >
-                Reset Stock to 50
+                Make all counts 50
               </button>
             </div>
 
             <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-6">
-              <h3 className="font-bold text-amber-500 mb-2">Categorize All Products</h3>
-              <p className="text-gray-400 text-sm mb-4">Automatically assign categories to products based on their names. This will only affect products that are missing a category or have an invalid one.</p>
+              <h3 className="font-bold text-amber-500 mb-2">Auto-Fix Bike Types</h3>
+              <p className="text-gray-400 text-sm mb-4">Automatically assign types to bikes if they are missing one.</p>
               <button 
                 type="button"
                 onClick={categorizeAllProducts}
                 className="bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold px-6 py-3 rounded-xl text-sm transition-all"
               >
-                Categorize All Products
+                Auto-Fix All Types
               </button>
             </div>
           </div>
@@ -160,11 +162,11 @@ export function Categories() {
     <div className="space-y-5">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-black text-white px-2">Categories</h1>
-          <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] px-2 mt-1">Classification Infrastructure</p>
+          <h1 className="text-2xl font-black text-white px-2">Bike Types</h1>
+          <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] px-2 mt-1">How we group bikes</p>
         </div>
         <button onClick={() => setShowAdd(true)} className="bg-amber-500 hover:bg-amber-400 text-gray-900 font-black px-6 py-3 rounded-2xl text-[10px] uppercase tracking-widest shadow-xl shadow-amber-500/20 transition-all active:scale-95 flex items-center gap-2">
-            <span className="text-lg">+</span> Create Segment
+            <span className="text-lg">+</span> Add New Type
         </button>
       </div>
 
@@ -197,16 +199,16 @@ export function Categories() {
                     <span className="text-[8px] font-black px-1.5 py-0.5 bg-gray-800 text-gray-500 rounded-md border border-gray-700 uppercase tracking-widest">P-{c.priority || 0}</span>
                 </div>
                 <p className="text-gray-500 text-[10px] font-medium mt-4 line-clamp-2 min-h-[2.5rem] leading-relaxed italic">
-                    {c.description || "Segment lacks strategy overview. Update required."}
+                    {c.description || "No description added yet."}
                 </p>
                 
                 <div className="mt-8 flex items-center justify-between border-t border-gray-800/50 pt-5">
                   <div className="flex flex-col">
-                    <span className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] leading-none mb-1">Asset Load</span>
-                    <span className="text-base font-black text-white tracking-tighter">{getCount(c.name)} Units</span>
+                    <span className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] leading-none mb-1">Stock</span>
+                    <span className="text-base font-black text-white tracking-tighter">{getCount(c.name)} Bikes</span>
                   </div>
                   <button onClick={() => updateCategory(c.id, { active: !c.active })} className={`px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${c.active ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-lg shadow-emerald-500/5' : 'bg-gray-800 text-gray-500 border-gray-700'}`}>
-                    {c.active ? 'Operational' : 'Deactivated'}
+                    {c.active ? 'Active' : 'Off'}
                   </button>
                 </div>
             </div>
@@ -220,13 +222,13 @@ export function Categories() {
             <div className="absolute top-0 right-0 w-48 h-48 opacity-[0.05] rounded-bl-full" style={{backgroundColor: formData.color}} />
             
             <div className="relative z-10">
-                <h2 className="font-black text-white text-3xl tracking-tighter uppercase">{editCat ? 'Modify Segment' : 'New Classification'}</h2>
-                <p className="text-amber-500/60 text-[10px] font-black uppercase tracking-[0.3em] mt-1">Infrastructure Configuration</p>
+                <h2 className="font-black text-white text-3xl tracking-tighter uppercase">{editCat ? 'Change Type' : 'Add New Type'}</h2>
+                <p className="text-amber-500/60 text-[10px] font-black uppercase tracking-[0.3em] mt-1">Type details</p>
             </div>
 
             <div className="grid grid-cols-2 gap-5 relative z-10">
               <div className="col-span-2">
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 ml-1">Internal Title <span className="text-amber-500">*</span></label>
+                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 ml-1">Type Name <span className="text-amber-500">*</span></label>
                 <input 
                     required 
                     value={formData.name} 
@@ -235,21 +237,21 @@ export function Categories() {
                         setFormData({...formData, name: name, slug: generateSlug(name)});
                     }} 
                     className="w-full bg-gray-800/50 border border-gray-700 rounded-2xl px-5 py-4 text-white text-sm focus:outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all font-black tracking-tight" 
-                    placeholder="e.g. PERFORMANCE ROAD"
+                    placeholder="e.g. MOUNTAIN BIKES"
                 />
               </div>
               <div className="col-span-2 sm:col-span-1">
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 ml-1">Identifier Slug</label>
+                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 ml-1">Link Name (Slug)</label>
                 <input 
                     required 
                     value={formData.slug} 
                     onChange={e => setFormData({...formData, slug: e.target.value})} 
                     className="w-full bg-gray-950 border border-gray-800 rounded-2xl px-5 py-4 text-amber-500/80 text-xs focus:outline-none focus:border-amber-500 font-black tracking-widest uppercase" 
-                    placeholder="road-performance"
+                    placeholder="mountain-bikes"
                 />
               </div>
               <div className="col-span-2 sm:col-span-1">
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 ml-1">Strategic Weight</label>
+                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 ml-1">Sort Order (Priority)</label>
                 <input 
                     type="number"
                     value={formData.priority} 
@@ -258,7 +260,7 @@ export function Categories() {
                 />
               </div>
               <div className="col-span-2 sm:col-span-1">
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 ml-1">Asset Image URL</label>
+                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 ml-1">Photo URL</label>
                 <input 
                     required 
                     value={formData.image} 
@@ -268,7 +270,7 @@ export function Categories() {
                 />
               </div>
               <div className="col-span-2 sm:col-span-1">
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 ml-1">Brand Accent</label>
+                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 ml-1">Color Theme</label>
                 <div className="flex gap-2">
                     <input 
                         type="color"
@@ -284,21 +286,21 @@ export function Categories() {
                 </div>
               </div>
               <div className="col-span-2">
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 ml-1">Executive Summary</label>
+                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 ml-1">Short Description</label>
                 <textarea 
                     value={formData.description} 
                     onChange={e => setFormData({...formData, description: e.target.value})} 
                     rows={3}
                     className="w-full bg-gray-950 border border-gray-800 rounded-2xl px-5 py-4 text-white text-xs font-medium focus:outline-none focus:border-amber-500 resize-none leading-relaxed italic" 
-                    placeholder="Define the core purpose and target audience for this segment..."
+                    placeholder="What kind of bikes are in this type?"
                 />
               </div>
             </div>
 
             <div className="flex gap-4 pt-4 relative z-10">
-              <button type="button" onClick={() => { setShowAdd(false); setEditCat(null); setFormData({ name:'', slug:'', image:'', description:'', color:'#f59e0b', priority:0 }); }} className="flex-1 bg-gray-800 text-gray-400 py-4.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-700 hover:text-white transition-all active:scale-95">Discard</button>
+              <button type="button" onClick={() => { setShowAdd(false); setEditCat(null); setFormData({ name:'', slug:'', image:'', description:'', color:'#f59e0b', priority:0 }); }} className="flex-1 bg-gray-800 text-gray-400 py-4.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-700 hover:text-white transition-all active:scale-95">Cancel</button>
               <button type="submit" className="flex-1 bg-amber-500 text-gray-900 py-4.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-amber-400 shadow-2xl shadow-amber-500/20 transition-all active:scale-95">
-                  {editCat ? 'Authorize Update' : 'Initialize Segment'}
+                  {editCat ? 'Save Changes' : 'Add Type'}
               </button>
             </div>
           </form>

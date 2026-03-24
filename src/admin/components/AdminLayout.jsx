@@ -23,16 +23,16 @@ import {
 } from 'lucide-react';
 
 const navItems = [
-  { label: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
-  { label: 'Products', icon: Bike, path: '/admin/products', children: [
-    { label: 'All Products', icon: List, path: '/admin/products' },
-    { label: 'Add Product', icon: PlusCircle, path: '/admin/products/add' },
-    { label: 'Categories', icon: Tags, path: '/admin/categories' },
-    { label: 'Inventory', icon: Archive, path: '/admin/inventory' },
+  { label: 'Shop Overview', icon: LayoutDashboard, path: '/admin' },
+  { label: 'Cycles', icon: Bike, path: '/admin/products', children: [
+    { label: 'All Cycles', icon: List, path: '/admin/products' },
+    { label: 'Add New Cycle', icon: PlusCircle, path: '/admin/products/add' },
+    { label: 'Cycle Types', icon: Tags, path: '/admin/categories' },
+    { label: 'Cycle Stock', icon: Archive, path: '/admin/inventory' },
   ]},
-  { label: 'Orders', icon: ShoppingBag, path: '/admin/orders' },
-  { label: 'Customers', icon: Users, path: '/admin/customers' },
-  { label: 'Settings', icon: Settings, path: '/admin/settings' },
+  { label: 'Sales', icon: ShoppingBag, path: '/admin/orders' },
+  { label: 'Buyers', icon: Users, path: '/admin/customers' },
+  { label: 'Admin Setup', icon: Settings, path: '/admin/settings' },
 ];
 
 function List(props) {
@@ -43,7 +43,7 @@ export default function AdminLayout({ children }) {
   const { sidebarOpen, setSidebarOpen, adminUser, logout, notifications, lowStockProducts, pendingOrders } = useAdmin();
   const location = useLocation();
   const navigate = useNavigate();
-  const [expandedMenu, setExpandedMenu] = useState('Products');
+  const [expandedMenu, setExpandedMenu] = useState('Cycles');
   const [showNotif, setShowNotif] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   
@@ -69,7 +69,7 @@ export default function AdminLayout({ children }) {
           {sidebarOpen && (
             <div className="flex flex-col">
                 <span className="font-black text-white tracking-tighter text-xl">CYCLE<span className="text-amber-500">CORE</span></span>
-                <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest -mt-1">Admin Panel</span>
+                <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest -mt-1">Shop Manager</span>
             </div>
           )}
         </div>
@@ -98,7 +98,7 @@ export default function AdminLayout({ children }) {
                     <>
                       <span className="text-sm font-bold flex-1">{item.label}</span>
                       {item.children && <ChevronRight size={14} className={`transition-transform duration-300 ${isExpanded ? 'rotate-90' : ''}`} />}
-                      {item.label === 'Orders' && pendingOrders > 0 && (
+                      {item.label === 'Sales' && pendingOrders > 0 && (
                         <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${isActive ? 'bg-gray-900 text-amber-400' : 'bg-amber-500 text-gray-900'}`}>
                             {pendingOrders}
                         </span>
@@ -166,7 +166,7 @@ export default function AdminLayout({ children }) {
             {/* Breadcrumbs Navigation */}
             <div className="hidden md:flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em]">
                 <Link to="/admin" className="text-gray-500 hover:text-amber-500 transition-colors flex items-center gap-2">
-                    <Home size={12} /> Dashboard
+                    <Home size={12} /> Overview
                 </Link>
                 {pathSegments.map((segment, index) => (
                     <React.Fragment key={index}>
@@ -185,7 +185,7 @@ export default function AdminLayout({ children }) {
                 <Search size={16} className="text-gray-500 group-hover:text-gray-300 transition-colors" />
                 <input 
                     type="text" 
-                    placeholder="Search panel..." 
+                    placeholder="Search for something..." 
                     className="bg-transparent border-none focus:ring-0 text-xs font-bold text-gray-200 placeholder:text-gray-600 w-full ml-2"
                 />
             </div>
@@ -205,7 +205,7 @@ export default function AdminLayout({ children }) {
               {showNotif && (
                 <div className="absolute right-0 top-14 w-80 lg:w-96 bg-gray-900 border border-gray-800 rounded-[2rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] z-[100] overflow-hidden">
                   <div className="p-6 border-b border-gray-800 flex items-center justify-between">
-                    <h4 className="font-black text-sm uppercase tracking-widest text-white">System Notifications</h4>
+                    <h4 className="font-black text-sm uppercase tracking-widest text-white">New Alerts</h4>
                     <span className="text-[10px] font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full">{unread} New</span>
                   </div>
                   <div className="max-h-[70vh] overflow-y-auto p-2 scrollbar-thin">
@@ -227,7 +227,7 @@ export default function AdminLayout({ children }) {
                     )}
                   </div>
                   <div className="p-4 bg-gray-950/50 border-t border-gray-800 text-center">
-                     <button className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 hover:text-white transition-all">Mark all as read</button>
+                     <button className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 hover:text-white transition-all">Clear all alerts</button>
                   </div>
                 </div>
               )}
@@ -240,7 +240,7 @@ export default function AdminLayout({ children }) {
                 className="hidden lg:flex items-center gap-3 px-5 py-3 bg-gray-900 border border-gray-800 rounded-2xl hover:border-amber-500 transition-all text-xs font-black uppercase tracking-widest group"
             >
                 <div className="w-2 h-2 bg-emerald-500 rounded-full group-hover:animate-pulse" />
-                Live Store
+                View Shop
             </Link>
           </div>
         </header>
@@ -255,21 +255,21 @@ export default function AdminLayout({ children }) {
                 )}
                 <div>
                     <h1 className="text-2xl font-black text-white tracking-tight capitalize">
-                        {pathSegments[pathSegments.length - 1]?.replace(/-/g, ' ') || 'Admin Ecosystem'}
+                        {pathSegments[pathSegments.length - 1]?.replace(/-/g, ' ') || 'Shop Admin'}
                     </h1>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-amber-500/60 mt-0.5">VeloCore Operations Hub</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-amber-500/60 mt-0.5">Cycle Shop Operations</p>
                 </div>
             </div>
             
             <div className="flex items-center gap-3">
                 {location.pathname.includes('/products') && !location.pathname.includes('/add') && (
                     <Link to="/admin/products/add" className="flex items-center gap-2.5 px-6 py-3.5 bg-amber-500 text-gray-900 rounded-[1.2rem] font-black text-xs uppercase tracking-widest shadow-xl shadow-amber-500/20 hover:bg-amber-600 active:scale-95 transition-all">
-                        <PlusCircle size={16} /> New Asset
+                        <PlusCircle size={16} /> Add Cycle
                     </Link>
                 )}
                 {location.pathname === '/admin' && (
                     <Link to="/admin/orders" className="flex items-center gap-2.5 px-6 py-3.5 bg-gray-900 border border-gray-800 text-white rounded-[1.2rem] font-black text-xs uppercase tracking-widest hover:border-gray-600 active:scale-95 transition-all">
-                        <ShoppingBag size={16} /> Audit Orders
+                        <ShoppingBag size={16} /> Check Sales
                     </Link>
                 )}
             </div>

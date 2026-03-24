@@ -43,9 +43,10 @@ export default function AddEditProduct() {
   } = useAdmin();
   const navigate = useNavigate();
 
-  const categories = dynamicCategories
-    .filter((c) => c.active)
-    .map((c) => c.name);
+  const categories = [...new Set([
+    ...dynamicCategories.filter((c) => c.active).map((c) => c.name),
+    ...products.map(p => p.category).filter(Boolean)
+  ])];
   const isEdit = !!id;
   const existing = products.find((p) => p.id === id);
 
@@ -123,13 +124,13 @@ export default function AddEditProduct() {
           ←
         </button>
         <h1 className="text-2xl font-black text-white">
-          {isEdit ? "Edit Product" : "Add New Product"}
+          {isEdit ? "Edit Cycle" : "Add New Cycle"}
         </h1>
       </div>
 
       {saved && (
         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 text-emerald-400 text-sm">
-          ✓ Product saved successfully! Redirecting...
+          ✓ Cycle saved! Going back now...
         </div>
       )}
 
@@ -137,12 +138,12 @@ export default function AddEditProduct() {
         {/* Basic Info */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-4">
           <h2 className="font-bold text-white text-sm uppercase tracking-wider text-gray-400">
-            Basic Information
+            Cycle Details
           </h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">
-                Product Name *
+                Cycle Name *
               </label>
               <input
                 required
@@ -154,7 +155,7 @@ export default function AddEditProduct() {
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">
-                Brand *
+                Company *
               </label>
               <input
                 required
@@ -166,7 +167,7 @@ export default function AddEditProduct() {
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">
-                Category *
+                Type *
               </label>
               <select
                 value={form.category}
@@ -180,7 +181,7 @@ export default function AddEditProduct() {
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">
-                SKU *
+                ID Number *
               </label>
               <input
                 required
@@ -208,12 +209,12 @@ export default function AddEditProduct() {
         {/* Pricing & Stock */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-4">
           <h2 className="font-bold text-sm uppercase tracking-wider text-gray-400">
-            Pricing & Stock
+            Price & Count
           </h2>
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">
-                MRP (₹) *
+                Old Price (MRP ₹) *
               </label>
               <input
                 required
@@ -226,7 +227,7 @@ export default function AddEditProduct() {
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">
-                Selling Price (₹) *
+                Today's Price (₹) *
               </label>
               <input
                 required
@@ -239,7 +240,7 @@ export default function AddEditProduct() {
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">
-                Stock Qty *
+                How many in stock? *
               </label>
               <input
                 required
@@ -262,7 +263,7 @@ export default function AddEditProduct() {
         {/* Images */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-4">
           <h2 className="font-bold text-sm uppercase tracking-wider text-gray-400">
-            Product Image
+            Cycle Photo
           </h2>
           <div className="flex gap-4 items-start">
             <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-800 flex-shrink-0">
@@ -275,7 +276,7 @@ export default function AddEditProduct() {
             </div>
             <div className="flex-1">
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">
-                Image URL
+                Photo URL
               </label>
               <input
                 value={form.image}
@@ -293,7 +294,7 @@ export default function AddEditProduct() {
         {/* Variants */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-4">
           <h2 className="font-bold text-sm uppercase tracking-wider text-gray-400">
-            Product Variants
+            Cycle Options
           </h2>
           <div className="grid grid-cols-4 gap-3">
             <div>
@@ -330,7 +331,7 @@ export default function AddEditProduct() {
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">
-                Gear Type
+                Gears
               </label>
               <select
                 value={variant.gear}
@@ -346,7 +347,7 @@ export default function AddEditProduct() {
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-400 mb-1.5">
-                Stock
+                Count
               </label>
               <input
                 type="number"
@@ -363,7 +364,7 @@ export default function AddEditProduct() {
             onClick={addVariant}
             className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all"
           >
-            + Add Variant
+            + Add Option
           </button>
           {form.variants?.length > 0 && (
             <div className="space-y-2">
@@ -382,7 +383,7 @@ export default function AddEditProduct() {
                     {v.gear}
                   </span>
                   <span className="text-xs text-gray-400 flex-1">
-                    Stock: {v.stock}
+                    Count: {v.stock}
                   </span>
                   <button
                     type="button"
@@ -400,7 +401,7 @@ export default function AddEditProduct() {
         {/* Status */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
           <h2 className="font-bold text-sm uppercase tracking-wider text-gray-400 mb-3">
-            Product Status
+            Show to Buyers?
           </h2>
           <div className="flex gap-3">
             {["active", "inactive"].map((s) => (
@@ -410,7 +411,7 @@ export default function AddEditProduct() {
                 onClick={() => set("status", s)}
                 className={`px-4 py-2 rounded-xl text-sm font-semibold capitalize transition-all ${form.status === s ? (s === "active" ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-gray-700 text-gray-300") : "bg-gray-800 text-gray-500 hover:bg-gray-700"}`}
               >
-                {s}
+                {s === 'active' ? 'Yes' : 'No'}
               </button>
             ))}
           </div>
@@ -423,13 +424,13 @@ export default function AddEditProduct() {
             onClick={() => navigate("/admin/products")}
             className="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-xl font-semibold transition-all"
           >
-            Cancel
+            Go Back
           </button>
           <button
             type="submit"
             className="flex-1 bg-amber-500 hover:bg-amber-400 text-gray-900 py-3 rounded-xl font-bold transition-all"
           >
-            {isEdit ? "Update Product" : "Save Product"}
+            {isEdit ? "Save Changes" : "Add Cycle"}
           </button>
         </div>
       </form>
