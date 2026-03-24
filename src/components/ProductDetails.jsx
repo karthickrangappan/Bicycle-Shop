@@ -26,7 +26,14 @@ export default function ProductDetails() {
       navigate('/shop', { replace: true });
       return;
     }
-    setProduct(found);
+    if (found) {
+      setProduct(found);
+      // Auto-select first color variant and frame size
+      const initialColor = found.colors?.length > 0 ? found.colors[0] : '#000000';
+      const initialSize = found.sizes?.length > 0 ? found.sizes[0] : 'S';
+      setForm({ color: initialColor });
+      setSelectedSize(initialSize);
+    }
   }, [id, products, navigate]);
 
   useEffect(() => {
