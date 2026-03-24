@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useShop } from '../context/ShopContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { CreditCard, Truck, ShieldCheck, ShoppingCart, ArrowRight, Wallet, CheckCircle2, MapPin, Box, Wrench, Building2, Home } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import PageHeader from '../layout/PageHeader';
@@ -82,19 +82,32 @@ export default function Checkout() {
       setFormData({ ...formData, [e.target.name]: e.target.value });
    };
 
+   const { state: buyNowState } = useLocation();
+   const activeItems = useMemo(() => {
+     if (buyNowState?.product) {
+       return [{
+         ...buyNowState.product,
+         selectedSize: buyNowState.selectedSize,
+         selectedColor: buyNowState.selectedColor,
+         quantity: 1
+       }];
+     }
+     return cart;
+   }, [cart, buyNowState]);
+
    const subtotal = useMemo(() => {
-      return cart.reduce((acc, item) => {
+      return activeItems.reduce((acc, item) => {
          const price = parseFloat(String(item.price).replace(/[^\d.]/g, '')) || 0;
          return acc + (price * (item.quantity || 1));
       }, 0);
-   }, [cart]);
+   }, [activeItems]);
 
    // Dimensional Weight Logic & Bulky Factor
    const shippingCosts = useMemo(() => {
       let totalDimWeightCost = 0;
       let assemblyFee = assemblyTier === 'ReadyToRide' ? 1499 : 499;
 
-      cart.forEach(item => {
+      activeItems.forEach(item => {
          // Default bicycle box dimensions if not provided (LxWxH in cm)
          const L = item.length || 150;
          const W = item.width || 25;
@@ -111,7 +124,7 @@ export default function Checkout() {
          assembly: assemblyFee,
          total: Math.round(totalDimWeightCost + assemblyFee + surcharge)
       };
-   }, [cart, assemblyTier, addressType]);
+   }, [activeItems, assemblyTier, addressType]);
 
    const totalInvestment = subtotal + shippingCosts.total;
 
@@ -131,7 +144,7 @@ export default function Checkout() {
          return false;
       }
 
-      if (!cart.length) {
+      if (!activeItems.length) {
          return false;
       }
 
@@ -154,7 +167,7 @@ export default function Checkout() {
       setLoading(true);
 
       // Final Inventory Check: Re-verify stock at the millisecond of "Place Order"
-      for(const item of cart) {
+      for(const item of activeItems) {
         const prodRef = doc(db, 'products', item.id);
         const prodSnap = await getDoc(prodRef);
         if(!prodSnap.exists() || (prodSnap.data().stock || 0) < 0) {
@@ -166,6 +179,7 @@ export default function Checkout() {
 
       const orderPayload = {
          ...formData,
+         items: activeItems,
          shippingCost: shippingCosts.total,
          assemblyTier,
          addressType,
@@ -207,7 +221,7 @@ export default function Checkout() {
                ...orderPayload,
                paymentMethod: "Razorpay",
                paymentId: response.razorpay_payment_id,
-               status: "Processing", // Valid fulfillment status, "Paid" is a payment state, not a fulfillment state
+               status: "Processing", 
             });
             if(res) {
                toast.success("Payment successful ✅");
@@ -239,8 +253,8 @@ export default function Checkout() {
       }).format(amount);
    };
 
-   if (cart.length === 0) {
-      navigate('/shop');
+   if (activeItems.length === 0) {
+      navigate('/cart');
       return null;
    }
 
@@ -366,11 +380,11 @@ export default function Checkout() {
                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
                   <div className="bg-white p-10 rounded-[3.5rem] shadow-2xl border border-slate-100 sticky top-32 overflow-hidden ring-1 ring-slate-100">
                      <h2 className="text-2xl font-black text-slate-900 mb-10 tracking-tight flex items-center gap-3">
-                        Investment Summary <span className="px-4 py-1.5 bg-slate-900 text-[11px] rounded-full text-white">{cart.length}</span>
+                        Investment Summary <span className="px-4 py-1.5 bg-slate-900 text-[11px] rounded-full text-white">{activeItems.length}</span>
                      </h2>
 
                      <div className="space-y-6 mb-12">
-                        {cart.map(item => (
+                        {activeItems.map(item => (
                            <div key={item.id} className="flex gap-4 items-center">
                               <div className="w-16 h-16 rounded-xl bg-slate-50 overflow-hidden border border-slate-100 p-2">
                                  <img src={item.image} className="w-full h-full object-contain" />

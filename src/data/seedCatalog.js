@@ -91,9 +91,9 @@ export const generateRealCatalog = () => {
     ];
 
     const allSizes = [
-        ["Adult Frame (S)", "Adult Frame (M)", "Adult Frame (L)"],
-        ["Adult Frame (M)", "Adult Frame (L)", "Adult Frame (XL)"],
-        ["Age 5-8 (16\")", "Age 10-14 (24\")"],
+        ["Age 18-20 (Adult S)", "Age 20-25 (Adult M)", "Age 25+ (Adult L)"],
+        ["Age 14-18 (26\")", "Age 18-20 (Adult S)", "Age 20-25 (Adult M)"],
+        ["Age 2-5 (12\")", "Age 6-10 (20\")", "Age 11-14 (24\")"],
         ["Universal"]
     ];
 
@@ -128,6 +128,20 @@ export const generateRealCatalog = () => {
         const sizes = template.brand === 'Woom' || template.brand === 'Strider' ? ["Age 5-8 (16\")", "Age 2-4 (12\")"] 
             : template.brand === 'Garmin' || template.category === 'Accessories' || template.category === 'Spare Parts' || template.brand === 'Gore Wear' ? ["Universal"] 
             : allSizes[i % 2];
+        
+        const colors = allColors[i % allColors.length];
+        
+        const variants = [];
+        sizes.forEach(s => {
+            colors.forEach(c => {
+                variants.push({
+                    size: s,
+                    color: c,
+                    gear: "21-speed",
+                    stock: Math.floor(Math.random() * 5) + 1
+                });
+            });
+        });
 
         finalCatalog.push({
             name: i >= 44 ? `${template.name} - Elite Edition` : template.name,
@@ -143,7 +157,8 @@ export const generateRealCatalog = () => {
             image: imgUrl,
             images: [imgUrl, imageLib[(i+1) % imageLib.length]],
             sizes: sizes,
-            colors: allColors[i % allColors.length],
+            colors: colors,
+            variants: variants,
             // Formatting price nicely into INR format string
             displayPrice: `₹${(i >= 44 ? template.price + 50000 : template.price).toLocaleString('en-IN')}`,
             displayOldPrice: `₹${Math.floor(template.price * 1.2).toLocaleString('en-IN')}`
