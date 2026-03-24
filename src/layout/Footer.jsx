@@ -43,7 +43,7 @@ export default function Footer() {
               </span>
             </a>
             
-            <p className="text-slate-400 font-medium leading-relaxed mb-8 max-w-sm mx-auto md:mx-0">
+            <p className="text-slate-400 font-medium leading-relaxed mb-6 lg:mb-8 text-xs lg:text-sm max-w-sm mx-auto md:mx-0">
                Engineering the future of cycling. Join our community for exclusive technical insights and early access to new releases.
             </p>
 
@@ -59,11 +59,11 @@ export default function Footer() {
           {/* Quick Links */}
           {displayCategories.length > 0 && (
             <div>
-              <h4 className="text-white font-black uppercase text-sm tracking-widest mb-8">Performance Shop</h4>
+            <h4 className="text-white font-black uppercase text-[10px] lg:text-xs tracking-widest mb-6 lg:mb-8">Performance Shop</h4>
               <ul className="space-y-4">
                 {displayCategories.map((item) => (
                   <li key={item.id || item.name}>
-                    <Link to={item.path} className="text-slate-400 hover:text-white flex items-center justify-center md:justify-start gap-2 group transition-colors">
+                    <Link to={item.path} className="text-slate-400 hover:text-white flex items-center justify-center md:justify-start gap-2 group transition-colors text-xs lg:text-sm">
                       <span className="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-brand-500 transition-colors"></span>
                       {item.name}
                     </Link>
@@ -74,11 +74,11 @@ export default function Footer() {
           )}
 
           <div>
-            <h4 className="text-white font-black uppercase text-sm tracking-widest mb-8">Rider Support</h4>
+            <h4 className="text-white font-black uppercase text-[10px] lg:text-xs tracking-widest mb-6 lg:mb-8">Rider Support</h4>
             <ul className="space-y-4">
               {supportLinks.map((item) => (
                 <li key={item.name}>
-                  <Link to={item.path} className="text-slate-400 hover:text-white flex items-center justify-center md:justify-start gap-2 group transition-colors">
+                  <Link to={item.path} className="text-slate-400 hover:text-white flex items-center justify-center md:justify-start gap-2 group transition-colors text-xs lg:text-sm">
                     <span className="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-brand-500 transition-colors"></span>
                     {item.name}
                   </Link>
@@ -89,18 +89,18 @@ export default function Footer() {
 
           {/* Contact & Hours */}
           <div>
-            <h4 className="text-white font-black uppercase text-sm tracking-widest mb-8">The Workshop</h4>
-            <ul className="space-y-6 text-slate-400 font-medium">
+            <h4 className="text-white font-black uppercase text-[10px] lg:text-xs tracking-widest mb-6 lg:mb-8">The Workshop</h4>
+            <ul className="space-y-4 lg:space-y-6 text-slate-400 font-medium text-xs lg:text-sm">
               <li className="flex flex-col md:flex-row items-center md:items-start gap-3">
-                <MapPin size={20} className="text-brand-500" />
+                <MapPin size={18} className="text-brand-500" />
                 <span>123 Performance Way, Gear City, GC 90210</span>
               </li>
               <li className="flex items-center justify-center md:justify-start gap-3">
-                <Phone size={20} className="text-brand-500" />
+                <Phone size={18} className="text-brand-500" />
                 <span>+1 (800) CYCLE-COR</span>
               </li>
               <li className="flex items-center justify-center md:justify-start gap-3">
-                <Mail size={20} className="text-brand-500" />
+                <Mail size={18} className="text-brand-500" />
                 <span>hello@cyclecore.io</span>
               </li>
             </ul>

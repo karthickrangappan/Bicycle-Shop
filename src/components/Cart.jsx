@@ -23,8 +23,8 @@ const RecentlyViewed = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-12">
           <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-brand-500 mb-2 block">Your History</span>
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Recently Viewed <span className="text-brand-600">Products</span></h2>
+            <span className="text-[9px] font-black uppercase tracking-widest text-brand-500 mb-1 lg:mb-2 block text-center md:text-left">Your History</span>
+            <h2 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight text-center md:text-left">Recently Viewed <span className="text-brand-600">Products</span></h2>
           </div>
           <Link 
             to="/shop" 
@@ -38,7 +38,7 @@ const RecentlyViewed = () => {
           <Swiper
             modules={[Autoplay, Navigation, Pagination]}
             spaceBetween={20}
-            slidesPerView={1.2}
+            slidesPerView={1}
             loop={true}
             speed={800}
             autoplay={{
@@ -57,7 +57,7 @@ const RecentlyViewed = () => {
             // }}
             breakpoints={{
               640: { slidesPerView: 2, spaceBetween: 24 }, // sm
-              768: { slidesPerView: 2.5, spaceBetween: 28 }, // md
+              768: { slidesPerView: 3, spaceBetween: 28 }, // md
               1024: { slidesPerView: 3, spaceBetween: 32 }, // lg
               1280: { slidesPerView: 4, spaceBetween: 32 }, // xl
             }}
@@ -149,15 +149,15 @@ export default function Cart() {
             <div className="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-8 text-brand-500 shadow-xl shadow-brand-500/10">
               <ShoppingBag size={48} />
             </div>
-            <h2 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">Your cart is empty</h2>
-            <p className="text-slate-500 font-medium mb-10 leading-relaxed italic">
+            <h2 className="text-2xl lg:text-3xl font-black text-slate-900 mb-3 lg:mb-4 tracking-tight">Your cart is empty</h2>
+            <p className="text-xs lg:text-sm text-slate-500 font-medium mb-8 lg:mb-10 leading-relaxed italic">
               Looks like you haven't added any premium cycles to your collection yet. Start browsing our elite catalog today.
             </p>
             <Link 
               to="/shop" 
-              className="inline-flex items-center gap-2 px-8 py-4 bg-brand-500 text-white rounded-2xl font-black shadow-xl shadow-brand-500/30 hover:bg-brand-600 transition-all active:scale-95"
+              className="inline-flex items-center gap-2 px-6 lg:px-8 py-3.5 lg:py-4 bg-brand-500 text-white rounded-2xl font-black shadow-xl shadow-brand-500/30 hover:bg-brand-600 transition-all active:scale-95 text-xs lg:text-sm"
             >
-              Start Shopping <ArrowRight size={20} />
+              Start Shopping <ArrowRight size={18} />
             </Link>
           </motion.div>
         </div>
@@ -201,18 +201,18 @@ export default function Cart() {
                   {/* Product Details */}
                   <div className="flex-grow text-center sm:text-left">
                     <div className="mb-4">
-                      <span className="text-[10px] uppercase font-black tracking-widest text-brand-500 mb-1 block">
+                      <span className="text-[9px] uppercase font-black tracking-widest text-brand-500 mb-1 block">
                         {item.category} • Frame Size: {item.selectedSize}
                       </span>
-                      <h3 className="text-xl font-black text-slate-900 tracking-tight group-hover:text-brand-600 transition-colors">
+                      <h3 className="text-lg lg:text-xl font-black text-slate-900 tracking-tight group-hover:text-brand-600 transition-colors">
                         {item.name}
                       </h3>
                     </div>
                     
                     <div className="flex items-center justify-center sm:justify-start gap-4">
-                       <p className="text-lg font-black text-slate-900 font-space">{formatCurrency(item.price)}</p>
+                       <p className="text-base lg:text-lg font-black text-slate-900 font-space">{formatCurrency(item.price)}</p>
                        <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-                       <p className="text-sm font-bold text-slate-400">Reserved</p>
+                       <p className="text-[10px] lg:text-sm font-bold text-slate-400">Reserved</p>
                     </div>
                   </div>
 
@@ -257,19 +257,19 @@ export default function Cart() {
               <h2 className="text-2xl font-black text-slate-900 mb-8 tracking-tight">Order Summary</h2>
               
               <div className="space-y-6 mb-10">
-                <div className="flex justify-between items-center pb-4 border-b border-slate-50">
+                <div className="flex justify-between items-center pb-4 border-b border-slate-50 text-sm lg:text-base">
                   <span className="text-slate-500 font-bold">Subtotal</span>
-                  <span className="text-lg font-black text-slate-900 font-space">{formatCurrency(subtotal)}</span>
+                  <span className="text-base lg:text-lg font-black text-slate-900 font-space">{formatCurrency(subtotal)}</span>
                 </div>
                 
-                <div className="flex justify-between items-center pb-4 border-b border-slate-50">
+                <div className="flex justify-between items-center pb-4 border-b border-slate-50 text-xs lg:text-sm">
                   <span className="text-slate-500 font-bold">Shipping</span>
-                  <span className="text-brand-600 font-black text-sm uppercase tracking-widest">Calculated at Checkout</span>
+                  <span className="text-brand-600 font-black uppercase tracking-widest text-[9px] lg:text-[10px]">Calculated at Checkout</span>
                 </div>
                 
                 <div className="flex justify-between items-center pt-2">
-                  <span className="text-xl font-black text-slate-900 tracking-tight">Grand Total</span>
-                  <span className="text-3xl font-black text-brand-600 font-space tracking-tighter">
+                  <span className="text-lg lg:text-xl font-black text-slate-900 tracking-tight">Grand Total</span>
+                  <span className="text-2xl lg:text-3xl font-black text-brand-600 font-space tracking-tighter">
                     {formatCurrency(subtotal)}
                   </span>
                 </div>

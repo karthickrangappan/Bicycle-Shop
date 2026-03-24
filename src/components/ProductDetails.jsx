@@ -339,19 +339,19 @@ export default function ProductDetails() {
             <Swiper
               modules={[Autoplay, FreeMode]}
               spaceBetween={24}
-              slidesPerView={1.2}
-              freeMode={true}
-              grabCursor={true}
-              autoplay={{
-                delay: 4000,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true
-              }}
-              breakpoints={{
-                640: { slidesPerView: 2.2 },
-                1024: { slidesPerView: 3.2 },
-                1280: { slidesPerView: 4 }
-              }}
+            slidesPerView={1}
+            freeMode={true}
+            grabCursor={true}
+            autoplay={{
+              delay: 4000,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true
+            }}
+            breakpoints={{
+              640: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+              1280: { slidesPerView: 4 }
+            }}
               className="related-products-swiper !pb-12"
             >
               {products

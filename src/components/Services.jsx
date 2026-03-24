@@ -103,17 +103,14 @@ export default function Services() {
           ].map((stat, i) => (
             <motion.div 
               key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -5, scale: 1.05 }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-white/80 backdrop-blur-xl p-6 rounded-[2rem] border border-white shadow-xl shadow-slate-200/50 flex flex-col items-center text-center group hover:bg-white transition-all hover:shadow-brand-500/10 hover:border-brand-200"
+              initial={{ opacity: 1, y: 0 }}
+              className="bg-white/80 backdrop-blur-xl p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] border border-white shadow-xl shadow-slate-200/50 flex flex-col items-center text-center group hover:bg-white transition-all hover:shadow-brand-500/10 hover:border-brand-200"
             >
-              <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 mb-4 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all group-hover:rotate-[15deg]">
-                <stat.icon size={22} />
+              <div className="w-10 h-10 lg:w-12 lg:h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 mb-3 lg:mb-4 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all group-hover:rotate-[15deg]">
+                <stat.icon size={18} />
               </div>
-              <p className="text-2xl font-black text-slate-900 tracking-tighter group-hover:text-brand-600 transition-colors">{stat.val}</p>
-              <p className="text-[10px] uppercase font-black tracking-widest text-slate-400 group-hover:text-slate-500 transition-colors">{stat.label}</p>
+              <p className="text-xl lg:text-2xl font-black text-slate-900 tracking-tighter group-hover:text-brand-600 transition-colors">{stat.val}</p>
+              <p className="text-[9px] lg:text-[10px] uppercase font-black tracking-widest text-slate-400 group-hover:text-slate-500 transition-colors">{stat.label}</p>
             </motion.div>
           ))}
         </div>
@@ -133,8 +130,8 @@ export default function Services() {
               }`}
             >
               {pkg.recommended && (
-                <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-6 py-2 bg-brand-500 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg shadow-brand-500/30">
-                  Master Choice
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 lg:px-6 py-1.5 lg:py-2 bg-brand-500 text-white text-[9px] lg:text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg shadow-brand-500/30 whitespace-nowrap">
+                   Master Choice
                 </div>
               )}
 
@@ -146,12 +143,12 @@ export default function Services() {
                 <pkg.icon size={30} />
               </div>
 
-              <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-2">{pkg.title}</h3>
-              <p className="text-sm text-slate-400 font-medium leading-relaxed mb-6">{pkg.description}</p>
+               <h3 className="text-xl lg:text-2xl font-black text-slate-900 tracking-tight mb-2">{pkg.title}</h3>
+              <p className="text-xs lg:text-sm text-slate-400 font-medium leading-relaxed mb-6">{pkg.description}</p>
               
               <div className="mb-8">
-                <span className="text-4xl font-black text-slate-950 tracking-tighter">{pkg.price}</span>
-                <span className="text-sm font-bold text-slate-300 ml-2">/ per service</span>
+                <span className="text-3xl lg:text-4xl font-black text-slate-950 tracking-tighter">{pkg.price}</span>
+                <span className="text-xs lg:text-sm font-bold text-slate-300 ml-2">/ service</span>
               </div>
 
               <ul className="space-y-4 mb-10">
@@ -237,8 +234,8 @@ export default function Services() {
             >
                Master Lab Services
             </motion.span>
-            <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-6 leading-tight">Need a Signature <span className="text-brand-400">Build?</span></h2>
-            <p className="text-lg sm:text-xl font-medium text-white/70 mb-10 leading-relaxed italic">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tighter mb-4 lg:mb-6 leading-tight">Need a Signature <span className="text-brand-400">Build?</span></h2>
+            <p className="text-base lg:text-xl font-medium text-white/70 mb-8 lg:mb-10 leading-relaxed italic">
               From custom frame painting to world-class part matching, our Master Lab builds your dream machine from the ground up.
             </p>
             <div className="flex flex-col sm:flex-row gap-5 justify-center">

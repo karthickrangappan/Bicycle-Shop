@@ -69,14 +69,14 @@ export default function About() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <div className="flex items-center gap-2 mb-6 text-brand-500 font-black uppercase tracking-widest text-[10px]">
-               <div className="w-10 h-[2px] bg-brand-500" />
+            <div className="flex items-center gap-2 mb-4 lg:mb-6 text-brand-500 font-black uppercase tracking-widest text-[9px] lg:text-[10px]">
+               <div className="w-8 lg:w-10 h-[2px] bg-brand-500" />
                Our Heritage
             </div>
-            <h2 className="text-4xl sm:text-6xl font-black tracking-tighter text-slate-900 mb-8 leading-tight">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-slate-900 mb-6 lg:mb-8 leading-[1.1] sm:leading-tight">
               Engineering the <span className="text-brand-500">Perfect Ride</span> Since 2010.
             </h2>
-            <div className="space-y-6 text-slate-500 font-medium leading-relaxed text-lg">
+            <div className="space-y-6 text-slate-500 font-medium leading-relaxed text-base lg:text-lg">
               <p>
                 Founded in 2010, <span className="text-slate-900 font-black">CycleCore</span> started with a single bench and a passion for speed. We didn't want to be just another bike shop; we wanted to be a service sanctuary for those who demand the absolute best from their machines.
               </p>
@@ -88,17 +88,17 @@ export default function About() {
             <div className="grid grid-cols-2 gap-6 mt-12">
                <motion.div 
                   whileHover={{ y: -5, scale: 1.05 }}
-                  className="p-6 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/50 transition-all hover:shadow-brand-500/10 hover:border-brand-200"
+                  className="p-4 lg:p-6 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/50 transition-all hover:shadow-brand-500/10 hover:border-brand-200"
                >
-                  <p className="text-4xl font-black text-slate-900 mb-1 tracking-tighter">15+</p>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Years Experience</p>
+                  <p className="text-2xl lg:text-4xl font-black text-slate-900 mb-1 lg:mb-1 tracking-tighter">15+</p>
+                  <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-400">Years Experience</p>
                </motion.div>
                <motion.div 
                   whileHover={{ y: -5, scale: 1.05 }}
-                  className="p-6 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/50 transition-all hover:shadow-brand-500/10 hover:border-brand-200"
+                  className="p-4 lg:p-6 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/50 transition-all hover:shadow-brand-500/10 hover:border-brand-200"
                >
-                  <p className="text-4xl font-black text-slate-900 mb-1 tracking-tighter">12K+</p>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Custom Builds</p>
+                  <p className="text-2xl lg:text-4xl font-black text-slate-900 mb-1 lg:mb-1 tracking-tighter">12K+</p>
+                  <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-400">Custom Builds</p>
                </motion.div>
             </div>
           </motion.div>
@@ -185,7 +185,7 @@ export default function About() {
                 viewport={{ once: true }}
                 className="relative p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-100/30 group hover:border-brand-500 hover:shadow-brand-500/10 transition-all"
               >
-                <div className="text-brand-500 font-black text-4xl mb-2 tracking-tighter opacity-10 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500">
+                <div className="text-brand-500 font-black text-3xl lg:text-4xl mb-2 tracking-tighter opacity-10 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500">
                    {ms.year}
                 </div>
                 <h4 className="text-xl font-black text-slate-900 mb-2 group-hover:text-brand-600 transition-colors">{ms.label}</h4>
@@ -236,10 +236,10 @@ export default function About() {
                >
                  <ArrowRight size={14} /> The Master Journey
                </motion.div>
-               <h2 className="text-5xl sm:text-7xl font-black tracking-tighter mb-8 leading-[0.95] text-white">
+               <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tighter mb-6 lg:mb-8 leading-[0.95] lg:leading-[0.95] text-white">
                  Ready to Experience <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-cyan-400">Perfection?</span>
                </h2>
-               <p className="text-xl sm:text-2xl font-medium text-white/70 mb-14 leading-relaxed max-w-2xl mx-auto italic">
+               <p className="text-lg lg:text-2xl font-medium text-white/70 mb-10 lg:mb-14 leading-relaxed max-w-2xl mx-auto italic">
                  Join the thousands of riders who have discovered their true potential at <span className="text-white font-black not-italic">CycleCore</span>. Your masterpiece awaits.
                </p>
                <Link to="/contact" className="relative overflow-hidden inline-flex items-center gap-4 px-14 py-6 bg-white text-slate-950 rounded-[2rem] font-black shadow-[0_20px_50px_rgba(255,255,255,0.3)] hover:text-white hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] active:scale-95 transition-all duration-300 text-xl group/btn">

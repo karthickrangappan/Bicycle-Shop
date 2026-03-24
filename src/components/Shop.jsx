@@ -143,15 +143,15 @@ export default function Shop() {
               <div className="relative">
                 <button 
                   onClick={() => setShowSortDropdown(!showSortDropdown)}
-                  className={`flex items-center gap-2 px-6 py-3.5 rounded-[1.5rem] font-black transition-all ${
+                  className={`flex items-center gap-2 px-4 sm:px-6 py-3.5 rounded-[1.5rem] font-black transition-all ${
                     sortBy !== "default" ? "text-brand-600 bg-brand-50" : "text-slate-600 hover:text-brand-600 hover:bg-slate-50"
                   }`}
                 >
                   <ChevronDown size={18} className={`transition-transform duration-300 ${showSortDropdown ? "rotate-180" : ""}`} />
-                  <span className="hidden sm:inline">
+                  <span className="text-xs sm:text-sm">
                     {sortBy === "default" ? "Sort By" : {
-                      "price-low": "Price: Low to High",
-                      "price-high": "Price: High to Low",
+                      "price-low": "Price: L-H",
+                      "price-high": "Price: H-L",
                       "rating": "Top Rated",
                       "newest": "Newest"
                     }[sortBy]}
@@ -160,33 +160,56 @@ export default function Shop() {
 
                 <AnimatePresence>
                   {showSortDropdown && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 z-50 overflow-hidden"
-                    >
-                      {[
-                        { label: "Default", value: "default" },
-                        { label: "Newest Arrivals", value: "newest" },
-                        { label: "Price: Low to High", value: "price-low" },
-                        { label: "Price: High to Low", value: "price-high" },
-                        { label: "Customer Rating", value: "rating" },
-                      ].map((option) => (
-                        <button
-                          key={option.value}
-                          onClick={() => {
-                            setSortBy(option.value);
-                            setShowSortDropdown(false);
-                          }}
-                          className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
-                            sortBy === option.value ? "bg-brand-500 text-white" : "text-slate-600 hover:bg-slate-50"
-                          }`}
-                        >
-                          {option.label}
-                        </button>
-                      ))}
-                    </motion.div>
+                    <>
+                      {/* Mobile Backdrop */}
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowSortDropdown(false)}
+                        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[50] md:hidden"
+                      />
+                      
+                      {/* Dropdown / Bottom Sheet */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="fixed bottom-0 inset-x-0 h-auto bg-white rounded-t-[2.5rem] shadow-2xl border-t border-slate-100 p-6 z-[60] md:absolute md:top-full md:bottom-auto md:right-0 md:left-auto md:w-64 md:rounded-2xl md:border md:mt-2 md:p-2"
+                      >
+                         <div className="md:hidden flex items-center justify-between mb-6">
+                            <h3 className="font-black text-xl text-slate-900">Sort By</h3>
+                            <button onClick={() => setShowSortDropdown(false)} className="p-2 bg-slate-50 rounded-xl text-slate-400">
+                               <X size={20} />
+                            </button>
+                         </div>
+
+                        <div className="space-y-2 md:space-y-1">
+                          {[
+                            { label: "Default", value: "default" },
+                            { label: "Newest Arrivals", value: "newest" },
+                            { label: "Price: Low to High", value: "price-low" },
+                            { label: "Price: High to Low", value: "price-high" },
+                            { label: "Customer Rating", value: "rating" },
+                          ].map((option) => (
+                            <button
+                              key={option.value}
+                              onClick={() => {
+                                setSortBy(option.value);
+                                setShowSortDropdown(false);
+                              }}
+                              className={`w-full text-left px-5 py-4 md:py-3 rounded-2xl md:rounded-xl text-base md:text-sm font-bold transition-all ${
+                                sortBy === option.value 
+                                ? "bg-brand-500 text-white shadow-lg shadow-brand-500/20" 
+                                : "text-slate-600 hover:bg-slate-50"
+                              }`}
+                            >
+                              {option.label}
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    </>
                   )}
                 </AnimatePresence>
               </div>
@@ -345,10 +368,10 @@ export default function Shop() {
             {filteredProducts.length > 0 ? (
               <motion.div 
                 layout
-                className={`grid grid-cols-2 ${
+                className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ${
                    showFilters 
-                   ? "md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
-                   : "md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+                   ? "lg:grid-cols-3 xl:grid-cols-4" 
+                   : "lg:grid-cols-4 xl:grid-cols-5"
                 } gap-6 sm:gap-8`}
               >
                 {filteredProducts.map((product) => (

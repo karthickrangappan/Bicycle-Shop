@@ -61,25 +61,22 @@ export default function Contact() {
           {contactInfo.map((info, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -5, scale: 1.05 }}
-              transition={{ delay: 0.2 + (idx * 0.1) }}
-              className="bg-white/80 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white shadow-xl shadow-slate-200/40 relative overflow-hidden group hover:bg-white transition-all hover:shadow-brand-500/10 hover:border-brand-200"
+              initial={{ opacity: 1, y: 0 }}
+              className="bg-white/80 backdrop-blur-xl p-6 lg:p-8 rounded-[2rem] lg:rounded-[2.5rem] border border-white shadow-xl shadow-slate-200/40 relative overflow-hidden group hover:bg-white transition-all hover:shadow-brand-500/10 hover:border-brand-200"
             >
-              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all duration-700">
-                 <info.icon size={80} />
+              <div className="absolute top-0 right-0 p-6 lg:p-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all duration-700">
+                 <info.icon size={60} className="lg:size-[80px]" />
               </div>
               <div className="relative z-10">
-                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 group-hover:scale-110 group-hover:rotate-[15deg] group-hover:shadow-lg ${
+                 <div className={`w-10 h-10 lg:w-12 lg:h-12 rounded-2xl flex items-center justify-center mb-4 lg:mb-6 transition-all duration-500 group-hover:scale-110 group-hover:rotate-[15deg] group-hover:shadow-lg ${
                    info.color === 'brand' ? 'bg-brand-50 text-brand-500 group-hover:bg-brand-500 group-hover:text-white' :
                    info.color === 'blue' ? 'bg-blue-50 text-blue-500 group-hover:bg-blue-500 group-hover:text-white' :
                    'bg-indigo-50 text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white'
                  }`}>
-                    <info.icon size={22} />
+                    <info.icon size={18} className="lg:size-[22px]" />
                  </div>
-                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-hover:text-slate-500 transition-colors">{info.label}</p>
-                 <p className="text-xl font-black text-slate-900 tracking-tight group-hover:text-brand-600 transition-colors">{info.val}</p>
+                 <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1 lg:mb-2 group-hover:text-slate-500 transition-colors">{info.label}</p>
+                 <p className="text-lg lg:text-xl font-black text-slate-900 tracking-tight group-hover:text-brand-600 transition-colors whitespace-nowrap overflow-hidden text-overflow-ellipsis">{info.val}</p>
               </div>
             </motion.div>
           ))}
@@ -94,10 +91,10 @@ export default function Contact() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-             <h2 className="text-4xl sm:text-6xl font-black tracking-tighter text-slate-950 mb-8 leading-[1.1]">
+             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-slate-950 mb-6 lg:mb-8 leading-[1.1]">
                 Let's <span className="text-brand-500">Connect</span> Your Journey.
              </h2>
-             <p className="text-lg text-slate-500 font-medium leading-relaxed mb-12 max-w-lg">
+             <p className="text-base lg:text-lg text-slate-500 font-medium leading-relaxed mb-8 lg:mb-12 max-w-lg">
                 Whether you're looking for a signature build, mechanical advice, or just want to join a community ride, our doors are always open.
              </p>
 
@@ -156,7 +153,7 @@ export default function Contact() {
                <form className="space-y-8 relative z-10">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     <div>
-                       <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2 mb-3 block">Full Name</label>
+                       <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2 mb-2 lg:mb-3 block">Full Name</label>
                        <div className="relative group/field">
                           <input 
                             type="text" 
@@ -167,7 +164,7 @@ export default function Contact() {
                        </div>
                     </div>
                     <div>
-                       <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2 mb-3 block">Email Address</label>
+                       <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2 mb-2 lg:mb-3 block">Email Address</label>
                        <div className="relative group/field">
                           <input 
                             type="email" 
@@ -180,7 +177,7 @@ export default function Contact() {
                   </div>
 
                   <div>
-                     <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2 mb-3 block">Subject</label>
+                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2 mb-2 lg:mb-3 block">Subject</label>
                      <div className="relative group/field">
                         <select className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-12 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:bg-white focus:border-brand-500 transition-all appearance-none cursor-pointer">
                            <option>General Inquiry</option>
@@ -196,7 +193,7 @@ export default function Contact() {
                   </div>
 
                   <div>
-                     <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2 mb-3 block">Your Message</label>
+                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2 mb-2 lg:mb-3 block">Your Message</label>
                      <textarea 
                         rows="4" 
                         className="w-full bg-slate-50 border border-slate-100 rounded-3xl py-4 px-6 text-sm font-bold text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:bg-white focus:border-brand-500 transition-all resize-none" 

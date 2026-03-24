@@ -100,18 +100,18 @@ export default function Categories() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <div className="max-w-2xl">
+          <div className="max-w-3xl">
             <motion.span 
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              className="text-brand-600 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block"
+              className="text-brand-600 font-black tracking-[0.4em] uppercase text-[10px] sm:text-xs mb-4 block"
             >
               Master The Terrain
             </motion.span>
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tighter leading-none"
+              className="text-4xl sm:text-6xl xl:text-7xl font-black text-slate-900 tracking-tighter leading-none"
             >
               Elite <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-500">Collections</span>
             </motion.h2>
@@ -131,7 +131,7 @@ export default function Categories() {
         <Swiper
           modules={[Autoplay, FreeMode]}
           spaceBetween={16}
-          slidesPerView={1.2}
+          slidesPerView={1}
           freeMode={true}
           grabCursor={true}
           autoplay={{
@@ -140,10 +140,11 @@ export default function Categories() {
             pauseOnMouseEnter: true
           }}
           breakpoints={{
-            640: { slidesPerView: 2.2 },
-            768: { slidesPerView: 3.2 },
-            1024: { slidesPerView: 4.2 },
-            1440: { slidesPerView: 5 }
+            640: { slidesPerView: 2, spaceBetween: 20 },
+            768: { slidesPerView: 3, spaceBetween: 24 },
+            1024: { slidesPerView: 4, spaceBetween: 24 },
+            1280: { slidesPerView: 5, spaceBetween: 32 },
+            1536: { slidesPerView: 6, spaceBetween: 32 }
           }}
           className="categories-swiper !pb-12 !px-1"
         >
