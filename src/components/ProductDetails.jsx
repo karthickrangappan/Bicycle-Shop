@@ -21,8 +21,13 @@ export default function ProductDetails() {
 
   useEffect(() => {
     const found = products.find(p => p.id === id);
+    if (found && found.status === 'inactive') {
+      toast.error("This cycle is currently hidden from the shop.");
+      navigate('/shop', { replace: true });
+      return;
+    }
     setProduct(found);
-  }, [id, products]);
+  }, [id, products, navigate]);
 
   useEffect(() => {
     if (product) {

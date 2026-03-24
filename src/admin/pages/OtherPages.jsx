@@ -204,11 +204,14 @@ export function Categories() {
                 
                 <div className="mt-8 flex items-center justify-between border-t border-gray-800/50 pt-5">
                   <div className="flex flex-col">
-                    <span className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] leading-none mb-1">Stock</span>
+                    <span className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] leading-none mb-1">Status</span>
                     <span className="text-base font-black text-white tracking-tighter">{getCount(c.name)} Bikes</span>
                   </div>
-                  <button onClick={() => updateCategory(c.id, { active: !c.active })} className={`px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${c.active ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-lg shadow-emerald-500/5' : 'bg-gray-800 text-gray-500 border-gray-700'}`}>
-                    {c.active ? 'Active' : 'Off'}
+                  <button 
+                    onClick={() => updateCategory(c.id, { active: !c.active })} 
+                    className={`px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${c.active ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-lg shadow-emerald-500/5' : 'bg-gray-800 text-gray-500 border-gray-700'}`}
+                  >
+                    {c.active ? 'Show' : 'No Show'}
                   </button>
                 </div>
             </div>
