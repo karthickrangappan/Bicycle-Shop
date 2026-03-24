@@ -8,8 +8,8 @@ export default function Products() {
   const { products, deleteProduct, updateProduct, categories: dynamicCategories } = useAdmin();
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [stockFilter, setStockFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('All Status');
+  const [stockFilter, setStockFilter] = useState('In Shop');
   const [priceSort, setPriceSort] = useState('Default');
   const [confirmDelete, setConfirmDelete] = useState(null);
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function Products() {
   let filtered = products.filter(p => {
     const matchSearch = (p.name || '').toLowerCase().includes(search.toLowerCase()) || (p.sku || '').toLowerCase().includes(search.toLowerCase()) || (p.brand || '').toLowerCase().includes(search.toLowerCase());
     const matchCat = categoryFilter === 'All' || categoryFilter === 'All Types' || p.category === categoryFilter;
-    const matchStatus = statusFilter === 'All' || p.status === statusFilter;
+    const matchStatus = statusFilter === 'All' || statusFilter === 'All Status' || (statusFilter === 'Show' ? p.status !== 'inactive' : p.status === 'inactive');
     
     let matchStock = true;
     if (stockFilter === 'Available') matchStock = p.stock > 3;
@@ -65,16 +65,21 @@ export default function Products() {
           <option value="All Types">All Types</option>
           {categories.filter(c => c !== 'All Types').map(c => <option key={c} value={c}>{c}</option>)}
         </select>
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+           <option value="All Status">All Status</option>
+           <option value="Show">Show (Active)</option>
+           <option value="No Show">No Show (Hidden)</option>
+        </select>
         <select value={stockFilter} onChange={e => setStockFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option>In Shop</option>
-          <option>Available</option>
-          <option>Almost Gone</option>
-          <option>Sold Out</option>
+          <option value="In Shop">In Shop (All)</option>
+          <option value="Available">Available</option>
+          <option value="Almost Gone">Almost Gone</option>
+          <option value="Sold Out">Sold Out</option>
         </select>
         <select value={priceSort} onChange={e => setPriceSort(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option>Sort by Price</option>
-          <option>Cheap First</option>
-          <option>Costly First</option>
+          <option value="Default">Sort by Price</option>
+          <option value="Cheap First">Cheap First</option>
+          <option value="Costly First">Costly First</option>
         </select>
       </div>
 
@@ -117,7 +122,12 @@ export default function Products() {
                     <span className={`text-sm font-bold ${product.stock === 0 ? 'text-red-400' : product.stock <= 3 ? 'text-amber-400' : 'text-emerald-400'}`}>{product.stock === 0 ? 'Out of Stock' : product.stock}</span>
                   </td>
                   <td className="px-5 py-3">
-                    <button onClick={() => toggleStatus(product)} className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-all ${statusColors[product.status]}`}>{product.status}</button>
+                    <button 
+                      onClick={() => toggleStatus(product)} 
+                      className={`text-[10px] uppercase tracking-widest px-3 py-1 rounded-full font-black transition-all ${product.status === 'inactive' ? 'bg-gray-700 text-gray-400' : 'bg-emerald-500/10 text-emerald-400'}`}
+                    >
+                      {product.status === 'inactive' ? 'No Show' : 'Show'}
+                    </button>
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex gap-2">
