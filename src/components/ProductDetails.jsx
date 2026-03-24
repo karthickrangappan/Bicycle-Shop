@@ -247,12 +247,19 @@ export default function ProductDetails() {
 
               <button
                 onClick={() => {
-                  handleAddToCart();
-                  if (selectedSize) navigate('/checkout', {
-                    state: { product, selectedSize, selectedColor: form.color }
-                  });
+                  if (selectedSize) {
+                    navigate('/checkout', {
+                      state: { 
+                        product, 
+                        selectedSize, 
+                        selectedColor: form.color 
+                      }
+                    });
+                  } else {
+                    toast.error('Please select a Precision Fit first');
+                  }
                 }}
-                disabled={product.stock <= 0 || !selectedSize}
+                disabled={product.stock <= 0}
                 className={`w-full py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg ${product.stock > 0 && selectedSize
                   ? "bg-brand-500 text-white shadow-brand-500/20 hover:bg-brand-600 hover:shadow-brand-500/30"
                   : "bg-slate-100 text-slate-300 cursor-not-allowed shadow-none"
