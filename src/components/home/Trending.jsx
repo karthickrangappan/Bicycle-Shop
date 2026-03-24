@@ -2,7 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import ProductCard, { MOCK_PRODUCTS } from '../ProductCard';
+import ProductCard from '../ProductCard';
+import mockData from '../../data/commonData.json';
 import { useShop } from '../../context/ShopContext';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
@@ -10,12 +11,13 @@ import 'swiper/css';
 
 export default function Trending() {
   const { products } = useShop();
+  const { mockProducts } = mockData;
 
   // Select trending products (High rating or just random 8)
   const trendingProducts = React.useMemo(() => {
-    const data = products.length > 0 ? products.filter(p => p.status !== 'inactive') : MOCK_PRODUCTS;
+    const data = products.length > 0 ? products.filter(p => p.status !== 'inactive') : mockProducts;
     return [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 8);
-  }, [products]);
+  }, [products, mockProducts]);
 
   return (
     <section className="py-24 bg-white relative overflow-hidden">
