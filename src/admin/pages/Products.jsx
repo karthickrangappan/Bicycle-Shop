@@ -9,16 +9,29 @@ export default function Products() {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [stockFilter, setStockFilter] = useState('All');
+  const [priceSort, setPriceSort] = useState('Default');
   const [confirmDelete, setConfirmDelete] = useState(null);
   const navigate = useNavigate();
 
   const categories = ['All', ...new Set(dynamicCategories.map(c => c.name))];
-  const filtered = products.filter(p => {
-    const matchSearch = (p.name || '').toLowerCase().includes(search.toLowerCase()) || (p.sku || '').toLowerCase().includes(search.toLowerCase());
+  const brands = ['All', ...new Set(products.map(p => p.brand).filter(Boolean))];
+
+  let filtered = products.filter(p => {
+    const matchSearch = (p.name || '').toLowerCase().includes(search.toLowerCase()) || (p.sku || '').toLowerCase().includes(search.toLowerCase()) || (p.brand || '').toLowerCase().includes(search.toLowerCase());
     const matchCat = categoryFilter === 'All' || p.category === categoryFilter;
     const matchStatus = statusFilter === 'All' || p.status === statusFilter;
-    return matchSearch && matchCat && matchStatus;
+    
+    let matchStock = true;
+    if (stockFilter === 'In Stock') matchStock = p.stock > 3;
+    if (stockFilter === 'Low Stock') matchStock = p.stock > 0 && p.stock <= 3;
+    if (stockFilter === 'Out of Stock') matchStock = p.stock === 0;
+
+    return matchSearch && matchCat && matchStatus && matchStock;
   });
+
+  if (priceSort === 'Low to High') filtered = [...filtered].sort((a,b) => a.price - b.price);
+  if (priceSort === 'High to Low') filtered = [...filtered].sort((a,b) => b.price - a.price);
 
   const handleDelete = (id) => {
     deleteProduct(id);
@@ -34,25 +47,34 @@ export default function Products() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-black text-white">Products</h1>
-          <p className="text-gray-500 text-sm">{products.length} total products</p>
+          <p className="text-gray-500 text-sm">{products.length} total products • {filtered.length} filtered</p>
         </div>
         <Link to="/admin/products/add" className="bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold px-4 py-2 rounded-xl text-sm transition-all">+ Add Product</Link>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
         <input
           type="text"
-          placeholder="Search by name or SKU..."
+          placeholder="Search name, brand, SKU..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 flex-1 min-w-48"
+          className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 w-full col-span-1 md:col-span-2"
         />
         <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          {categories.map(c => <option key={c}>{c}</option>)}
+          <option value="All">All Categories</option>
+          {categories.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
         </select>
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option>All</option><option>active</option><option>inactive</option>
+        <select value={stockFilter} onChange={e => setStockFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+          <option>All Stock</option>
+          <option>In Stock</option>
+          <option>Low Stock</option>
+          <option>Out of Stock</option>
+        </select>
+        <select value={priceSort} onChange={e => setPriceSort(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+          <option>Price Sort</option>
+          <option>Low to High</option>
+          <option>High to Low</option>
         </select>
       </div>
 

@@ -6,12 +6,17 @@ export default function Customers() {
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
   const [statusFilter, setStatusFilter] = useState('All');
+  const [customerSort, setCustomerSort] = useState('Newest First');
 
-  const filtered = customers.filter(c => {
+  let filtered = customers.filter(c => {
     const matchSearch = (c.name || '').toLowerCase().includes(search.toLowerCase()) || (c.email || '').toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === 'All' || c.status === statusFilter;
     return matchSearch && matchStatus;
   });
+
+  if (customerSort === 'High Spender') filtered = [...filtered].sort((a,b) => (b.totalSpent || 0) - (a.totalSpent || 0));
+  if (customerSort === 'Most Active') filtered = [...filtered].sort((a,b) => (b.orders || 0) - (a.orders || 0));
+  if (customerSort === 'Newest First') filtered = [...filtered].sort((a,b) => new Date(b.joined || 0) - new Date(a.joined || 0));
 
   const getCustomerOrders = (email) => orders.filter(o => o.email === email);
 
@@ -20,16 +25,29 @@ export default function Customers() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-black text-white">Customers</h1>
-          <p className="text-gray-500 text-sm">{customers.length} registered customers</p>
-        </div>
-        <div className="flex gap-2">
-          {['All','active','blocked'].map(s => (
-            <button key={s} onClick={() => setStatusFilter(s)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${statusFilter === s ? 'bg-amber-500 text-gray-900' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}>{s}</button>
-          ))}
+          <p className="text-gray-500 text-sm">{customers.length} registered customers • {filtered.length} filtered</p>
         </div>
       </div>
 
-      <input type="text" placeholder="Search customers..." value={search} onChange={e => setSearch(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 w-full max-w-md" />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <input 
+          type="text" 
+          placeholder="Search name, email, city..." 
+          value={search} 
+          onChange={e => setSearch(e.target.value)} 
+          className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 col-span-1 md:col-span-2" 
+        />
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+          <option>All Status</option>
+          <option>active</option>
+          <option>blocked</option>
+        </select>
+        <select value={customerSort} onChange={e => setCustomerSort(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+          <option>Newest First</option>
+          <option>High Spender</option>
+          <option>Most Active</option>
+        </select>
+      </div>
 
       <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
         <table className="w-full">

@@ -6,17 +6,24 @@ export function Inventory() {
   const [editStock, setEditStock] = useState({});
   const [search, setSearch] = useState('');
   const [catFilter, setCatFilter] = useState('All');
+  const [stockFilter, setStockFilter] = useState('All Stock');
   
-  const lowStock = products.filter(p => p.stock <= 5);
+  const lowStockProducts = products.filter(p => p.stock <= 5);
 
   const filtered = products.filter(p => {
-    const matchSearch = (p.name || '').toLowerCase().includes(search.toLowerCase()) || (p.sku || '').toLowerCase().includes(search.toLowerCase());
+    const matchSearch = (p.name || '').toLowerCase().includes(search.toLowerCase()) || (p.sku || '').toLowerCase().includes(search.toLowerCase()) || (p.brand || '').toLowerCase().includes(search.toLowerCase());
     const matchCat = catFilter === 'All' || catFilter === 'All Categories' || p.category === catFilter;
-    return matchSearch && matchCat;
+    
+    let matchStock = true;
+    if (stockFilter === 'In Stock') matchStock = p.stock > 3;
+    if (stockFilter === 'Low Stock') matchStock = p.stock > 0 && p.stock <= 3;
+    if (stockFilter === 'Out of Stock') matchStock = p.stock === 0;
+
+    return matchSearch && matchCat && matchStock;
   });
 
   const handleStockUpdate = (id, newStock) => {
-    updateProduct(id, { stock: parseInt(newStock) });
+    updateProduct(id, typeof newStock === 'string' ? { stock: parseInt(newStock) } : { stock: newStock });
     setEditStock(prev => { const n = {...prev}; delete n[id]; return n; });
   };
 
@@ -25,27 +32,34 @@ export function Inventory() {
       <h1 className="text-2xl font-black text-white">Inventory Management</h1>
       
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <input
           type="text"
-          placeholder="Search by name or SKU..."
+          placeholder="Search name, brand, SKU..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 flex-1 min-w-48"
+          className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 w-full"
         />
         <select value={catFilter} onChange={e => setCatFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option>All Categories</option>
+          <option value="All">All Categories</option>
           {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+        </select>
+        <select value={stockFilter} onChange={e => setStockFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+          <option>All Stock</option>
+          <option>In Stock</option>
+          <option>Low Stock</option>
+          <option>Out of Stock</option>
         </select>
       </div>
 
-      {lowStock.length > 0 && (
+      {lowStockProducts.length > 0 && (
         <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4">
-          <p className="text-red-400 font-bold text-sm mb-2">⚠️ {lowStock.length} products need restocking</p>
+          <p className="text-red-400 font-bold text-sm mb-2">⚠️ {lowStockProducts.length} items critical or low</p>
           <div className="flex flex-wrap gap-2">
-            {lowStock.map(p => (
-              <span key={p.id} className="text-xs bg-red-500/10 text-red-300 px-2 py-1 rounded-lg">{p.name} ({p.stock} left)</span>
+            {lowStockProducts.slice(0, 10).map(p => (
+              <span key={p.id} className="text-xs bg-red-500/10 text-red-300 px-2 py-1 rounded-lg">{p.name} ({p.stock})</span>
             ))}
+            {lowStockProducts.length > 10 && <span className="text-xs text-gray-500">+{lowStockProducts.length - 10} more...</span>}
           </div>
         </div>
       )}

@@ -1,79 +1,55 @@
 export const generateRealCatalog = () => {
-    const categories = [
-        "Mountain Bikes", "Road Bikes", "Urban & City", "Gravel & Adventure", 
-        "Kids Bicycles", "Electric Bikes", "Spare Parts", "Performance Apparel", "Accessories"
-    ];
+    const categories = ["Mens", "Womens", "Kids", "Electric Cycles"];
     
-    // Pool of highly realistic specific models per category to create realistic products rather than gibberish
+    // Pool of highly realistic specific models per category
     const baseModels = {
-        "Mountain Bikes": [
-            { name: "Trek Fuel EX 8", brand: "Trek", price: 350000, desc: "A versatile trail bike that balances climbing efficiency with downhill prowess. Features Shimano XT 12-speed and Fox Rhythm 34." },
-            { name: "Specialized Stumpjumper EVO", brand: "Specialized", price: 420000, desc: "The ultimate progressive trail machine. Carbon frame, aggressive geometry, and SWAT door integration." },
-            { name: "Giant Trance X", brand: "Giant", price: 280000, desc: "Built for tackling aggressive trails with confidence. ALUXX SL frame and Maestro suspension." },
-            { name: "Cannondale Habit Carbon 3", brand: "Cannondale", price: 310000, desc: "Playful, agile and built for fun on the trails without sacrificing speed and climbing ability." },
-            { name: "Santa Cruz Hightower", brand: "Santa Cruz", price: 550000, desc: "The gold standard in all-mountain riding. 150mm of VPP travel ready to tackle anything." },
-            { name: "Scott Spark RC", brand: "Scott", price: 480000, desc: "Integrated suspension technology and ultra-lightweight carbon frame for World Cup cross-country dominance." },
+        "Mens": [
+            { name: "Trek Fuel EX 8", brand: "Trek", price: 350000, desc: "A versatile men's trail bike that balances climbing efficiency with downhill prowess." },
+            { name: "Specialized Stumpjumper EVO", brand: "Specialized", price: 420000, desc: "The ultimate progressive trail machine for men." },
+            { name: "Giant Trance X", brand: "Giant", price: 280000, desc: "Built for tackling aggressive trails with confidence." },
+            { name: "Cannondale Habit Carbon 3", brand: "Cannondale", price: 310000, desc: "Playful, agile and built for fun on the trails." },
+            { name: "Santa Cruz Hightower", brand: "Santa Cruz", price: 550000, desc: "The gold standard in all-mountain riding." },
+            { name: "Scott Spark RC", brand: "Scott", price: 480000, desc: "Integrated suspension technology and ultra-lightweight carbon frame." },
             { name: "Orbea Occam M10", brand: "Orbea", price: 620000, desc: "A mid-travel masterpiece with flawless Spanish carbon engineering." },
-            { name: "Yeti SB130 TLR", brand: "Yeti", price: 690000, desc: "Legendary Switch Infinity suspension platform engineered to crush the steepest descents." }
+            { name: "Yeti SB130 TLR", brand: "Yeti", price: 690000, desc: "Legendary Switch Infinity suspension platform." },
+            { name: "Trek Madone SLR 9", brand: "Trek", price: 950000, desc: "The pinnacle of men's aero road racing." },
+            { name: "Specialized Tarmac SL8", brand: "Specialized", price: 1100000, desc: "The most uncompromising race bike ever made." }
         ],
-        "Road Bikes": [
-            { name: "Trek Madone SLR 9", brand: "Trek", price: 950000, desc: "The pinnacle of aero road racing. Features IsoFlow technology, Dura-Ace Di2, and Bontrager Aeolus RSL 51 wheels." },
-            { name: "Specialized Tarmac SL8", brand: "Specialized", price: 1100000, desc: "The most uncompromising race bike ever made. Aero, stiff, incredibly light." },
-            { name: "Giant TCR Advanced Pro", brand: "Giant", price: 420000, desc: "Total race bike performance combining stiffness, light weight, and aerodynamics." },
-            { name: "Canyon Aeroad CFR", brand: "Canyon", price: 850000, desc: "Pure speed. Used by world champions to dominate the fastest sprints in the peloton." },
-            { name: "BMC Teammachine SLR01", brand: "BMC", price: 920000, desc: "Swiss precision engineering resulting in the ultimate climbing machine." },
-            { name: "Pinarello Dogma F", brand: "Pinarello", price: 1250000, desc: "The bike of champions. Legendary Italian design, asymmetric frame, uncompromising speed." },
-            { name: "Cervélo S5", brand: "Cervélo", price: 890000, desc: "Revolutionary V-stem aerodynamic design built to slice through the wind." },
-            { name: "Colnago V4Rs", brand: "Colnago", price: 980000, desc: "Classic heritage meets modern aero performance. Built to win Grand Tours." }
+        "Womens": [
+            { name: "Liv Intrigue Advanced Pro", brand: "Liv", price: 380000, desc: "Carbon women's trail bike built to conquer technical singletrack." },
+            { name: "Trek Marlin 7 Women's", brand: "Trek", price: 65000, desc: "Race-worthy mountain bike built specifically for women." },
+            { name: "Specialized Ariel Elite", brand: "Specialized", price: 75000, desc: "Fitness and utility in one sleek package tailored for female riders." },
+            { name: "Cannondale Foray 2", brand: "Cannondale", price: 48000, desc: "An affordable, capable dirt-ready bike crafted for women." },
+            { name: "Liv Langma Advanced", brand: "Liv", price: 210000, desc: "Lightweight climbing road bike designed for female racers." },
+            { name: "Trek Domane AL 3 Women's", brand: "Trek", price: 85000, desc: "Smooth, stable, and super fun women's endurance road bike." },
+            { name: "Specialized Ruby Sport", brand: "Specialized", price: 195000, desc: "High-performance women's road bike with vibration damping." },
+            { name: "Scott Contessa Speedster", brand: "Scott", price: 92000, desc: "Alloy women's road bike optimized for speed and comfort." },
+            { name: "Giant Rove 2 DD", brand: "Giant", price: 55000, desc: "Versatile women's hybrid bike for city streets or dirt paths." },
+            { name: "Liv Avail AR 1", brand: "Liv", price: 130000, desc: "All-road champion built specifically for female endurance." }
         ],
-        "Urban & City": [
-            { name: "Trek FX 3 Disc", brand: "Trek", price: 85000, desc: "A versatile hybrid bike that's primed for performance, comfort, and utility." },
-            { name: "Specialized Sirrus 2.0", brand: "Specialized", price: 65000, desc: "Pavement, dirt, and anything in between. The ultimate durable commuter." },
-            { name: "Cannondale Quick 4", brand: "Cannondale", price: 72000, desc: "A swift, sporty bike that's perfect for getting a workout, city cruising or just getting out." },
-            { name: "Giant Escape 3", brand: "Giant", price: 45000, desc: "The perfect introduction to city cycling with a comfortable, upright riding position." },
-            { name: "Brompton C Line", brand: "Brompton", price: 145000, desc: "The classic steel folding bike. Folds incredibly compact for multi-modal public transport commutes." },
-            { name: "Electra Cruiser 1", brand: "Electra", price: 38000, desc: "Pure joy on two wheels. Classic styling and absolute comfort." }
+        "Kids": [
+            { name: "Woom 4 (20\")", brand: "Woom", price: 45000, desc: "Ultra-lightweight premium kids bike with 7 microSHIFT gears." },
+            { name: "Trek Precaliber 16", brand: "Trek", price: 24000, desc: "The perfect starter bike, featuring training wheels and coaster brake." },
+            { name: "Specialized Riprock 24", brand: "Specialized", price: 65000, desc: "A true mini-mountain bike with modern geometry and wide tires." },
+            { name: "Strider 12 Sport", brand: "Strider", price: 12000, desc: "The industry-standard balance bike for toddlers." },
+            { name: "Frog 52", brand: "Frog", price: 38000, desc: "British-designed lightweight aluminum kids bike." },
+            { name: "Cleary Hedgehog 16\"", brand: "Cleary", price: 32000, desc: "A fun, lightweight 16-inch kids bike for cruising the neighborhood." },
+            { name: "Cannondale Trail 20", brand: "Cannondale", price: 35000, desc: "Rugged kids mountain bike built for off-road fun." },
+            { name: "Giant Animator 16", brand: "Giant", price: 18000, desc: "Easy to ride, durable first pedal bike for youngsters." },
+            { name: "Trek Wahoo 24", brand: "Trek", price: 42000, desc: "Lightweight all-purpose kids bike for pavements and light trails." },
+            { name: "Early Rider Belter 16", brand: "Early Rider", price: 48000, desc: "Premium belt-drive kids bike requiring zero maintenance." }
         ],
-        "Gravel & Adventure": [
-            { name: "Specialized Diverge STR", brand: "Specialized", price: 580000, desc: "Future Shock suspension front and rear turns rough gravel into silk." },
-            { name: "Canyon Grizl CF SL", brand: "Canyon", price: 310000, desc: "Carbon gravel machine with massive tire clearance and mounting points for endless bikepacking." },
-            { name: "Trek Checkpoint SL 5", brand: "Trek", price: 290000, desc: "A progressive geometry carbon gravel bike built for epic adventures off the beaten path." },
-            { name: "Salsa Cutthroat", brand: "Salsa", price: 410000, desc: "The ultimate ultra-endurance bikepacking racing machine designed explicitly for the Tour Divide." },
-            { name: "Cannondale Topstone Alloy", brand: "Cannondale", price: 155000, desc: "Capable, affordable alloy gravel bike ready to explore dirt roads and trails." },
-            { name: "Cervelo Aspero", brand: "Cervelo", price: 380000, desc: "Gravel racing aerodynamics. Haul ass, not cargo." }
-        ],
-        "Kids Bicycles": [
-            { name: "Woom 4 (20\")", brand: "Woom", price: 45000, desc: "Ultra-lightweight premium kids bike with 7 microSHIFT gears. Perfect for kids aged 6-8 years." },
-            { name: "Trek Precaliber 16", brand: "Trek", price: 24000, desc: "The perfect starter bike, featuring training wheels, a built-in handle on the saddle, and a coaster brake." },
-            { name: "Specialized Riprock 24", brand: "Specialized", price: 65000, desc: "A true mini-mountain bike with modern geometry, disc brakes, and wide grippy tires." },
-            { name: "Strider 12 Sport", brand: "Strider", price: 12000, desc: "The industry-standard balance bike that teaches kids to balance before they pedal." },
-            { name: "Frog 52", brand: "Frog", price: 38000, desc: "British-designed lightweight aluminum kids bike built specifically for small riders." }
-        ],
-        "Electric Bikes": [
-            { name: "Aventon Pace 500.3", brand: "Aventon", price: 145000, desc: "Upright cruiser E-bike with perfectly tuned torque sensor, 28mph top speed, and pure comfort." },
-            { name: "Rad Power RadRunner 3", brand: "Rad Power Bikes", price: 155000, desc: "The ultimate electric utility bike. Haul cargo, carry a passenger, and conquer hills with ease." },
-            { name: "Trek Rail 9.7", brand: "Trek", price: 750000, desc: "Long-travel carbon electric mountain bike powered by the incredibly robust Bosch Performance Line CX." },
-            { name: "Specialized Turbo Creo SL", brand: "Specialized", price: 850000, desc: "It's you, only faster. The ultimate lightweight electric road bike." }
-        ],
-        "Spare Parts": [
-            { name: "Shimano Ultegra 12-Speed Cassette", brand: "Shimano", price: 8500, desc: "Silky smooth Hyperglide+ shifting engineered for electronic Di2 drivetrains." },
-            { name: "SRAM Eagle X01 Chain", brand: "SRAM", price: 5200, desc: "Hard chrome technology for maximum strength and wear resistance." },
-            { name: "Maxxis Minion DHF Tire 29x2.5", brand: "Maxxis", price: 6500, desc: "The standard by which all other downhill and enduro tires are measured. 3C MaxxTerra compound." },
-            { name: "Continental Grand Prix 5000", brand: "Continental", price: 5800, desc: "The best all-rounder road tire in the field, brought to a whole new performance level." },
-            { name: "Fox 36 Factory Grip2 Fork", brand: "Fox Racing Shox", price: 95000, desc: "The undisputed champion of all-mountain forks with incredibly tunable GRIP2 damper." }
-        ],
-        "Performance Apparel": [
-            { name: "Rapha Pro Team Aero Jersey", brand: "Rapha", price: 16500, desc: "Race-ready aero efficiency woven into the most premium fabric on the market." },
-            { name: "Castelli Free Aero RC Bibshort", brand: "Castelli", price: 18000, desc: "Pro-level bib shorts featuring the legendary Progetto X2 Air seamless seat pad." },
-            { name: "Gore Wear Shakedry Jacket", brand: "Gore", price: 28000, desc: "The ultimate waterproof, breathable, endlessly packable cycling jacket." },
-            { name: "Assos Mille GT Socks", brand: "Assos", price: 1800, desc: "Breathable, lightly compressive cycling socks with a classic aesthetic." }
-        ],
-        "Accessories": [
-            { name: "Garmin Edge 840 Solar", brand: "Garmin", price: 48000, desc: "Advanced GPS cycling computer with solar charging, touchscreen, and highly targeted adaptive coaching." },
-            { name: "Wahoo KICKR Core Smart Trainer", brand: "Wahoo", price: 85000, desc: "The essential indoor smart trainer. Realistic ride feel and flawless software connectivity." },
-            { name: "Kryptonite New York Fahgettaboudit U-Lock", brand: "Kryptonite", price: 12500, desc: "18mm maximum performance steel shackle. Defeats almost any attack." },
-            { name: "Bontrager Ion Pro RT Headlight", brand: "Bontrager", price: 11000, desc: "1300 Lumens to light up any dark trail or city street. Ant+ enabled." },
-            { name: "Park Tool PCS-10.3 Repair Stand", brand: "Park Tool", price: 18500, desc: "Professional-grade home mechanic repair stand." }
+        "Electric Cycles": [
+            { name: "Aventon Pace 500.3", brand: "Aventon", price: 145000, desc: "Upright cruiser E-bike with perfectly tuned torque sensor." },
+            { name: "Rad Power RadRunner 3", brand: "Rad Power Bikes", price: 155000, desc: "The ultimate electric utility bike. Haul cargo with ease." },
+            { name: "Trek Rail 9.7", brand: "Trek", price: 750000, desc: "Long-travel carbon electric mountain bike." },
+            { name: "Specialized Turbo Creo SL", brand: "Specialized", price: 850000, desc: "It's you, only faster. The ultimate lightweight electric road bike." },
+            { name: "Giant Roam E+", brand: "Giant", price: 210000, desc: "All-rounder E-bike for city commutes and mixed terrain." },
+            { name: "Cannondale Moterra Neo", brand: "Cannondale", price: 620000, desc: "High-performance e-MTB designed for rugged trails." },
+            { name: "Riese & Müller Load 75", brand: "Riese & Müller", price: 950000, desc: "Premium electric cargo bike capable of replacing a car." },
+            { name: "VanMoof S3", brand: "VanMoof", price: 190000, desc: "Iconic, high-tech urban electric bike with integrated security." },
+            { name: "Cowboy 4", brand: "Cowboy", price: 215000, desc: "Sleek, minimalist urban e-bike with automatic assistance." },
+            { name: "Brompton Electric C Line", brand: "Brompton", price: 295000, desc: "The classic folding bike, supercharged for effortless commuting." }
         ]
     };
 
@@ -93,7 +69,6 @@ export const generateRealCatalog = () => {
     const allSizes = [
         ["Age 18-20 (Adult S)", "Age 20-25 (Adult M)", "Age 25+ (Adult L)"],
         ["Age 14-18 (26\")", "Age 18-20 (Adult S)", "Age 20-25 (Adult M)"],
-        ["Age 2-5 (12\")", "Age 6-10 (20\")", "Age 11-14 (24\")"],
         ["Universal"]
     ];
 
@@ -107,63 +82,61 @@ export const generateRealCatalog = () => {
 
     let finalCatalog = [];
     
-    // We aim for exactly 50 products. 
-    // We have 44 base models. Let's add all of them, plus randomly generate 6 more variations.
-    let keys = Object.keys(baseModels);
-    
-    for (let i = 0; i < 50; i++) {
-        const catName = keys[(i % keys.length)];
+    // We aim for exactly 80 products (20 per category).
+    categories.forEach((catName, catIndex) => {
         const categoryModels = baseModels[catName];
         
-        let template;
-        if (i < categoryModels.length * 5) {
-             template = categoryModels[i % categoryModels.length];
-        } else {
-             template = categoryModels[Math.floor(Math.random() * categoryModels.length)]; // duplicate variation for end
-        }
-        
-        // Randomize the image from the beautiful curated library based on index
-        const imgUrl = imageLib[i % imageLib.length];
+        for (let i = 0; i < 20; i++) {
+            let template = categoryModels[i % categoryModels.length];
+            
+            const imgUrl = imageLib[(i + catIndex) % imageLib.length];
 
-        const sizes = template.brand === 'Woom' || template.brand === 'Strider' ? ["Age 5-8 (16\")", "Age 2-4 (12\")"] 
-            : template.brand === 'Garmin' || template.category === 'Accessories' || template.category === 'Spare Parts' || template.brand === 'Gore Wear' ? ["Universal"] 
-            : allSizes[i % 2];
-        
-        const colors = allColors[i % allColors.length];
-        
-        const variants = [];
-        sizes.forEach(s => {
-            colors.forEach(c => {
-                variants.push({
-                    size: s,
-                    color: c,
-                    gear: "21-speed",
-                    stock: Math.floor(Math.random() * 5) + 1
+            let sizes = allSizes[i % 2]; // Default to adult sizes mostly
+            if (catName === "Kids") {
+                sizes = ["Age 2-5 (12\")", "Age 6-10 (20\")", "Age 11-14 (24\")"];
+                if (template.brand === 'Woom' || template.brand === 'Strider') sizes = ["Age 2-4 (12\")", "Age 5-8 (16\")"];
+            } else if (catName === "Electric Cycles" && template.brand === 'Brompton') {
+                sizes = ["Universal"];
+            }
+
+            const colors = allColors[i % allColors.length];
+            
+            const variants = [];
+            sizes.forEach(s => {
+                colors.forEach(c => {
+                    variants.push({
+                        size: s,
+                        color: c,
+                        gear: "21-speed",
+                        stock: Math.floor(Math.random() * 5) + 1
+                    });
                 });
             });
-        });
 
-        finalCatalog.push({
-            name: i >= 44 ? `${template.name} - Elite Edition` : template.name,
-            brand: template.brand,
-            price: i >= 44 ? template.price + 50000 : template.price, // Format properly later if string needed
-            oldPrice: template.price * 1.2,
-            rating: (Math.random() * (5.0 - 4.5) + 4.5).toFixed(1),
-            reviews: Math.floor(Math.random() * 850) + 12,
-            category: catName,
-            status: "active",
-            stock: Math.floor(Math.random() * 45) + 2,
-            description: template.desc,
-            image: imgUrl,
-            images: [imgUrl, imageLib[(i+1) % imageLib.length]],
-            sizes: sizes,
-            colors: colors,
-            variants: variants,
-            // Formatting price nicely into INR format string
-            displayPrice: `₹${(i >= 44 ? template.price + 50000 : template.price).toLocaleString('en-IN')}`,
-            displayOldPrice: `₹${Math.floor(template.price * 1.2).toLocaleString('en-IN')}`
-        });
-    }
+            const isElite = i >= categoryModels.length; // Duplicate variations get 'Elite' appended
+            const finalPrice = isElite ? template.price + 25000 : template.price;
+
+            finalCatalog.push({
+                name: isElite ? `${template.name} - Pro Edition` : template.name,
+                brand: template.brand,
+                price: finalPrice,
+                oldPrice: Math.floor(finalPrice * 1.2),
+                rating: (Math.random() * (5.0 - 4.5) + 4.5).toFixed(1),
+                reviews: Math.floor(Math.random() * 850) + 12,
+                category: catName,
+                status: "active",
+                stock: Math.floor(Math.random() * 45) + 2,
+                description: template.desc,
+                image: imgUrl,
+                images: [imgUrl, imageLib[(i+1) % imageLib.length]],
+                sizes: sizes,
+                colors: colors,
+                variants: variants,
+                displayPrice: `₹${finalPrice.toLocaleString('en-IN')}`,
+                displayOldPrice: `₹${Math.floor(finalPrice * 1.2).toLocaleString('en-IN')}`
+            });
+        }
+    });
 
     return finalCatalog;
 };
