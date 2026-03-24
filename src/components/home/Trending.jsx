@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import ProductCard, { MOCK_PRODUCTS } from '../ProductCard';
+import ProductCard from '../ProductCard';
 import { useShop } from '../../context/ShopContext';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
@@ -13,8 +13,7 @@ export default function Trending() {
 
   // Select trending products (High rating or just random 8)
   const trendingProducts = React.useMemo(() => {
-    const data = products.length > 0 ? products : MOCK_PRODUCTS;
-    return [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 8);
+    return [...products].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 8);
   }, [products]);
 
   return (
@@ -58,7 +57,7 @@ export default function Trending() {
             modules={[Autoplay]}
             spaceBetween={20}
             slidesPerView={1}
-            loop={true}
+            loop={trendingProducts.length > 5}
             speed={800}
             autoplay={{
               delay: 2500,

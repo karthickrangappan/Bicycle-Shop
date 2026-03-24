@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, ShoppingCart, Star, ArrowLeft, Shield, Truck, RotateCcw, CheckCircle2, Ruler, Weight } from 'lucide-react';
+import { ShoppingCart, Star, ArrowLeft, Shield, Truck, RotateCcw, CheckCircle2, Ruler, Weight } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { db } from '../../firebase';
 import { collection, query, where, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -10,7 +10,7 @@ import { toast } from 'react-hot-toast';
 export default function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { products, addToCart, addToWishlist, isInWishlist, removeFromWishlist, user, orders } = useShop();
+  const { products, addToCart, user, orders } = useShop();
   
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState('');
@@ -36,7 +36,7 @@ export default function ProductDetails() {
 
   useEffect(() => {
     if (user && product) {
-      const bought = orders.some(o => 
+      const bought = (orders || []).some(o => 
         o.status === "Delivered" && 
         o.items.some(item => item.id === product.id)
       );

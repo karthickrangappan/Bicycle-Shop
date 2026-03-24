@@ -30,7 +30,14 @@ export default function Shop() {
   // Update state if URL changes
   useEffect(() => {
     if (categoryFromUrl) {
-      setActiveCategory(categoryFromUrl);
+      // Find category name by slug first
+      const categoryObj = categories.find(c => c.slug === categoryFromUrl);
+      if (categoryObj) {
+        setActiveCategory(categoryObj.name);
+      } else {
+        // Fallback or case where the name itself was passed (legacy/direct)
+        setActiveCategory(categoryFromUrl);
+      }
     } else {
       setActiveCategory("All");
     }
@@ -38,7 +45,7 @@ export default function Shop() {
     if (searchFromUrl) {
       setSearchTerm(searchFromUrl);
     }
-  }, [categoryFromUrl, searchFromUrl]);
+  }, [categoryFromUrl, searchFromUrl, categories]);
 
   // Parse price string to number for filtering
   const parsePrice = (priceStr) => {
@@ -93,7 +100,7 @@ export default function Shop() {
   return (
     <div className="bg-slate-50 min-h-screen relative">
       <PageHeader 
-        title="Premium Collection"
+        title={activeCategory === "All" ? "Premium Collection" : activeCategory}
         icon={ShoppingBag}
       />
       <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">

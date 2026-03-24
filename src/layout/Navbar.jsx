@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   ShoppingCart,
-  Heart,
   User,
   Menu,
   X,
@@ -40,7 +39,10 @@ export default function Navbar() {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout, cart, wishlist, categories: dynamicCategories, products: shopProducts } = useShop();
+  const { user, logout, cart, categories: dynamicCategories, products: shopProducts } = useShop();
+
+  const categoriesDropdownRef = useRef(null);
+  const pagesDropdownRef = useRef(null);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -66,6 +68,23 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close dropdowns on click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (categoriesDropdownRef.current && !categoriesDropdownRef.current.contains(event.target)) {
+        setCategoriesDropdown(false);
+      }
+      if (pagesDropdownRef.current && !pagesDropdownRef.current.contains(event.target)) {
+        setPagesDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Shop", href: "/shop" },
@@ -85,7 +104,7 @@ export default function Navbar() {
       .slice(0, 6)
       .map(c => ({
         label: c.name,
-        href: `/shop?category=${encodeURIComponent(c.name)}`,
+        href: `/category/${encodeURIComponent(c.name)}`,
         desc: c.description || `Browse ${c.name}`,
         image: c.image
       }));
@@ -132,15 +151,18 @@ export default function Navbar() {
               </Link>
             ))}
 
-            {/* Categories Dropdown on Hover */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setCategoriesDropdown(true)}
-              onMouseLeave={() => setCategoriesDropdown(false)}
-            >
-              <button className={`px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-1.5 ${
-                categoriesDropdown ? "text-brand-500 bg-white/5" : "text-white hover:text-brand-400"
-              }`}>
+            {/* Categories Dropdown on Click */}
+            <div className="relative" ref={categoriesDropdownRef}>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCategoriesDropdown(!categoriesDropdown);
+                  setPagesDropdown(false);
+                }}
+                className={`px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-1.5 ${
+                  categoriesDropdown ? "text-brand-500 bg-white/5" : "text-white hover:text-brand-400"
+                }`}
+              >
                 Categories <ChevronDown size={14} className={`transition-transform duration-300 ${categoriesDropdown ? 'rotate-180' : ''}`} />
               </button>
 
@@ -176,15 +198,18 @@ export default function Navbar() {
               </AnimatePresence>
             </div>
 
-            {/* Pages Dropdown on Hover */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setPagesDropdown(true)}
-              onMouseLeave={() => setPagesDropdown(false)}
-            >
-              <button className={`px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-1.5 ${
-                pagesDropdown ? "text-brand-500 bg-white/5" : "text-white hover:text-brand-400"
-              }`}>
+            {/* Pages Dropdown on Click */}
+            <div className="relative" ref={pagesDropdownRef}>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPagesDropdown(!pagesDropdown);
+                  setCategoriesDropdown(false);
+                }}
+                className={`px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-1.5 ${
+                  pagesDropdown ? "text-brand-500 bg-white/5" : "text-white hover:text-brand-400"
+                }`}
+              >
                 Pages <ChevronDown size={14} className={`transition-transform duration-300 ${pagesDropdown ? 'rotate-180' : ''}`} />
               </button>
 
@@ -244,7 +269,7 @@ export default function Navbar() {
                          className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-2 text-sm text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all shadow-2xl"
                        />
                      </form>
- 
+  
                      {/* Live Results Dropdown */}
                      <AnimatePresence>
                        {searchQuery.trim() !== "" && (
@@ -313,16 +338,6 @@ export default function Navbar() {
                     <span className="text-[10px] font-black uppercase tracking-widest hidden xl:block pr-1">Dashboard</span>
                 </Link>
              )}
-
-            {/* Wishlist */}
-            {/* <Link to="/wishlist" className="relative p-2 text-white hover:bg-white/10 rounded-lg transition-all group">
-              <Heart size={18} className={`group-hover:scale-110 ${wishlist.length > 0 ? "fill-brand-500 text-brand-500" : ""}`} />
-              {wishlist.length > 0 && (
-                <span className="absolute top-1 right-1 w-3.5 h-3.5 text-[8px] bg-red-500 text-white flex items-center justify-center rounded-full shadow-lg">
-                  {wishlist.length}
-                </span>
-              )}
-            </Link> */}
 
             {/* Cart */}
             <Link to="/cart" className="relative p-2 text-white hover:bg-white/10 rounded-lg transition-all group">

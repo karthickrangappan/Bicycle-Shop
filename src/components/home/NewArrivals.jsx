@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import ProductCard, { MOCK_PRODUCTS } from '../ProductCard';
+import ProductCard from '../ProductCard';
 import { useShop } from '../../context/ShopContext';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
@@ -12,11 +12,10 @@ import 'swiper/css/pagination';
 export default function NewArrivals() {
   const { products } = useShop();
   
-  // Select latest products from DB (or fallback to mock)
+  // Select latest products from DB
   const newProducts = React.useMemo(() => {
-    const data = products.length > 0 ? products : MOCK_PRODUCTS;
     // Sort by id descending or just take the last 6
-    return [...data].sort((a, b) => b.id - a.id).slice(0, 6);
+    return [...products].sort((a, b) => b.id - a.id).slice(0, 6);
   }, [products]);
 
   return (
@@ -61,7 +60,7 @@ export default function NewArrivals() {
             modules={[Autoplay, Pagination]}
             spaceBetween={20}
             slidesPerView={1}
-            loop={true}
+            loop={newProducts.length > 5}
             speed={1000}
             autoplay={{
               delay: 3500,
