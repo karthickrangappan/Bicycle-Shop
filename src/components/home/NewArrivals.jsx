@@ -3,14 +3,21 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProductCard, { MOCK_PRODUCTS } from '../ProductCard';
+import { useShop } from '../../context/ShopContext';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
 export default function NewArrivals() {
-  // Select latest products (IDs 15-20)
-  const newProducts = MOCK_PRODUCTS.filter(p => p.id >= 15 && p.id <= 20);
+  const { products } = useShop();
+  
+  // Select latest products from DB (or fallback to mock)
+  const newProducts = React.useMemo(() => {
+    const data = products.length > 0 ? products : MOCK_PRODUCTS;
+    // Sort by id descending or just take the last 6
+    return [...data].sort((a, b) => b.id - a.id).slice(0, 6);
+  }, [products]);
 
   return (
     <section className="py-24 bg-slate-50 relative overflow-hidden">
@@ -20,18 +27,18 @@ export default function NewArrivals() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <div className="max-w-2xl text-center md:text-left mx-auto md:mx-0">
+          <div className="max-w-3xl text-center md:text-left mx-auto md:mx-0">
             <motion.div 
                initial={{ opacity: 0, scale: 0.9 }}
                whileInView={{ opacity: 1, scale: 1 }}
-               className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 border border-emerald-100"
+               className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest mb-4 border border-emerald-100"
             >
                <Sparkles size={14} /> Fresh Off The Line
             </motion.div>
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tighter"
+              className="text-4xl sm:text-6xl xl:text-7xl font-black text-slate-900 tracking-tighter"
             >
               Discover <span className="text-emerald-500">New Arrivals</span>
             </motion.h2>
@@ -39,10 +46,10 @@ export default function NewArrivals() {
           
           <Link 
             to="/shop" 
-            className="flex items-center gap-2 text-slate-900 font-bold hover:text-emerald-600 transition-colors group"
+            className="flex items-center gap-2 text-slate-900 font-bold hover:text-emerald-600 transition-colors group px-6 py-3 bg-white rounded-2xl border border-slate-100 shadow-sm"
           >
             View Full Drop
-            <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:translate-x-1 transition-transform">
+            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:translate-x-1 transition-transform">
               <ArrowRight size={16} />
             </div>
           </Link>
@@ -53,7 +60,7 @@ export default function NewArrivals() {
           <Swiper
             modules={[Autoplay, Pagination]}
             spaceBetween={20}
-            slidesPerView={1.2}
+            slidesPerView={1}
             loop={true}
             speed={1000}
             autoplay={{
@@ -67,8 +74,10 @@ export default function NewArrivals() {
             }}
             breakpoints={{
               640: { slidesPerView: 2, spaceBetween: 24 },
+              768: { slidesPerView: 3, spaceBetween: 24 },
               1024: { slidesPerView: 3, spaceBetween: 32 },
               1280: { slidesPerView: 4, spaceBetween: 32 },
+              1536: { slidesPerView: 5, spaceBetween: 32 },
             }}
             className="!pb-16"
           >

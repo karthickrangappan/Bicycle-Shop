@@ -10,7 +10,10 @@ import {
   MapPin,
   CreditCard,
   Truck,
-  ArrowRight
+  ArrowRight,
+  Wrench,
+  Zap,
+  CheckCircle2
 } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { Link } from 'react-router-dom';
@@ -48,15 +51,15 @@ function OrderCard({ order }) {
             <Box size={28} />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Order Ref</p>
-            <h3 className="text-xl font-black text-slate-900 tracking-tight">{order.id}</h3>
-            <p className="text-sm font-bold text-slate-500 italic">Placed on {new Date(order.date).toLocaleDateString()}</p>
+            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Order Ref</p>
+            <h3 className="text-lg lg:text-xl font-black text-slate-900 tracking-tight">{order.id}</h3>
+            <p className="text-[11px] lg:text-sm font-bold text-slate-500 italic uppercase tracking-tight">Placed on {new Date(order.date).toLocaleDateString()}</p>
           </div>
         </div>
 
         <div className="flex flex-col items-center md:items-end gap-2 relative z-10 w-full md:w-auto">
           <div className="flex items-center gap-4 w-full justify-between md:justify-end">
-            <span className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border ring-2 ring-white transition-all duration-500 ${
+            <span className={`px-4 lg:px-6 py-2 rounded-full text-[9px] font-black uppercase tracking-widest border ring-2 ring-white transition-all duration-500 ${
               order.status === 'Cancelled' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-green-50 text-green-600 border-green-100'
             }`}>
                {order.status}
@@ -69,8 +72,8 @@ function OrderCard({ order }) {
             </button>
           </div>
           <div className="mt-1 flex items-baseline gap-2">
-             <span className="text-xs font-bold text-slate-400">Total Selection:</span>
-             <p className="text-2xl font-black text-brand-600 tracking-tighter">{formatCurrency(order.total)}</p>
+             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Investment:</span>
+             <p className="text-xl lg:text-2xl font-black text-brand-600 tracking-tighter">{formatCurrency(order.total)}</p>
           </div>
         </div>
       </div>
@@ -96,21 +99,72 @@ function OrderCard({ order }) {
                   ))}
                </div>
 
+               {/* Tracking Progress */}
+               <div className="relative pt-12 pb-16">
+                  <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-100 -translate-y-1/2 rounded-full overflow-hidden">
+                     <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: order.status === 'Cancelled' ? '0%' : 
+                                   order.status === 'Delivered' ? '100%' : 
+                                   order.status === 'Shipped' ? '75%' : 
+                                   order.status === 'Assembling' ? '50%' : 
+                                   order.status === 'Processing' ? '25%' : '5%' }}
+                        className={`h-full transition-all duration-1000 ${order.status === 'Cancelled' ? 'bg-red-500' : 'bg-brand-500'}`}
+                     />
+                  </div>
+                  
+                  <div className="relative flex justify-between items-center px-2">
+                     {[
+                        { label: 'Pending', icon: Box, status: 'Pending' },
+                        { label: 'Processing', icon: Zap, status: 'Processing' },
+                        { label: 'Assembling', icon: Wrench, status: 'Assembling' },
+                        { label: 'In Transit', icon: Truck, status: 'Shipped' },
+                        { label: 'Delivered', icon: CheckCircle2, status: 'Delivered' }
+                     ].map((step, idx) => {
+                        const isCompleted = ['Delivered', 'Shipped', 'Assembling', 'Processing', 'Pending'].indexOf(order.status) >= ['Delivered', 'Shipped', 'Assembling', 'Processing', 'Pending'].indexOf(step.status);
+                        const isActive = order.status === step.status;
+                        
+                        return (
+                           <div key={idx} className="flex flex-col items-center gap-3 relative z-10">
+                              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${
+                                 isCompleted ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/30' : 'bg-white text-slate-300 border border-slate-100'
+                              } ${isActive ? 'scale-125 ring-4 ring-brand-50' : ''}`}>
+                                 <step.icon size={20} />
+                              </div>
+                              <div className="absolute top-16 text-center">
+                                 <p className={`text-[8px] font-black uppercase tracking-widest whitespace-nowrap transition-colors duration-500 ${
+                                    isCompleted ? 'text-slate-900' : 'text-slate-300'
+                                 }`}>{step.label}</p>
+                                 {isActive && <span className="w-1.5 h-1.5 bg-brand-500 rounded-full inline-block mt-1 animate-ping" />}
+                              </div>
+                           </div>
+                        );
+                     })}
+                  </div>
+               </div>
+
                {/* Logistics & Payment */}
                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 relative group/info">
-                     <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Dispatch Details</h4>
+                     <div className="flex justify-between items-start mb-6">
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Dispatch Details</h4>
+                         <div className="text-right">
+                           <p className="text-[9px] font-black uppercase tracking-widest text-brand-500">Tracking Number</p>
+                           <p className="text-[10px] lg:text-xs font-black text-slate-900 tracking-tight">TRK-{order.id.replace('ORD', '')}-ELITE</p>
+                         </div>
+                     </div>
                      <p className="text-lg font-black text-slate-900 mb-2">{order.name}</p>
                      <p className="text-sm font-bold text-slate-500 leading-relaxed mb-4">{order.address}, {order.city} - {order.zip}</p>
                   </div>
-                  <div className="bg-slate-900 p-8 rounded-[2.5rem] text-white overflow-hidden shadow-2xl">
+                  <div className="bg-slate-900 p-8 rounded-[2.5rem] text-white overflow-hidden shadow-2xl relative">
+                     <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full translate-x-10 -translate-y-10 blur-2xl"></div>
                      <h4 className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-4">Accountability</h4>
-                     <p className="text-sm font-black mb-4">Method: {order.paymentMethod} • Status: <span className="text-brand-500">{order.paymentStatus}</span></p>
+                     <p className="text-sm font-black mb-4">Method: {order.paymentMethod} • Status: <span className="text-brand-500 uppercase tracking-widest text-[10px] ml-2 px-2 py-0.5 bg-brand-500/10 rounded-full">{order.paymentStatus}</span></p>
                      {order.refundStatus && <p className="text-xs font-bold text-blue-400">Refund: {order.refundStatus}</p>}
-                     <div className="mt-8">
-                        <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1">Grand Total Investment</p>
-                        <p className="text-3xl font-black text-white tracking-tighter">{formatCurrency(order.total)}</p>
-                     </div>
+                      <div className="mt-8">
+                        <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">Grand Total Investment</p>
+                        <p className="text-2xl lg:text-3xl font-black text-white tracking-tighter">{formatCurrency(order.total)}</p>
+                      </div>
                   </div>
                </div>
 
@@ -209,8 +263,8 @@ export default function MyOrders() {
             <div className="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-8 text-brand-500 shadow-xl shadow-brand-500/10">
               <Package size={48} />
             </div>
-            <h2 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">No orders found</h2>
-            <p className="text-slate-500 font-medium mb-10 leading-relaxed italic">
+            <h2 className="text-2xl lg:text-3xl font-black text-slate-900 mb-3 lg:mb-4 tracking-tight">No orders found</h2>
+            <p className="text-xs lg:text-sm text-slate-500 font-medium mb-8 lg:mb-10 leading-relaxed italic">
               Your premium ride history is empty. Time to start your first elite journey with CycleCore.
             </p>
             <Link 

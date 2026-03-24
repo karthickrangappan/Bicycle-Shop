@@ -3,26 +3,19 @@ import { motion } from 'framer-motion';
 import { ArrowRight, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProductCard, { MOCK_PRODUCTS } from '../ProductCard';
+import { useShop } from '../../context/ShopContext';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 
 export default function Trending() {
-  // Select 2 products from each key category
-  const trendingProducts = [
-    // Mountain
-    MOCK_PRODUCTS.find(p => p.id === 1),
-    MOCK_PRODUCTS.find(p => p.id === 16),
-    // Road
-    MOCK_PRODUCTS.find(p => p.id === 2),
-    MOCK_PRODUCTS.find(p => p.id === 17),
-    // Urban/City
-    MOCK_PRODUCTS.find(p => p.id === 4),
-    MOCK_PRODUCTS.find(p => p.id === 15),
-    // Gear/Accessories
-    MOCK_PRODUCTS.find(p => p.id === 11),
-    MOCK_PRODUCTS.find(p => p.id === 12),
-  ].filter(Boolean); // Safety filter
+  const { products } = useShop();
+
+  // Select trending products (High rating or just random 8)
+  const trendingProducts = React.useMemo(() => {
+    const data = products.length > 0 ? products : MOCK_PRODUCTS;
+    return [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 8);
+  }, [products]);
 
   return (
     <section className="py-24 bg-white relative overflow-hidden">
@@ -32,11 +25,11 @@ export default function Trending() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <div className="max-w-2xl text-center md:text-left mx-auto md:mx-0">
+          <div className="max-w-3xl text-center md:text-left mx-auto md:mx-0">
             <motion.div 
                initial={{ opacity: 0, y: 20 }}
                whileInView={{ opacity: 1, y: 0 }}
-               className="inline-flex items-center gap-2 px-4 py-1.5 bg-brand-50 text-brand-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 border border-brand-100 shadow-sm shadow-brand-500/5"
+               className="inline-flex items-center gap-2 px-4 py-1.5 bg-brand-50 text-brand-600 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest mb-4 border border-brand-100 shadow-sm shadow-brand-500/5"
             >
                <TrendingUp size={14} /> Trending Now
             </motion.div>
@@ -44,7 +37,7 @@ export default function Trending() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tighter"
+              className="text-4xl sm:text-6xl xl:text-7xl font-black text-slate-900 tracking-tighter"
             >
               Hottest <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600">Picks</span> of the Season
             </motion.h2>
@@ -64,7 +57,7 @@ export default function Trending() {
           <Swiper
             modules={[Autoplay]}
             spaceBetween={20}
-            slidesPerView={1.2}
+            slidesPerView={1}
             loop={true}
             speed={800}
             autoplay={{
@@ -74,8 +67,10 @@ export default function Trending() {
             }}
             breakpoints={{
               640: { slidesPerView: 2, spaceBetween: 24 },
+              768: { slidesPerView: 3, spaceBetween: 24 },
               1024: { slidesPerView: 3, spaceBetween: 32 },
               1280: { slidesPerView: 4, spaceBetween: 32 },
+              1536: { slidesPerView: 5, spaceBetween: 32 },
             }}
             className="!pb-12 !pt-4"
           >

@@ -70,20 +70,20 @@ export default function Banner() {
             </div>
 
             {/* Content (Centered) */}
-            <div className="absolute inset-0 flex items-center pt-20 sm:pt-24 px-4">
-              <div className="max-w-7xl mx-auto w-full">
-                <div className="max-w-4xl mx-auto text-center">
+            <div className="absolute inset-0 flex items-center pt-24 sm:pt-32 px-4 sm:px-8">
+              <div className="max-w-[1600px] mx-auto w-full">
+                <div className="max-w-5xl mx-auto text-center">
                   
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
                   >
-                    <span className="inline-block px-4 py-1.5 mb-6 text-sm font-bold tracking-widest uppercase text-brand-400 border border-brand-400/30 bg-brand-400/10 rounded-full backdrop-blur-sm">
+                    <span className="inline-block px-5 py-2 mb-8 text-xs sm:text-sm font-black tracking-[0.2em] uppercase text-brand-400 border border-brand-400/30 bg-brand-400/10 rounded-full backdrop-blur-sm">
                       Premium Collection 2024
                     </span>
 
-                    <h2 className="text-5xl sm:text-7xl md:text-8xl font-black text-white mb-6 leading-[1.1] tracking-tighter drop-shadow-2xl">
+                    <h2 className="text-4xl sm:text-7xl lg:text-8xl xl:text-9xl font-black text-white mb-8 leading-[1.05] tracking-tighter drop-shadow-2xl">
                       {banner.title.split(' ').map((word, i) => (
                         <span
                           key={i}
@@ -94,14 +94,14 @@ export default function Banner() {
                       ))}
                     </h2>
 
-                    <p className="text-lg sm:text-2xl text-slate-200 mb-10 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-lg">
+                    <p className="text-base sm:text-xl lg:text-2xl text-slate-200 mb-12 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-lg opacity-90">
                       {banner.subtitle}
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-5 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
                       
-                      <button className="relative overflow-hidden px-12 py-5 bg-brand-500 text-white font-black rounded-2xl transition-all duration-300 hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] active:scale-95 group/btn">
-                        <span className="relative z-10 flex items-center gap-3">
+                      <button className="w-full sm:w-auto relative overflow-hidden px-10 sm:px-14 py-5 bg-brand-500 text-white font-black rounded-2xl transition-all duration-500 hover:shadow-[0_20px_40px_rgba(59,130,246,0.5)] hover:-translate-y-1 active:scale-95 group/btn">
+                        <span className="relative z-10 flex items-center justify-center gap-3">
                           Shop Collection
                           <svg
                             className="w-5 h-5 transition-transform duration-300 group-hover/btn:translate-x-1"
@@ -112,15 +112,15 @@ export default function Banner() {
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
-                              strokeWidth="2.5"
+                              strokeWidth="3"
                               d="M17 8l4 4m0 0l-4 4m4-4H3"
                             />
                           </svg>
                         </span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
                       </button>
 
-                      <button className="px-12 py-5 bg-white/10 backdrop-blur-xl text-white font-black rounded-2xl transition-all duration-300 hover:bg-white/20 active:scale-95 border border-white/20">
+                      <button className="w-full sm:w-auto px-10 sm:px-14 py-5 bg-white/10 backdrop-blur-xl text-white font-black rounded-2xl transition-all duration-500 hover:bg-white/20 hover:-translate-y-1 active:scale-95 border border-white/20">
                         View Showroom
                       </button>
 

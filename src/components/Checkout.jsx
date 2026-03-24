@@ -16,23 +16,27 @@ export default function Checkout() {
    const [selectedAddressId, setSelectedAddressId] = useState(null);
    
    // New Shipping Logic states
-   const [assemblyTier, setAssemblyTier] = useState('Standard'); // 'Standard' or 'ReadyToRide'
-   const [addressType, setAddressType] = useState('Residential'); // 'Residential' or 'Commercial'
+   const [assemblyTier, setAssemblyTier] = useState('Standard'); 
+   const [addressType, setAddressType] = useState('Residential');
    const [mechanicAvailable, setMechanicAvailable] = useState(null);
    const [isValidatingAddress, setIsValidatingAddress] = useState(false);
 
    const [formData, setFormData] = useState({
-      name: '',
-      email: '',
-      phone: '',
-      address: '',
-      city: '',
-      zip: ''
+      name: 'Arjun Sharma',
+      email: 'arjun.sharma@performance.com',
+      phone: '9876543210',
+      address: '42, Elite Velocity Heights, Carbon Block',
+      city: 'Mumbai, Maharashtra',
+      zip: '400001'
    });
 
    useEffect(() => {
       if (user) {
-         setFormData(prev => ({ ...prev, name: user.name || '', email: user.email || '' }));
+         setFormData(prev => ({ 
+            ...prev, 
+            name: user.name || prev.name, 
+            email: user.email || prev.email 
+         }));
       }
    }, [user]);
 
@@ -62,9 +66,8 @@ export default function Checkout() {
       const isResidential = parseInt(pincode) % 2 === 0;
       setAddressType(isResidential ? 'Residential' : 'Commercial');
       
-      // Mock Logic: Pincodes starting with "6" have Mobile Mechanics
-      const isMechanicAvail = pincode.startsWith('6');
-      setMechanicAvailable(isMechanicAvail);
+      // Mechanic available all over India
+      setMechanicAvailable(true);
       
       setIsValidatingAddress(false);
    };
@@ -117,27 +120,18 @@ export default function Checkout() {
       const pincodeRegex = /^[0-9]{6}$/;
 
       if (!formData.name || !formData.email || !formData.phone || !formData.address || !formData.city || !formData.zip) {
-         toast.error("Please fill all shipping details");
          return false;
       }
 
       if (!phoneRegex.test(formData.phone)) {
-         toast.error("Enter valid 10-digit phone number");
          return false;
       }
 
       if (!pincodeRegex.test(formData.zip)) {
-         toast.error("Enter valid 6-digit pincode");
          return false;
       }
 
       if (!cart.length) {
-         toast.error("Cart is empty");
-         return false;
-      }
-
-      if (assemblyTier === 'ReadyToRide' && mechanicAvailable === false) {
-         toast.error("Ready-to-Ride is not available in your zip code. Please select Standard Boxed.");
          return false;
       }
 
@@ -263,7 +257,7 @@ export default function Checkout() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
 
                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-                  <form onSubmit={handleCheckout} className="space-y-8">
+                  <form onSubmit={handleCheckout} className="space-y-8" noValidate>
                      
                      {/* Shipping Logistics */}
                      <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 space-y-8">
@@ -289,44 +283,44 @@ export default function Checkout() {
                            <button
                               type="button"
                               onClick={() => setAssemblyTier('Standard')}
-                              className={`p-6 rounded-3xl border-2 transition-all flex flex-col gap-3 text-left ${assemblyTier === 'Standard' ? 'border-slate-900 bg-slate-900 text-white shadow-xl' : 'border-slate-50 bg-slate-50 text-slate-400 hover:border-slate-200'}`}
+                              className={`p-4 lg:p-6 rounded-3xl border-2 transition-all flex flex-col gap-2 lg:gap-3 text-left ${assemblyTier === 'Standard' ? 'border-slate-900 bg-slate-900 text-white shadow-xl' : 'border-slate-50 bg-slate-50 text-slate-400 hover:border-slate-200'}`}
                            >
-                              <Box size={24} />
+                              <Box size={22} />
                               <div>
-                                 <p className="font-black text-lg">Standard Boxed</p>
-                                 <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Professional Factory Packaging</p>
-                                 <p className="mt-2 text-sm font-black">₹499</p>
+                                 <p className="font-black text-base lg:text-lg">Standard Boxed</p>
+                                 <p className="text-[9px] font-bold uppercase tracking-widest opacity-60">Factory Packaging</p>
+                                 <p className="mt-2 text-xs lg:text-sm font-black">₹499</p>
                               </div>
                            </button>
 
                            <button
                               type="button"
                               onClick={() => setAssemblyTier('ReadyToRide')}
-                              className={`p-6 rounded-3xl border-2 transition-all flex flex-col gap-3 text-left relative overflow-hidden ${assemblyTier === 'ReadyToRide' ? 'border-brand-500 bg-brand-500 text-white shadow-xl' : 'border-slate-50 bg-slate-50 text-slate-400 hover:border-slate-200'}`}
+                              className={`p-4 lg:p-6 rounded-3xl border-2 transition-all flex flex-col gap-2 lg:gap-3 text-left relative overflow-hidden ${assemblyTier === 'ReadyToRide' ? 'border-brand-500 bg-brand-500 text-white shadow-xl' : 'border-slate-50 bg-slate-50 text-slate-400 hover:border-slate-200'}`}
                            >
-                              <Wrench size={24} />
+                              <Wrench size={22} />
                               <div>
-                                 <p className="font-black text-lg">Ready-to-Ride</p>
-                                 <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">White-Glove Assembly Delivery</p>
-                                 {mechanicAvailable === false && <p className="text-[10px] font-black text-red-200 uppercase mt-1">Not available in your area</p>}
-                                 <p className="mt-2 text-sm font-black">₹1,499</p>
+                                 <p className="font-black text-base lg:text-lg">Ready-to-Ride</p>
+                                 <p className="text-[9px] font-bold uppercase tracking-widest opacity-60">White-Glove Delivery</p>
+                                 <p className="text-[9px] font-black opacity-80 uppercase mt-1">Available across India</p>
+                                 <p className="mt-2 text-xs lg:text-sm font-black">₹1,499</p>
                               </div>
                            </button>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-50">
                            <div className="space-y-2">
-                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Full Name</label>
-                              <input type="text" name="name" value={formData.name} required className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-brand-500 transition-all" onChange={handleChange} />
+                               <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Full Name</label>
+                              <input type="text" name="name" value={formData.name} className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-brand-500 transition-all" onChange={handleChange} />
                            </div>
                            <div className="space-y-2">
-                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Email Address</label>
-                              <input type="email" name="email" value={formData.email} required className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-brand-500 transition-all" onChange={handleChange} />
+                               <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Email Address</label>
+                              <input type="email" name="email" value={formData.email} className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-brand-500 transition-all" onChange={handleChange} />
                            </div>
                            <div className="space-y-2">
-                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Pincode</label>
+                               <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Pincode</label>
                               <div className="relative">
-                                <input type="text" name="zip" value={formData.zip} required maxLength="6" className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-brand-500 transition-all" placeholder="6-digit pincode" onChange={handleChange} />
+                                <input type="text" name="zip" value={formData.zip} maxLength="6" className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-brand-500 transition-all" placeholder="6-digit pincode" onChange={handleChange} />
                                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                                   {addressType === 'Residential' ? <Home size={16} className="text-brand-500" /> : <Building2 size={16} className="text-orange-500" />}
                                   <span className={`text-[8px] font-black uppercase tracking-widest ${addressType === 'Residential' ? 'text-brand-500' : 'text-orange-500'}`}>{addressType}</span>
@@ -334,12 +328,12 @@ export default function Checkout() {
                               </div>
                            </div>
                            <div className="space-y-2">
-                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Phone Number</label>
-                              <input type="tel" name="phone" value={formData.phone} required className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-brand-500 transition-all" placeholder="10-digit number" onChange={handleChange} />
+                               <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Phone Number</label>
+                              <input type="tel" name="phone" value={formData.phone} className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-brand-500 transition-all" placeholder="10-digit number" onChange={handleChange} />
                            </div>
                            <div className="space-y-2 md:col-span-2">
-                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Street Address</label>
-                              <textarea name="address" value={formData.address} required rows="2" className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-brand-500 transition-all" placeholder="Detailed address details..." onChange={handleChange} />
+                               <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Street Address</label>
+                              <textarea name="address" value={formData.address} rows="2" className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl font-bold focus:ring-2 focus:ring-brand-500 transition-all" placeholder="Detailed address details..." onChange={handleChange} />
                            </div>
                         </div>
                      </div>
@@ -409,10 +403,10 @@ export default function Checkout() {
                               <span className="font-black tracking-tight">+ ₹250</span>
                            </div>
                         )}
-                        <div className="flex justify-between items-center pt-6">
-                           <span className="text-xl font-black text-slate-900">Total Investment</span>
-                           <span className="text-4xl font-black text-brand-600 font-space tracking-tighter">{formatCurrency(totalInvestment)}</span>
-                        </div>
+                         <div className="flex justify-between items-center pt-6">
+                            <span className="text-lg lg:text-xl font-black text-slate-900">Total Investment</span>
+                            <span className="text-3xl lg:text-4xl font-black text-brand-600 font-space tracking-tighter">{formatCurrency(totalInvestment)}</span>
+                         </div>
                      </div>
                   </div>
                </motion.div>

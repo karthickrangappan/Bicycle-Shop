@@ -16,6 +16,12 @@ import ProductDetails from "./components/ProductDetails";
 import Checkout from "./components/Checkout";
 import MyOrders from "./components/MyOrders";
 import Profile from "./components/Profile";
+import TechnicalHelp from "./components/support/TechnicalHelp";
+import ServiceCenter from "./components/support/ServiceCenter";
+import WarrantyPolicy from "./components/support/WarrantyPolicy";
+import SizingGuide from "./components/support/SizingGuide";
+import ShippingInfo from "./components/support/ShippingInfo";
+import WarrantyClaimForm from "./components/support/WarrantyClaimForm";
 import AdminRouter from "./admin/AdminRouter";
 import { AdminProvider } from "./admin/context/AdminContext";
 
@@ -57,6 +63,14 @@ function AppContent() {
 
         {/* Product Routes */}
         <Route path="/product/:id" element={<ProductDetails />} />
+
+        {/* Support Routes */}
+        <Route path="/technical-help" element={<TechnicalHelp />} />
+        <Route path="/service-center" element={<ServiceCenter />} />
+        <Route path="/warranty-policy" element={<WarrantyPolicy />} />
+        <Route path="/sizing-guide" element={<SizingGuide />} />
+        <Route path="/shipping-info" element={<ShippingInfo />} />
+        <Route path="/warranty-claim" element={<WarrantyClaimForm />} />
 
         {/* Protected Routes */}
         <Route
