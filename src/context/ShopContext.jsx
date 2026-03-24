@@ -394,7 +394,7 @@ export const ShopProvider = ({ children }) => {
     const refundAmount = orderData.total - restockingFee;
 
     await updateDoc(orderRef, {
-      status: 'Return Requested',
+      status: 'Refund Requested',
       isReturnable: false,
       returnReason: reason,
       restockingFee,

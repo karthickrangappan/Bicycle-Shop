@@ -135,10 +135,25 @@ export const AdminProvider = ({ children }) => {
 
   const updateOrderStatus = async (orderId, status, userRefPath) => {
     try {
+      const updateData = { status };
+      
+      // Auto-mark as Paid if COD is Delivered
+      if (status === 'Delivered') {
+        const order = orders.find(o => o.id === orderId);
+        const method = (order?.paymentMethod || order?.payment || '').toLowerCase();
+        if (method === 'cod' || method === 'pay at home' || method === 'cash on delivery') {
+          updateData.paymentStatus = 'Paid';
+        }
+      }
+
+      if (status === 'Refund') {
+        updateData.paymentStatus = 'Refunded';
+      }
+
       if (userRefPath) {
-        await updateDoc(doc(db, userRefPath, 'orders', orderId), { status });
+        await updateDoc(doc(db, userRefPath, 'orders', orderId), updateData);
       } else {
-        await updateDoc(doc(db, "orders", orderId), { status });
+        await updateDoc(doc(db, "orders", orderId), updateData);
       }
       addLog("Order status updated", `${orderId} → ${status}`);
       addNotification(`Order ${orderId} is now ${status}`);

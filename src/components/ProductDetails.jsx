@@ -1,17 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, ShoppingCart, Star, ArrowLeft, Shield, Truck, RotateCcw, CheckCircle2, Ruler, Weight, ChevronRight, Bike } from 'lucide-react';
+import { Heart, ShoppingCart, Star, ArrowLeft, Shield, Truck, RotateCcw, CheckCircle2, Ruler, Weight } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { db } from '../../firebase';
 import { collection, query, where, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay } from 'swiper/modules';
-import ProductCard from './ProductCard';
-
-// Import Swiper styles
-import 'swiper/css';
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -55,16 +49,6 @@ export default function ProductDetails() {
     }
   }, [user, product, orders]);
 
-  const sizes = ['XS', 'S', 'M', 'L', 'XL'];
-
-  const relatedProducts = useMemo(() => {
-    if (!product) return [];
-    return products
-      .filter(p => p.category === product.category && p.id !== product.id && p.status !== 'inactive')
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 8);
-  }, [product, products]);
-
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -103,93 +87,84 @@ export default function ProductDetails() {
     toast.success("Review submitted!");
   };
 
-
+  const sizes = ['XS', 'S', 'M', 'L', 'XL'];
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-28 pb-12">
+    <div className="min-h-screen bg-slate-50 pt-32 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <button 
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-slate-500 font-bold hover:text-brand-600 transition-colors mb-6 group text-xs uppercase tracking-widest"
+          className="flex items-center gap-2 text-slate-500 font-bold hover:text-brand-600 transition-colors mb-8 group"
         >
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
           <span>Back to Catalog</span>
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-[2.5rem] p-3 shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden h-fit"
+            className="bg-white rounded-[2.5rem] p-3 shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden"
           >
-            <div className="aspect-[16/11] sm:aspect-video rounded-[2rem] overflow-hidden bg-slate-50 relative flex items-center justify-center">
-               <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-               <div className="absolute top-6 left-6">
-                  <span className="px-4 py-2 bg-white/90 backdrop-blur-md text-slate-900 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg border border-white">
+            <div className="aspect-[4/3] rounded-[2rem] overflow-hidden bg-white relative flex items-center justify-center p-4">
+               <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+               <div className="absolute top-8 left-8">
+                  <span className="px-4 py-2 bg-brand-500 text-white rounded-full text-xs font-black uppercase tracking-widest shadow-lg shadow-brand-500/30">
                     {product.category}
                   </span>
                </div>
             </div>
           </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, x: 50 }} 
-            animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-[2rem] p-5 sm:p-7 shadow-xl shadow-slate-200/50 border border-slate-100 h-fit"
-          >
-            <div className="mb-4">
-               <div className="flex items-center gap-1 mb-2">
-                  <div className="flex gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={10} className={i < Math.floor(product.rating || 5) ? "fill-brand-500 text-brand-500" : "text-slate-100"} />
-                    ))}
-                  </div>
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{reviews.length} Performance Records</span>
+          <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }}>
+            <div className="mb-6">
+               <div className="flex items-center gap-1.5 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={14} className={i < Math.floor(product.rating || 5) ? "fill-brand-500 text-brand-500" : "text-slate-200"} />
+                  ))}
+                  <span className="text-xs font-bold text-slate-400 ml-1">({reviews.length} Reviews)</span>
                </div>
                
-               <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tighter mb-1.5 leading-tight">
+               <h1 className="text-3xl sm:text-5xl font-black text-slate-950 tracking-tighter mb-2 leading-tight">
                  {product.name}
                </h1>
                
-               <p className="text-[11px] text-slate-500 font-medium max-w-sm mb-4 leading-relaxed">
+               <p className="text-sm text-slate-500 font-medium max-w-sm mb-6">
                  {product.description || "Engineered for elite performance. Masterpiece carbon fiber frame and high-precision gears for the perfect ride."}
                </p>
                
-               <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-2xl font-black text-slate-900 tracking-tighter">
+               <div className="flex items-center gap-3 mb-8">
+                  <span className="text-4xl font-black text-slate-900">
                     ₹{product.price}
                   </span>
                   {product.stock > 0 ? (
-                    <span className="px-1.5 py-0.5 bg-green-50 text-green-600 rounded-md text-[8px] font-black uppercase tracking-widest border border-green-100/50">
-                      {product.stock} In Stock
+                    <span className="px-2 py-0.5 bg-green-50 text-green-600 rounded-lg text-[10px] font-black uppercase tracking-widest border border-green-100">
+                      {product.stock} Available
                     </span>
                   ) : (
-                    <span className="px-1.5 py-0.5 bg-red-50 text-red-600 rounded-md text-[8px] font-black uppercase tracking-widest border border-red-100/50">
-                      Sold Out
+                    <span className="px-2 py-0.5 bg-red-50 text-red-600 rounded-lg text-[10px] font-black uppercase tracking-widest border border-red-100">
+                      Out of Stock
                     </span>
                   )}
                </div>
 
-                   {/* Variant Selection */}
-                   <div className="space-y-3 mb-5">
-                      <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-0.5 flex items-center gap-1.5">
-                        <div className="w-1 h-1 bg-slate-300 rounded-full" />
-                        Color Variant <span className="text-red-500">*</span>
-                      </label>
-                      <div className="flex flex-wrap gap-2">
+                   {/* Color Selection */}
+                   <div className="space-y-4 mb-8">
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Select Variant <span className="text-red-500">*</span></label>
+                      <div className="flex flex-wrap gap-3">
                         {(product.colors || ['#000000', '#ffffff', '#ef4444', '#3b82f6', '#10b981']).map(color => {
                           const isHex = color.startsWith('#');
                           return (
                             <button
                               key={color}
                               onClick={() => setForm(f => ({ ...f, color }))}
-                              className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all border ${
-                                form.color === color ? 'border-brand-500 bg-brand-50 text-brand-600 shadow-sm' : 'border-slate-100 bg-white text-slate-400'
+                              className={`px-4 py-2 rounded-xl text-xs font-black transition-all border-2 ${
+                                form.color === color ? 'border-brand-500 bg-brand-50' : 'border-slate-100 bg-white text-slate-400'
                               }`}
                             >
-                              <div className="flex items-center gap-1.5">
-                                {isHex && <div className="w-2 h-2 rounded-full border border-slate-200" style={{ backgroundColor: color }} />}
+                              <div className="flex items-center gap-2">
+                                {isHex && <div className="w-3 h-3 rounded-full border border-slate-200" style={{ backgroundColor: color }} />}
                                 <span>{color}</span>
                               </div>
                             </button>
@@ -199,20 +174,17 @@ export default function ProductDetails() {
                    </div>
 
                    {/* Size Selection */}
-                   <div className="space-y-3 mb-6">
-                      <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-0.5 flex items-center gap-1.5">
-                        <div className="w-1 h-1 bg-slate-300 rounded-full" />
-                        Precision Fit <span className="text-red-500">*</span>
-                      </label>
-                      <div className="flex flex-wrap gap-2">
+                   <div className="space-y-4 mb-8">
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Select Frame Size <span className="text-red-500">*</span></label>
+                      <div className="flex flex-wrap gap-3">
                         {(product.sizes || ['XS', 'S', 'M', 'L', 'XL']).map(size => (
                           <button
                             key={size}
                             onClick={() => setSelectedSize(size)}
-                            className={`px-4 py-2 rounded-lg font-black text-[10px] tracking-widest transition-all ${
+                            className={`px-6 py-3 rounded-xl font-black transition-all ${
                               selectedSize === size
-                              ? "bg-slate-900 text-white shadow-md shadow-slate-900/10"
-                              : "bg-white text-slate-400 border border-slate-50 hover:border-slate-200"
+                              ? "bg-slate-900 text-white shadow-lg"
+                              : "bg-white text-slate-400 border border-slate-100 hover:border-slate-300"
                             }`}
                           >
                             {size}
@@ -222,18 +194,18 @@ export default function ProductDetails() {
                    </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-2 mb-6">
+            <div className="flex flex-col sm:flex-row gap-3 mb-8">
                <button 
                  onClick={handleAddToCart}
                  disabled={product.stock <= 0 || !selectedSize}
-                 className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 ${
+                 className={`flex-1 py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95 ${
                    product.stock > 0 && selectedSize
-                   ? "bg-slate-50 text-slate-900 border border-slate-200 hover:bg-white hover:shadow-sm"
-                   : "bg-slate-50 text-slate-300 cursor-not-allowed border-transparent"
+                   ? "bg-slate-100 text-slate-900 shadow-slate-200 border border-slate-200 hover:bg-white hover:-translate-y-1"
+                   : "bg-slate-100 text-slate-400 cursor-not-allowed shadow-none"
                  }`}
                >
-                 <ShoppingCart size={14} />
-                 {product.stock <= 0 ? "Out" : !selectedSize ? "Size?" : "To Bag"}
+                 <ShoppingCart size={20} />
+                 {product.stock <= 0 ? "Out of Stock" : !selectedSize ? "Select Size" : "Add to Bag"}
                </button>
 
                <button 
@@ -244,36 +216,36 @@ export default function ProductDetails() {
                     }); 
                  }}
                  disabled={product.stock <= 0 || !selectedSize}
-                 className={`flex-[1.5] py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 shadow-sm ${
+                 className={`flex-[1.5] py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95 ${
                    product.stock > 0 && selectedSize
-                   ? "bg-brand-500 text-white shadow-brand-500/10 hover:bg-brand-600"
-                   : "bg-slate-50 text-slate-200 cursor-not-allowed shadow-none"
+                   ? "bg-brand-500 text-white shadow-brand-500/20 hover:bg-brand-600 hover:-translate-y-1"
+                   : "bg-slate-100 text-slate-400 cursor-not-allowed shadow-none"
                  }`}
                >
-                 {product.stock <= 0 ? "No Stock" : !selectedSize ? "Variant?" : "Buy It Now"}
+                 {product.stock <= 0 ? "Out of Stock" : !selectedSize ? "Select Variant" : "Buy It Now"}
                </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 pt-5 border-t border-slate-50">
-               <div className="flex flex-col items-center text-center gap-1">
-                  <Shield size={14} className="text-slate-300" />
-                  <h4 className="text-[7px] font-black text-slate-400 uppercase tracking-widest">Warranty</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8 border-t border-slate-100">
+               <div className="flex items-center gap-2.5">
+                  <Shield size={16} className="text-slate-400" />
+                  <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-tight">Lifetime Warranty</h4>
                </div>
-               <div className="flex flex-col items-center text-center gap-1 border-x border-slate-50">
-                  <Truck size={14} className="text-slate-300" />
-                  <h4 className="text-[7px] font-black text-slate-400 uppercase tracking-widest">Express</h4>
+               <div className="flex items-center gap-2.5">
+                  <Truck size={16} className="text-slate-400" />
+                  <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-tight">Free Express</h4>
                </div>
-               <div className="flex flex-col items-center text-center gap-1">
-                  <RotateCcw size={14} className="text-slate-300" />
-                  <h4 className="text-[7px] font-black text-slate-400 uppercase tracking-widest">30 Day</h4>
+               <div className="flex items-center gap-2.5">
+                  <RotateCcw size={16} className="text-slate-400" />
+                  <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-tight">30 Day Return</h4>
                </div>
             </div>
           </motion.div>
         </div>
 
         {/* Reviews Section */}
-        <div className="mt-16 pt-16 border-t border-slate-100">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="mt-24 pt-24 border-t border-slate-100">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
             <div>
               <h2 className="text-2xl font-black text-slate-900 tracking-tighter mb-4">Customer Experience</h2>
               <p className="text-slate-500 text-sm font-medium mb-8">
@@ -405,43 +377,6 @@ export default function ProductDetails() {
             </div>
           </div>
         </div>
-
-        {/* Related Products Section */}
-        {relatedProducts.length > 0 && (
-          <div className="mt-16 pt-16 border-t border-slate-100 pb-12">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
-               <div>
-                  <h2 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tighter leading-none mb-2">Explore <span className="text-brand-600">Similar</span> Gear</h2>
-                  <p className="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px]">High precision alternatives in {product.category}</p>
-               </div>
-               <Link to="/shop" className="group flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-600 transition-all shrink-0">
-                  Full Catalog <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-all"><ChevronRight size={16} /></div>
-               </Link>
-            </div>
-
-            <div className="relative overflow-visible">
-               <Swiper
-                  modules={[Autoplay]}
-                  spaceBetween={16}
-                  slidesPerView={1}
-                  autoplay={{ delay: 3500, disableOnInteraction: false }}
-                  breakpoints={{
-                    480: { slidesPerView: 1.5, spaceBetween: 20 },
-                    768: { slidesPerView: 2.5, spaceBetween: 24 },
-                    1024: { slidesPerView: 3.5, spaceBetween: 30 },
-                    1280: { slidesPerView: 4, spaceBetween: 32 }
-                  }}
-                  className="!overflow-visible"
-               >
-                  {relatedProducts.map((p) => (
-                    <SwiperSlide key={p.id} className="pb-8">
-                      <ProductCard product={p} />
-                    </SwiperSlide>
-                  ))}
-               </Swiper>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -2,16 +2,14 @@ import React, { useState } from 'react';
 import { useAdmin } from '../context/AdminContext';
 
 export default function Customers() {
-  const { customers, toggleCustomerStatus, orders } = useAdmin();
+  const { customers, orders } = useAdmin();
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
-  const [statusFilter, setStatusFilter] = useState('All');
   const [customerSort, setCustomerSort] = useState('Newest First');
 
   let filtered = customers.filter(c => {
-    const matchSearch = (c.name || '').toLowerCase().includes(search.toLowerCase()) || (c.email || '').toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === 'All' || c.status === statusFilter;
-    return matchSearch && matchStatus;
+    return (c.name || '').toLowerCase().includes(search.toLowerCase()) || 
+           (c.email || '').toLowerCase().includes(search.toLowerCase());
   });
 
   if (customerSort === 'Big Buyers') filtered = [...filtered].sort((a,b) => (b.totalSpent || 0) - (a.totalSpent || 0));
@@ -35,13 +33,8 @@ export default function Customers() {
           placeholder="Search by name, email, or city..." 
           value={search} 
           onChange={e => setSearch(e.target.value)} 
-          className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 col-span-1 md:col-span-2" 
+          className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 col-span-1 md:col-span-3" 
         />
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option value="All">All Users</option>
-          <option value="active">Allowed</option>
-          <option value="blocked">Stopped</option>
-        </select>
         <select value={customerSort} onChange={e => setCustomerSort(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
           <option>Recent Buyers</option>
           <option>Big Buyers</option>
@@ -58,7 +51,6 @@ export default function Customers() {
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Bikes Bought</th>
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Total Paid</th>
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Date Joined</th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Step</th>
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Options</th>
             </tr>
           </thead>
@@ -82,14 +74,8 @@ export default function Customers() {
                 <td className="px-5 py-3"><span className="text-sm font-bold text-emerald-400">₹{(c.totalSpent || 0).toLocaleString()}</span></td>
                 <td className="px-5 py-3"><span className="text-xs text-gray-400">{c.joined}</span></td>
                 <td className="px-5 py-3">
-                  <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${c.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>{c.status}</span>
-                </td>
-                <td className="px-5 py-3">
                   <div className="flex gap-2">
                     <button onClick={() => setSelected(c)} className="text-xs bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 px-2.5 py-1 rounded-lg">View Info</button>
-                    <button onClick={() => toggleCustomerStatus(c.id)} className={`text-xs px-2.5 py-1 rounded-lg transition-all ${c.status === 'active' ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'}`}>
-                      {c.status === 'active' ? 'Stop User' : 'Allow User'}
-                    </button>
                   </div>
                 </td>
               </tr>
@@ -111,7 +97,6 @@ export default function Customers() {
               <div>
                 <h3 className="font-bold text-white text-lg">{selected.name || 'Unknown User'}</h3>
                 <p className="text-gray-400 text-sm">{selected.email}</p>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${selected.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>{selected.status === 'active' ? 'Allowed' : 'Stopped'}</span>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3 mb-5">
