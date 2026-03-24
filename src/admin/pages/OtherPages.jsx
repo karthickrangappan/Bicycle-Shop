@@ -3,7 +3,7 @@ import { useAdmin } from '../context/AdminContext';
 
 export function Settings() {
   const [tab, setTab] = useState('general');
-  const { categorizeAllProducts, resetToDefaultCategories } = useAdmin();
+  const { categorizeAllProducts, resetToDefaultCategories, resetAllStocks } = useAdmin();
   const tabs = ['general', 'payment', 'tax', 'notifications', 'maintenance'];
 
   return (
@@ -85,6 +85,18 @@ export function Settings() {
                 className="bg-red-500 hover:bg-red-400 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all"
               >
                 Reset Infrastructure
+              </button>
+            </div>
+
+            <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-6">
+              <h3 className="font-bold text-emerald-500 mb-2">Reset Inventory Stock</h3>
+              <p className="text-gray-400 text-sm mb-4">Set the stock count of EVERY product and variant in the store to exactly 50 units. Use this to quickly prepare the store for a fresh launch or demo.</p>
+              <button 
+                type="button"
+                onClick={() => { if(confirm('IRREVERSIBLE: Set current stock for ALL products to 50?')) resetAllStocks() }}
+                className="bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-lg shadow-emerald-500/10"
+              >
+                Reset Stock to 50
               </button>
             </div>
 

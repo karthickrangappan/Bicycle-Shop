@@ -22,24 +22,24 @@ function InvoiceModal({ order, onClose }) {
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
         </div>
-        <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
-          <div><p className="text-gray-500">Invoice No</p><p className="font-bold">{order.id}</p></div>
-          <div><p className="text-gray-500">Date</p><p className="font-bold">{order.date}</p></div>
-          <div><p className="text-gray-500">Customer</p><p className="font-bold">{order.customer}</p></div>
-          <div><p className="text-gray-500">Payment</p><p className="font-bold">{order.payment}</p></div>
-        </div>
+          <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
+            <div><p className="text-gray-500">Invoice No</p><p className="font-bold">{order.id}</p></div>
+            <div><p className="text-gray-500">Date</p><p className="font-bold">{order.date ? new Date(order.date).toLocaleDateString() : 'N/A'}</p></div>
+            <div><p className="text-gray-500">Customer</p><p className="font-bold">{order.customer || order.customerName || 'Guest'}</p></div>
+            <div><p className="text-gray-500">Payment</p><p className="font-bold">{order.payment || order.paymentMethod || 'N/A'}</p></div>
+          </div>
         <div className="border-t border-gray-200 pt-4 mb-4">
-          {order.items.map((item, i) => (
+          {(order.items || []).map((item, i) => (
             <div key={i} className="flex justify-between py-2 text-sm">
-              <span>{item.name} × {item.qty}</span>
-              <span className="font-bold">₹{(item.price * item.qty).toLocaleString()}</span>
+              <span>{item.name} × {item.qty || item.quantity || 1}</span>
+              <span className="font-bold">₹{((item.price || 0) * (item.qty || item.quantity || 1)).toLocaleString()}</span>
             </div>
           ))}
         </div>
         <div className="border-t border-gray-200 pt-4 space-y-1 text-sm">
-          <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span>₹{order.total.toLocaleString()}</span></div>
-          <div className="flex justify-between"><span className="text-gray-500">GST (18%)</span><span>₹{Math.round(order.total * 0.18 / 1.18).toLocaleString()}</span></div>
-          <div className="flex justify-between font-black text-lg pt-2 border-t border-gray-200"><span>Total</span><span>₹{order.total.toLocaleString()}</span></div>
+          <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span>₹{(order.total || 0).toLocaleString()}</span></div>
+          <div className="flex justify-between"><span className="text-gray-500">GST (18%)</span><span>₹{Math.round((order.total || 0) * 0.18 / 1.18).toLocaleString()}</span></div>
+          <div className="flex justify-between font-black text-lg pt-2 border-t border-gray-200"><span>Total</span><span>₹{(order.total || 0).toLocaleString()}</span></div>
         </div>
         <button onClick={() => window.print()} className="mt-5 w-full bg-gray-900 text-white py-2.5 rounded-xl font-semibold text-sm">Print Invoice</button>
       </div>
@@ -55,7 +55,7 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
         <div className="flex justify-between items-start mb-5">
           <div>
             <h2 className="font-black text-lg">{order.id}</h2>
-            <p className="text-gray-500 text-sm">{order.date}</p>
+            <p className="text-gray-500 text-sm">{order.date ? new Date(order.date).toLocaleDateString() : 'N/A'}</p>
           </div>
           <button onClick={onClose} className="text-gray-500 hover:text-white">✕</button>
         </div>
@@ -80,20 +80,20 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
         <div className="space-y-3 mb-5">
           <div className="bg-gray-800/50 rounded-xl p-3">
             <p className="text-xs text-gray-400 mb-1">Customer</p>
-            <p className="font-semibold">{order.customer}</p>
-            <p className="text-sm text-gray-400">{order.email}</p>
-            <p className="text-xs text-gray-500 mt-1">{order.address}</p>
+            <p className="font-semibold">{order.customer || order.customerName || 'Guest'}</p>
+            <p className="text-sm text-gray-400">{order.email || order.customerEmail || ''}</p>
+            <p className="text-xs text-gray-500 mt-1">{order.address || ''}</p>
           </div>
           <div className="bg-gray-800/50 rounded-xl p-3">
             <p className="text-xs text-gray-400 mb-2">Items</p>
-            {order.items.map((item, i) => (
+            {(order.items || []).map((item, i) => (
               <div key={i} className="flex justify-between text-sm py-1">
-                <span className="text-gray-300">{item.name} × {item.qty}</span>
-                <span className="font-bold">₹{(item.price * item.qty).toLocaleString()}</span>
+                <span className="text-gray-300">{item.name} × {item.qty || item.quantity || 1}</span>
+                <span className="font-bold">₹{((item.price || 0) * (item.qty || item.quantity || 1)).toLocaleString()}</span>
               </div>
             ))}
             <div className="border-t border-gray-700 mt-2 pt-2 flex justify-between font-black">
-              <span>Total</span><span className="text-amber-400">₹{order.total.toLocaleString()}</span>
+              <span>Total</span><span className="text-amber-400">₹{(order.total || 0).toLocaleString()}</span>
             </div>
           </div>
         </div>
@@ -141,9 +141,11 @@ export default function Orders() {
   const [invoiceOrder, setInvoiceOrder] = useState(null);
 
   const filtered = orders.filter(o => {
-    const matchSearch = o.id.toLowerCase().includes(search.toLowerCase()) || o.customer.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === 'All' || o.status === statusFilter;
-    const matchCat = categoryFilter === 'All' || o.items.some(item => item.category === categoryFilter);
+    const orderId = o.id || '';
+    const customer = o.customer || o.customerName || '';
+    const matchSearch = orderId.toLowerCase().includes(search.toLowerCase()) || customer.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === 'All' || statusFilter === 'All Status' || o.status === statusFilter;
+    const matchCat = categoryFilter === 'All' || categoryFilter === 'All Categories' || (o.items || []).some(item => item.category === categoryFilter);
     return matchSearch && matchStatus && matchCat;
   });
 
@@ -200,20 +202,20 @@ export default function Orders() {
                 <tr key={order.id} className="hover:bg-gray-800/30 transition-all">
                   <td className="px-5 py-3">
                     <p className="text-xs font-mono text-amber-400">{order.id}</p>
-                    <p className="text-xs text-gray-500">{order.date}</p>
+                    <p className="text-xs text-gray-500">{order.date ? new Date(order.date).toLocaleDateString() : 'N/A'}</p>
                   </td>
                   <td className="px-5 py-3">
-                    <p className="text-sm font-medium text-white">{order.customer}</p>
-                    <p className="text-xs text-gray-500">{order.email}</p>
+                    <p className="text-sm font-medium text-white">{order.customer || order.customerName || 'Guest'}</p>
+                    <p className="text-xs text-gray-500">{order.email || order.customerEmail || ''}</p>
                   </td>
-                  <td className="px-5 py-3"><p className="text-xs text-gray-400 max-w-32 truncate">{order.items.map(i=>i.name).join(', ')}</p></td>
-                  <td className="px-5 py-3"><p className="text-sm font-bold text-white">₹{order.total.toLocaleString()}</p></td>
+                  <td className="px-5 py-3"><p className="text-xs text-gray-400 max-w-32 truncate">{(order.items || []).map(i=>i.name).join(', ') || 'No items'}</p></td>
+                  <td className="px-5 py-3"><p className="text-sm font-bold text-white">₹{(order.total || 0).toLocaleString()}</p></td>
                   <td className="px-5 py-3">
-                    <p className="text-xs text-gray-300">{order.payment}</p>
-                    <span className={`text-xs font-medium ${order.paymentStatus === 'Paid' ? 'text-emerald-400' : order.paymentStatus === 'Failed' ? 'text-red-400' : 'text-amber-400'}`}>{order.paymentStatus}</span>
+                    <p className="text-xs text-gray-300">{order.payment || order.paymentMethod || 'N/A'}</p>
+                    <span className={`text-xs font-medium ${order.paymentStatus === 'Paid' ? 'text-emerald-400' : order.paymentStatus === 'Failed' ? 'text-red-400' : 'text-amber-400'}`}>{order.paymentStatus || 'Pending'}</span>
                   </td>
                   <td className="px-5 py-3">
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-semibold border ${statusColors[order.status]}`}>{order.status}</span>
+                    <span className={`text-xs px-2.5 py-1 rounded-full font-semibold border ${statusColors[order.status] || 'bg-gray-700 text-gray-400 border-gray-600'}`}>{order.status || 'Unknown'}</span>
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex gap-2">

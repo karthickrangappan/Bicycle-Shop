@@ -181,7 +181,7 @@ export default function Cart() {
               {cart.map((item) => (
                 <motion.div
                   layout
-                  key={`${item.id}-${item.selectedSize}`}
+                  key={`${item.id}-${item.selectedSize}-${item.selectedColor}`}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
@@ -200,7 +200,7 @@ export default function Cart() {
                   <div className="flex-grow text-center sm:text-left">
                     <div className="mb-4">
                       <span className="text-[10px] uppercase font-black tracking-widest text-brand-500 mb-1 block">
-                        {item.category} • Frame Size: {item.selectedSize}
+                        {item.category} • {item.selectedSize} • <span className="inline-block w-2.5 h-2.5 rounded-full border border-slate-200" style={{ backgroundColor: item.selectedColor }}></span> {item.selectedColor === 'Standard' ? 'Standard' : 'Custom Paint'}
                       </span>
                       <h3 className="text-xl font-black text-slate-900 tracking-tight group-hover:text-brand-600 transition-colors">
                         {item.name}
@@ -218,14 +218,14 @@ export default function Cart() {
                   <div className="flex flex-col items-center sm:items-end gap-6 flex-shrink-0">
                     <div className="flex items-center bg-slate-50 rounded-2xl p-1 border border-slate-100">
                       <button 
-                        onClick={() => updateQuantity(item.id, item.selectedSize, -1)}
+                        onClick={() => updateQuantity(item.id, item.selectedSize, -1, item.selectedColor)}
                         className="p-2 text-slate-400 hover:text-brand-600 transition-colors"
                       >
                         <Minus size={18} />
                       </button>
                       <span className="w-12 text-center font-black text-slate-900">{item.quantity}</span>
                       <button 
-                         onClick={() => updateQuantity(item.id, item.selectedSize, 1)}
+                         onClick={() => updateQuantity(item.id, item.selectedSize, 1, item.selectedColor)}
                          className="p-2 text-slate-400 hover:text-brand-600 transition-colors"
                       >
                         <Plus size={18} />
@@ -233,7 +233,7 @@ export default function Cart() {
                     </div>
 
                     <button 
-                      onClick={() => removeFromCart(item.id, item.selectedSize)}
+                      onClick={() => removeFromCart(item.id, item.selectedSize, item.selectedColor)}
                       className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-red-500 transition-colors group/del"
                     >
                       <Trash2 size={16} className="group-hover/del:scale-110 transition-transform" />

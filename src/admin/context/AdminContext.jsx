@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, auth } from '../../../firebase';
 import { collection, collectionGroup, onSnapshot, doc, deleteDoc, updateDoc, setDoc, addDoc, getDoc, getDocs } from 'firebase/firestore';
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { toast } from 'react-hot-toast';
 
 const AdminContext = createContext();
@@ -66,9 +66,22 @@ export const AdminProvider = ({ children }) => {
 
     const unsubAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userSnap = await getDoc(doc(db, "users", user.uid));
-        if (userSnap.exists() && userSnap.data().role === 'admin') {
-          setAdminUser({ name: userSnap.data().name || "Admin", email: user.email, role: "manager", uid: user.uid });
+        const [userSnap, emailSnap] = await Promise.all([
+          getDoc(doc(db, "users", user.uid)).catch(() => null),
+          getDoc(doc(db, "users", user.email)).catch(() => null)
+        ]);
+        
+        const isUidAdmin = userSnap?.exists() && userSnap.data().role === 'admin';
+        const isEmailAdmin = emailSnap?.exists() && emailSnap.data().role === 'admin';
+
+        if (isUidAdmin || isEmailAdmin) {
+          const data = userSnap?.exists() ? userSnap.data() : (emailSnap?.exists() ? emailSnap.data() : {});
+          setAdminUser({ 
+            name: data?.name || "Admin", 
+            email: user.email, 
+            role: 'admin',
+            uid: user.uid 
+          });
         } else {
           setAdminUser(null);
         }
@@ -178,21 +191,6 @@ export const AdminProvider = ({ children }) => {
     await updateDoc(doc(db, "services", id), { status }).catch(e => console.error(e));
   };
 
-  const login = async (email, password) => {
-    try {
-      if (email === "admin@bicycleshop.com" && password === "admin123") {
-        setAdminUser({ name: "Super Admin", email, role: "super_admin" });
-        return { success: true };
-      }
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      setAdminUser({ name: userCredential.user.displayName || "Admin", email, role: "manager" });
-      toast.success('Admin login successful');
-      return { success: true };
-    } catch(e) {
-      return { success: false, message: e.message };
-    }
-  };
-
   const logout = async () => {
     await signOut(auth);
     setAdminUser(null);
@@ -237,6 +235,20 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
+  const resetAllStocks = async () => {
+    try {
+      let count = 0;
+      for (const prod of products) {
+        await updateDoc(doc(db, "products", prod.id), { stock: 50 });
+        count++;
+      }
+      toast.success(`Successfully reset stock ${count} products to 50!`);
+      addLog("Stock Reset", `Updated ${count} products`);
+    } catch (e) {
+      toast.error("Stock reset failed: " + e.message);
+    }
+  };
+
   const categorizeAllProducts = async () => {
     let updatedCount = 0;
     for (const prod of products) {
@@ -264,8 +276,8 @@ export const AdminProvider = ({ children }) => {
 
   return (
     <AdminContext.Provider value={{
-      adminUser, login, logout,
-      products, addProduct, updateProduct, deleteProduct, categorizeAllProducts,
+      adminUser, logout,
+      products, addProduct, updateProduct, deleteProduct, categorizeAllProducts, resetAllStocks,
       orders, updateOrderStatus,
       customers, toggleCustomerStatus,
       coupons, addCoupon, deleteCoupon,

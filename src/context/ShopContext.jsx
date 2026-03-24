@@ -54,28 +54,38 @@ export const ShopProvider = ({ children }) => {
         let role = 'user';
         let data = {};
 
-        // Use UID as primary key as per snippets
+        // Check for both UID-based and Email-based documents
         const userRef = doc(db, 'users', currentUser.uid);
-        const userSnap = await getDoc(userRef).catch(() => null);
+        const emailRef = doc(db, 'users', currentUser.email);
         
+        const [userSnap, emailSnap] = await Promise.all([
+          getDoc(userRef).catch(() => null),
+          getDoc(emailRef).catch(() => null)
+        ]);
+        
+        // If an email-based document exists and is admin, respect that role
+        const emailRole = emailSnap?.exists() ? emailSnap.data().role : null;
+
         if (userSnap?.exists()) {
           data = userSnap.data();
-          role = data.role || role;
+          role = emailRole === 'admin' ? 'admin' : (data.role || role);
+
           setCart(data.cart || []);
           setWishlist(data.wishlist || []);
           setAddresses(data.addresses || []);
 
-          // Update lastLogin as per snippet
-          await updateDoc(userRef, { lastLogin: new Date() }).catch(() => {});
+          // Sync the admin role to the UID document if it was found in the email document
+          const updates = { lastLogin: new Date() };
+          if (emailRole === 'admin' && data.role !== 'admin') updates.role = 'admin';
+          await updateDoc(userRef, updates).catch(() => {});
         } else {
+          role = emailRole === 'admin' ? 'admin' : role;
+          
           // Initialize new user profile using UID
-          const email = currentUser.email;
-          if (email === "admin@bicycleshop.com") role = 'admin';
-
           data = { 
             uid: currentUser.uid,
-            name: currentUser.displayName || email?.split('@')[0] || "User",
-            email: email,
+            name: currentUser.displayName || currentUser.email?.split('@')[0] || "User",
+            email: currentUser.email,
             cart: [], 
             wishlist: [], 
             addresses: [], 
@@ -88,7 +98,7 @@ export const ShopProvider = ({ children }) => {
 
         setUser({
           uid: currentUser.uid,
-          name: data.name || currentUser.displayName || (currentUser.email === "admin@bicycleshop.com" ? "Super Admin" : "User"),
+          name: data.name || currentUser.displayName || "User",
           email: currentUser.email,
           role
         });
@@ -161,8 +171,8 @@ export const ShopProvider = ({ children }) => {
     updateUserData({ addresses: newAddresses });
   };
 
-  const addToCart = async (product, size) => {
-    if (!user) {
+  const addToCart = async (product, size, color = "Standard") => {
+    if (!user?.uid) {
       toast.error("Please log in to add items to your cart.");
       return;
     }
@@ -188,11 +198,12 @@ export const ShopProvider = ({ children }) => {
     const cartItem = { 
       ...product, 
       selectedSize: size, 
+      selectedColor: color,
       quantity: 1, 
       reservationExpiry: Date.now() + 15 * 60 * 1000 
     };
 
-    const existingIndex = cart.findIndex(item => item.id === product.id && item.selectedSize === size);
+    const existingIndex = cart.findIndex(item => item.id === product.id && item.selectedSize === size && item.selectedColor === color);
     let newCart;
     if (existingIndex > -1) {
       newCart = cart.map((item, idx) => idx === existingIndex ? { ...item, quantity: item.quantity + 1 } : item);
@@ -212,19 +223,19 @@ export const ShopProvider = ({ children }) => {
     }, 15 * 60 * 1000);
   };
 
-  const removeFromCart = async (productId, size) => {
-    const itemToRemove = cart.find(item => item.id === productId && item.selectedSize === size);
+  const removeFromCart = async (productId, size, color) => {
+    const itemToRemove = cart.find(item => item.id === productId && item.selectedSize === size && item.selectedColor === color);
     if (itemToRemove) {
       // Increment stock back
-      await updateDoc(doc(db, 'products', productId), { stock: increment(1) });
+      await updateDoc(doc(db, 'products', productId), { stock: increment(itemToRemove.quantity) });
     }
-    const newCart = cart.filter(item => !(item.id === productId && item.selectedSize === size));
+    const newCart = cart.filter(item => !(item.id === productId && item.selectedSize === size && item.selectedColor === color));
     setCart(newCart);
     updateUserData({ cart: newCart });
   };
 
-  const updateQuantity = async (productId, size, delta) => {
-    const item = cart.find(i => i.id === productId && i.selectedSize === size);
+  const updateQuantity = async (productId, size, delta, color) => {
+    const item = cart.find(i => i.id === productId && i.selectedSize === size && i.selectedColor === color);
     if (!item) return;
     
     if (delta > 0) {
@@ -244,7 +255,7 @@ export const ShopProvider = ({ children }) => {
     }
 
     const newCart = cart.map(i => 
-      (i.id === productId && i.selectedSize === size) 
+      (i.id === productId && i.selectedSize === size && i.selectedColor === color) 
       ? { ...i, quantity: i.quantity + delta } 
       : i
     );

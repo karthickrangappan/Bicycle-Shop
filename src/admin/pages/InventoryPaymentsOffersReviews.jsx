@@ -10,8 +10,8 @@ export function Inventory() {
   const lowStock = products.filter(p => p.stock <= 5);
 
   const filtered = products.filter(p => {
-    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.sku.toLowerCase().includes(search.toLowerCase());
-    const matchCat = catFilter === 'All' || p.category === catFilter;
+    const matchSearch = (p.name || '').toLowerCase().includes(search.toLowerCase()) || (p.sku || '').toLowerCase().includes(search.toLowerCase());
+    const matchCat = catFilter === 'All' || catFilter === 'All Categories' || p.category === catFilter;
     return matchSearch && matchCat;
   });
 
