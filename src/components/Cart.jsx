@@ -4,112 +4,6 @@ import { Trash2, Plus, Minus, ArrowRight, ShoppingBag, ShoppingCart } from 'luci
 import { useShop } from '../context/ShopContext';
 import { Link, useNavigate } from 'react-router-dom';
 import PageHeader from '../layout/PageHeader';
-import ProductCard, { MOCK_PRODUCTS } from './ProductCard';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-
-const RecentlyViewed = () => {
-  const recentProducts = React.useMemo(() => 
-    [...MOCK_PRODUCTS].sort(() => 0.5 - Math.random()).slice(0, 8),
-  []);
-  
-  return (
-    <section className="bg-slate-50 py-20 border-t border-slate-200/60 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-brand-500 mb-2 block">Your History</span>
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Recently Viewed <span className="text-brand-600">Products</span></h2>
-          </div>
-          <Link 
-            to="/shop" 
-            className="px-6 py-3 bg-white border border-slate-100 rounded-2xl text-sm font-black text-slate-900 hover:text-brand-600 hover:border-brand-100 shadow-sm transition-all flex items-center gap-2 group"
-          >
-            Shop All <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-
-        <div className="-mx-4 px-4 sm:mx-0 sm:px-0 relative group/swiper">
-          <Swiper
-            modules={[Autoplay, Navigation, Pagination]}
-            spaceBetween={20}
-            slidesPerView={1.2}
-            loop={true}
-            speed={800}
-            autoplay={{
-              delay: 3500,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true,
-            }}
-            // pagination={{
-            //   clickable: true,
-            //   dynamicBullets: true,
-            //   el: '.swiper-pagination-recent'
-            // }}
-            // navigation={{
-            //   nextEl: '.swiper-button-next-recent',
-            //   prevEl: '.swiper-button-prev-recent',
-            // }}
-            breakpoints={{
-              640: { slidesPerView: 2, spaceBetween: 24 }, // sm
-              768: { slidesPerView: 2.5, spaceBetween: 28 }, // md
-              1024: { slidesPerView: 3, spaceBetween: 32 }, // lg
-              1280: { slidesPerView: 4, spaceBetween: 32 }, // xl
-            }}
-            className="!pb-16 !pt-4"
-          >
-            {recentProducts.map((product, idx) => (
-              <SwiperSlide key={`${product.id}-${idx}`}>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <ProductCard product={product} />
-                </motion.div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-
-            <div className="flex items-center justify-center gap-4 mt-8">
-               <style>{`
-                 .swiper-pagination-recent .swiper-pagination-bullet {
-                   background: var(--color-slate-300);
-                   opacity: 0.5;
-                   width: 10px;
-                   height: 10px;
-                   margin: 0 6px !important;
-                   transition: all 0.3s ease;
-                 }
-                 .swiper-pagination-recent .swiper-pagination-bullet-active {
-                   background: var(--color-brand-500);
-                   opacity: 1;
-                   width: 24px;
-                   border-radius: 5px;
-                   box-shadow: 0 4px 10px -2px rgba(59, 130, 246, 0.5);
-                 }
-               `}</style>
-               <div className="swiper-pagination-recent flex justify-center !static !w-auto"></div>
-            </div>
-
-          {/* <div className="hidden lg:block">
-             <button className="swiper-button-prev-recent absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 w-12 h-12 bg-white rounded-full shadow-xl border border-slate-100 flex items-center justify-center text-slate-400 hover:text-brand-600 hover:border-brand-200 transition-all z-10 opacity-0 group-hover/swiper:opacity-100 group-hover/swiper:-translate-x-6 cursor-pointer">
-                <ArrowRight className="rotate-180" size={20} />
-             </button>
-             <button className="swiper-button-next-recent absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 w-12 h-12 bg-white rounded-full shadow-xl border border-slate-100 flex items-center justify-center text-slate-400 hover:text-brand-600 hover:border-brand-200 transition-all z-10 opacity-0 group-hover/swiper:opacity-100 group-hover/swiper:translate-x-6 cursor-pointer">
-                <ArrowRight size={20} />
-             </button>
-          </div> */}
-        </div>
-      </div>
-    </section>
-  );
-};
-
 
 export default function Cart() {
   const { cart, removeFromCart, updateQuantity } = useShop();
@@ -159,7 +53,6 @@ export default function Cart() {
             </Link>
           </motion.div>
         </div>
-        <RecentlyViewed />
       </div>
     );
   }
@@ -289,7 +182,6 @@ export default function Cart() {
         </div>
 
       </div>
-      <RecentlyViewed />
     </div>
   );
 }

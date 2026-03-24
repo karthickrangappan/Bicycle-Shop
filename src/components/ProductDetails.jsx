@@ -6,11 +6,6 @@ import { useShop } from '../context/ShopContext';
 import { db } from '../../firebase';
 import { collection, query, where, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, FreeMode } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/free-mode';
-import ProductCard from './ProductCard';
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -19,10 +14,10 @@ export default function ProductDetails() {
   
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState('');
-  const [selectedColor, setSelectedColor] = useState('');
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({ rating: 5, text: '', height: '', weight: '' });
   const [isVerified, setIsVerified] = useState(false);
+  const [form, setForm] = useState({ color: '#000000' });
 
   useEffect(() => {
     const found = products.find(p => p.id === id);
@@ -58,15 +53,11 @@ export default function ProductDetails() {
   }
 
   const handleAddToCart = () => {
-    if (!selectedColor) {
-      toast.error('Please select a Paint color first');
-      return;
-    }
     if (!selectedSize) {
       toast.error('Please select a Frame Size first');
       return;
     }
-    addToCart(product, selectedSize, selectedColor);
+    addToCart(product, selectedSize, form.color);
   };
 
   const submitReview = async (e) => {
@@ -104,7 +95,7 @@ export default function ProductDetails() {
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
           <span>Back to Catalog</span>
         </button>
- 
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
@@ -120,7 +111,7 @@ export default function ProductDetails() {
                </div>
             </div>
           </motion.div>
- 
+
           <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }}>
             <div className="mb-6">
                <div className="flex items-center gap-1.5 mb-2">
@@ -152,7 +143,7 @@ export default function ProductDetails() {
                     </span>
                   )}
                </div>
- 
+
                    {/* Color Selection */}
                    <div className="space-y-4 mb-8">
                       <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Select Paint <span className="text-red-500">*</span></label>
@@ -160,9 +151,9 @@ export default function ProductDetails() {
                         {['#000000', '#ffffff', '#ef4444', '#3b82f6', '#10b981'].map(color => (
                           <button
                             key={color}
-                            onClick={() => setSelectedColor(color)}
+                            onClick={() => setForm(f => ({ ...f, color }))}
                             className={`w-10 h-10 rounded-full border-2 transition-all hover:scale-110 ${
-                              selectedColor === color ? 'border-brand-500 ring-2 ring-brand-500/20 shadow-lg' : 'border-white shadow-sm'
+                              form.color === color ? 'border-brand-500 ring-2 ring-brand-500/20 shadow-lg' : 'border-white shadow-sm'
                             }`}
                             style={{ backgroundColor: color }}
                           />
@@ -328,42 +319,6 @@ export default function ProductDetails() {
             </div>
           </div>
         </div>
-        {/* Related Products Swiper Section */}
-        {products.filter(p => p.category === product.category && p.id !== product.id).length > 0 && (
-          <div className="mt-24 pt-24 border-t border-slate-100">
-            <div className="mb-12">
-               <h2 className="text-3xl font-black text-slate-900 tracking-tighter">You Might Also <span className="text-brand-500">Love</span></h2>
-               <p className="text-slate-400 font-medium mt-2 italic">Similar elite models engineered with the same DNA.</p>
-            </div>
-            
-            <Swiper
-              modules={[Autoplay, FreeMode]}
-              spaceBetween={24}
-            slidesPerView={1}
-            freeMode={true}
-            grabCursor={true}
-            autoplay={{
-              delay: 4000,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true
-            }}
-            breakpoints={{
-              640: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
-              1280: { slidesPerView: 4 }
-            }}
-              className="related-products-swiper !pb-12"
-            >
-              {products
-                .filter(p => p.category === product.category && p.id !== product.id)
-                .map((related) => (
-                  <SwiperSlide key={related.id}>
-                    <ProductCard product={related} />
-                  </SwiperSlide>
-                ))}
-            </Swiper>
-          </div>
-        )}
       </div>
     </div>
   );
