@@ -12,36 +12,83 @@ export default function Categories() {
   const navigate = useNavigate();
   const { categories } = useShop();
 
-  if (categories.length === 0) return null;
 
   const categoryThemes = {
-    Mountain: { color: "from-blue-600/90", accent: "bg-blue-600", secondary: "text-blue-400" },
-    Road: { color: "from-emerald-600/90", accent: "bg-emerald-600", secondary: "text-emerald-400" },
-    City: { color: "from-cyan-600/90", accent: "bg-cyan-600", secondary: "text-cyan-400" },
-    "E-Bikes": { color: "from-yellow-600/90", accent: "bg-yellow-600", secondary: "text-yellow-400" },
-    Gravel: { color: "from-orange-600/90", accent: "bg-orange-600", secondary: "text-orange-400" },
-    Hybrid: { color: "from-indigo-600/90", accent: "bg-indigo-600", secondary: "text-indigo-400" },
-    Kids: { color: "from-pink-600/90", accent: "bg-pink-600", secondary: "text-pink-400" },
-    Accessories: { color: "from-yellow-600/90", accent: "bg-yellow-600", secondary: "text-yellow-400" }
+    Mountain: { 
+      color: "from-blue-600/90", 
+      accent: "bg-blue-600", 
+      secondary: "text-blue-400",
+      image: "https://images.unsplash.com/photo-1544191630-c36b41d200ce?auto=format&fit=crop&q=80&w=800"
+    },
+    Road: { 
+      color: "from-emerald-600/90", 
+      accent: "bg-emerald-600", 
+      secondary: "text-emerald-400",
+      image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&q=80&w=800"
+    },
+    City: { 
+      color: "from-cyan-600/90", 
+      accent: "bg-cyan-600", 
+      secondary: "text-cyan-400",
+      image: "https://images.unsplash.com/photo-1571068316344-75bc76f77890?auto=format&fit=crop&q=80&w=800"
+    },
+    "E-Bikes": { 
+      color: "from-amber-600/90", 
+      accent: "bg-amber-600", 
+      secondary: "text-amber-400",
+      image: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&q=80&w=800"
+    },
+    Gravel: { 
+      color: "from-yellow-600/90", 
+      accent: "bg-yellow-600", 
+      secondary: "text-yellow-400",
+      image: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&q=80&w=800"
+    },
+    Hybrid: { 
+      color: "from-indigo-600/90", 
+      accent: "bg-indigo-600", 
+      secondary: "text-indigo-400",
+      image: "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&q=80&w=800"
+    },
+    Kids: { 
+      color: "from-pink-600/90", 
+      accent: "bg-pink-600", 
+      secondary: "text-pink-400",
+      image: "https://images.unsplash.com/photo-1471506480208-8a93a6863481?auto=format&fit=crop&q=80&w=800"
+    },
+    Accessories: { 
+      color: "from-orange-600/90", 
+      accent: "bg-orange-600", 
+      secondary: "text-orange-400",
+      image: "https://images.unsplash.com/photo-1528629202477-fe29a66da246?auto=format&fit=crop&q=80&w=800"
+    }
   };
 
   const fallbackThemes = [
-    { color: "from-brand-600/90", accent: "bg-brand-600", secondary: "text-brand-400" },
-    { color: "from-purple-600/90", accent: "bg-purple-600", secondary: "text-purple-400" },
-    { color: "from-rose-600/90", accent: "bg-rose-600", secondary: "text-rose-400" },
-    { color: "from-teal-600/90", accent: "bg-teal-600", secondary: "text-teal-400" }
+    { color: "from-brand-600/90", accent: "bg-brand-600", secondary: "text-brand-400", image: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&q=80&w=800" },
+    { color: "from-purple-600/90", accent: "bg-purple-600", secondary: "text-purple-400", image: "https://images.unsplash.com/photo-1593764592116-bfb2a97c642a?auto=format&fit=crop&q=80&w=800" },
+    { color: "from-rose-600/90", accent: "bg-rose-600", secondary: "text-rose-400", image: "https://images.unsplash.com/photo-1505705694340-019e1e335916?auto=format&fit=crop&q=80&w=800" },
+    { color: "from-teal-600/90", accent: "bg-teal-600", secondary: "text-teal-400", image: "/images/hero/bg-img (5).jpg" }
   ];
 
-  const displayCategories = categories.map((cat, idx) => {
+  const activeCategories = categories
+    .filter(cat => cat.active)
+    .sort((a, b) => (a.priority || 0) - (b.priority || 0));
+
+  if (activeCategories.length === 0) return null;
+
+  const displayCategories = activeCategories.map((cat, idx) => {
     const title = cat.title || cat.name || cat.label;
+    const theme = categoryThemes[title] || fallbackThemes[idx % fallbackThemes.length];
+    
     return {
       ...cat,
       id: cat.id,
       title: title,
       subtitle: cat.subtitle || cat.desc || "Explore our premium collection",
-      image: cat.image || "/images/hero/bg-img (6).jpg",
+      image: cat.image || theme.image,
       link: cat.link || `/shop?category=${title}`,
-      theme: categoryThemes[title] || fallbackThemes[idx % fallbackThemes.length]
+      theme: theme
     };
   });
 

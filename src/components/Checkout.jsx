@@ -66,9 +66,8 @@ export default function Checkout() {
       const isResidential = parseInt(pincode) % 2 === 0;
       setAddressType(isResidential ? 'Residential' : 'Commercial');
       
-      // Mock Logic: Pincodes starting with "6" have Mobile Mechanics
-      const isMechanicAvail = pincode.startsWith('6');
-      setMechanicAvailable(isMechanicAvail);
+      // Mechanic available all over India
+      setMechanicAvailable(true);
       
       setIsValidatingAddress(false);
    };
@@ -133,10 +132,6 @@ export default function Checkout() {
       }
 
       if (!cart.length) {
-         return false;
-      }
-
-      if (assemblyTier === 'ReadyToRide' && mechanicAvailable === false) {
          return false;
       }
 
@@ -307,7 +302,7 @@ export default function Checkout() {
                               <div>
                                  <p className="font-black text-lg">Ready-to-Ride</p>
                                  <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">White-Glove Assembly Delivery</p>
-                                 {mechanicAvailable === false && <p className="text-[10px] font-black text-red-200 uppercase mt-1">Not available in your area</p>}
+                                 <p className="text-[10px] font-black opacity-80 uppercase mt-1">Available all over India</p>
                                  <p className="mt-2 text-sm font-black">₹1,499</p>
                               </div>
                            </button>

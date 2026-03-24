@@ -433,7 +433,7 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-[85%] max-w-sm bg-white p-8 z-[80] flex flex-col shadow-2xl"
+              className="fixed right-0 top-0 h-full w-[85%] max-w-sm bg-slate-900 p-8 z-[80] flex flex-col shadow-2xl border-l border-white/5"
             >
               <div className="flex justify-between items-center mb-10">
                 <div className="flex items-center gap-2">
@@ -444,11 +444,11 @@ export default function Navbar() {
                       <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11V9a2 2 0 0 0-2-2H4" />
                     </svg>
                   </div>
-                  <span className="font-black text-slate-950 uppercase tracking-tight">CycleCore</span>
+                  <span className="font-black text-white uppercase tracking-tight">CycleCore</span>
                 </div>
                 <button 
                   onClick={() => setOpen(false)}
-                  className="p-2 bg-slate-50 rounded-xl text-slate-400 hover:text-slate-950 transition-all"
+                  className="p-2 bg-white/5 rounded-xl text-white/40 hover:text-white transition-all"
                 >
                   <X size={20} />
                 </button>
@@ -463,7 +463,7 @@ export default function Navbar() {
                     className={`flex justify-between items-center p-4 rounded-2xl transition-all ${
                       location.pathname === item.href
                         ? "bg-brand-500 text-white font-black"
-                        : "hover:bg-slate-50 text-slate-600 font-bold"
+                        : "hover:bg-white/5 text-slate-300 font-bold"
                     }`}
                   >
                     {item.label}
@@ -472,7 +472,7 @@ export default function Navbar() {
                 ))}
 
                 <div className="pt-4 pb-2">
-                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-300 ml-4 mb-2">Explore</p>
+                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4 mb-2">Explore</p>
                 </div>
                 
                 {pageItems.map((item) => (
@@ -480,9 +480,9 @@ export default function Navbar() {
                     key={item.href}
                     to={item.href}
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-4 p-4 rounded-2xl text-slate-600 font-bold hover:bg-slate-50 transition-all"
+                    className="flex items-center gap-4 p-4 rounded-2xl text-slate-300 font-bold hover:bg-white/5 transition-all"
                   >
-                    <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
+                    <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-500">
                        <item.icon size={18} />
                     </div>
                     {item.label}
@@ -490,7 +490,7 @@ export default function Navbar() {
                 ))}
 
                 <div className="pt-4 pb-2">
-                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-300 ml-4 mb-2">Categories</p>
+                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4 mb-2">Categories</p>
                 </div>
 
                 {categoryItems.map((item) => (
@@ -498,9 +498,9 @@ export default function Navbar() {
                     key={item.href}
                     to={item.href}
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-4 p-4 rounded-2xl text-slate-600 font-bold hover:bg-slate-50 transition-all"
+                    className="flex items-center gap-4 p-4 rounded-2xl text-slate-300 font-bold hover:bg-white/5 transition-all"
                   >
-                    <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
+                    <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-500">
                        <item.icon size={18} />
                     </div>
                     {item.label}
@@ -508,7 +508,7 @@ export default function Navbar() {
                 ))}
               </div>
 
-              <div className="pt-6 border-t border-slate-100">
+              <div className="pt-6 border-t border-white/5">
                 {!user ? (
                   <Link
                     to="/login"
@@ -518,13 +518,13 @@ export default function Navbar() {
                     Continue to Login <ArrowRight size={18} />
                   </Link>
                 ) : (
-                  <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl">
-                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand-500 shadow-sm font-black">
+                  <div className="flex items-center gap-3 p-3 bg-white/5 rounded-2xl">
+                    <div className="w-10 h-10 bg-brand-500 text-white rounded-xl flex items-center justify-center shadow-sm font-black">
                       {(user.name || 'U')[0].toUpperCase()}
                     </div>
                     <div className="overflow-hidden">
-                      <p className="text-xs font-black text-slate-950 truncate">{user.name || 'Unknown User'}</p>
-                      <button onClick={logout} className="text-[10px] font-bold text-red-500 uppercase tracking-widest">Sign Out</button>
+                      <p className="text-xs font-black text-white truncate">{user.name || 'Unknown User'}</p>
+                      <button onClick={logout} className="text-[10px] font-bold text-red-500 uppercase tracking-widest hover:text-red-400 transition-colors">Sign Out</button>
                     </div>
                   </div>
                 )}
