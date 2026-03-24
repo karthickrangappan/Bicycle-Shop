@@ -147,6 +147,16 @@ export function Categories() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const isDuplicate = categories.some(
+      cat => (cat.name.toLowerCase() === formData.name.toLowerCase() || cat.slug.toLowerCase() === formData.slug.toLowerCase()) && (!editCat || cat.id !== editCat.id)
+    );
+
+    if (isDuplicate) {
+      alert('A category with this name or slug already exists.');
+      return;
+    }
+
     const data = { ...formData, priority: parseInt(formData.priority) };
     if (editCat) {
       updateCategory(editCat.id, data);

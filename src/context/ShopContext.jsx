@@ -90,7 +90,7 @@ export const ShopProvider = ({ children }) => {
             wishlist: [], 
             addresses: [], 
             role: role,
-            createdAt: new Date(),
+            joined: new Date(),
             lastLogin: new Date()
           };
           await setDoc(userRef, data).catch(e => console.log(e));
@@ -394,7 +394,7 @@ export const ShopProvider = ({ children }) => {
     const refundAmount = orderData.total - restockingFee;
 
     await updateDoc(orderRef, {
-      status: 'Return Requested',
+      status: 'Refund Requested',
       isReturnable: false,
       returnReason: reason,
       restockingFee,
