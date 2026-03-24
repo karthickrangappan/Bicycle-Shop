@@ -223,7 +223,8 @@ export default function ProductCard({ product }) {
 
   const handleAddToCart = (e) => {
     e.preventDefault();
-    addToCart(product);
+    // Size selection is mandatory - redirect to details
+    navigate(`/product/${product.id}`);
   };
 
   // Dynamic themes based on product category
@@ -305,10 +306,24 @@ export default function ProductCard({ product }) {
         </div>
 
         <Link to={`/product/${product.id}`} className="block">
-          <h3 className="font-black text-lg text-slate-950 group-hover:text-brand-600 transition truncate leading-snug mb-4">
+          <h3 className="font-black text-lg text-slate-950 group-hover:text-brand-600 transition truncate leading-snug mb-2">
             {product.name}
           </h3>
         </Link>
+        
+        {/* Size/Age Range Info */}
+        <div className="flex gap-2 mb-4 overflow-x-auto pb-1 no-scrollbar">
+          {(product.sizes || []).map((s, i) => (
+            <span key={i} className="whitespace-nowrap px-2 py-0.5 bg-slate-50 text-slate-400 text-[9px] font-black uppercase tracking-tighter rounded-md border border-slate-100">
+              {s.includes('Age') ? s.split('(')[0].trim() : s}
+            </span>
+          ))}
+          {(!product.sizes || product.sizes.length === 0) && (
+            <span className="px-2 py-0.5 bg-slate-50 text-slate-300 text-[9px] font-black uppercase tracking-tighter rounded-md border border-slate-100">
+              Standard Size
+            </span>
+          )}
+        </div>
 
         <div className="flex items-center justify-between mt-auto">
           <div className="flex flex-col">
