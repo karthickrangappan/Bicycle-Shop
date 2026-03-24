@@ -14,9 +14,9 @@ export default function Customers() {
     return matchSearch && matchStatus;
   });
 
-  if (customerSort === 'High Spender') filtered = [...filtered].sort((a,b) => (b.totalSpent || 0) - (a.totalSpent || 0));
-  if (customerSort === 'Most Active') filtered = [...filtered].sort((a,b) => (b.orders || 0) - (a.orders || 0));
-  if (customerSort === 'Newest First') filtered = [...filtered].sort((a,b) => new Date(b.joined || 0) - new Date(a.joined || 0));
+  if (customerSort === 'Big Buyers') filtered = [...filtered].sort((a,b) => (b.totalSpent || 0) - (a.totalSpent || 0));
+  if (customerSort === 'Top Fans') filtered = [...filtered].sort((a,b) => (b.orders || 0) - (a.orders || 0));
+  if (customerSort === 'Recent Buyers') filtered = [...filtered].sort((a,b) => new Date(b.joined || 0) - new Date(a.joined || 0));
 
   const getCustomerOrders = (email) => orders.filter(o => o.email === email);
 
@@ -24,28 +24,28 @@ export default function Customers() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-black text-white">Customers</h1>
-          <p className="text-gray-500 text-sm">{customers.length} registered customers • {filtered.length} filtered</p>
+          <h1 className="text-2xl font-black text-white">All Buyers</h1>
+          <p className="text-gray-500 text-sm">{customers.length} total buyers • {filtered.length} shown</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
         <input 
           type="text" 
-          placeholder="Search name, email, city..." 
+          placeholder="Search by name, email, or city..." 
           value={search} 
           onChange={e => setSearch(e.target.value)} 
           className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 col-span-1 md:col-span-2" 
         />
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option>All Status</option>
-          <option>active</option>
-          <option>blocked</option>
+          <option value="All">All Users</option>
+          <option value="active">Allowed</option>
+          <option value="blocked">Stopped</option>
         </select>
         <select value={customerSort} onChange={e => setCustomerSort(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option>Newest First</option>
-          <option>High Spender</option>
-          <option>Most Active</option>
+          <option>Recent Buyers</option>
+          <option>Big Buyers</option>
+          <option>Top Fans</option>
         </select>
       </div>
 
@@ -53,13 +53,13 @@ export default function Customers() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-800">
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Customer</th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Contact</th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Orders</th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Total Spent</th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Joined</th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Status</th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Actions</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Buyer Name</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Phone & Email</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Bikes Bought</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Total Paid</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Date Joined</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Step</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">Options</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-800">
@@ -86,9 +86,9 @@ export default function Customers() {
                 </td>
                 <td className="px-5 py-3">
                   <div className="flex gap-2">
-                    <button onClick={() => setSelected(c)} className="text-xs bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 px-2.5 py-1 rounded-lg">Profile</button>
+                    <button onClick={() => setSelected(c)} className="text-xs bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 px-2.5 py-1 rounded-lg">View Info</button>
                     <button onClick={() => toggleCustomerStatus(c.id)} className={`text-xs px-2.5 py-1 rounded-lg transition-all ${c.status === 'active' ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'}`}>
-                      {c.status === 'active' ? 'Block' : 'Unblock'}
+                      {c.status === 'active' ? 'Stop User' : 'Allow User'}
                     </button>
                   </div>
                 </td>
@@ -103,7 +103,7 @@ export default function Customers() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 max-w-md w-full">
             <div className="flex justify-between mb-5">
-              <h2 className="font-black text-white text-lg">Customer Profile</h2>
+              <h2 className="font-black text-white text-lg">Buyer Info</h2>
               <button onClick={() => setSelected(null)} className="text-gray-500 hover:text-white">✕</button>
             </div>
             <div className="flex items-center gap-4 mb-5">
@@ -111,17 +111,17 @@ export default function Customers() {
               <div>
                 <h3 className="font-bold text-white text-lg">{selected.name || 'Unknown User'}</h3>
                 <p className="text-gray-400 text-sm">{selected.email}</p>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${selected.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>{selected.status}</span>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${selected.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>{selected.status === 'active' ? 'Allowed' : 'Stopped'}</span>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3 mb-5">
               <div className="bg-gray-800 rounded-xl p-3 text-center">
                 <p className="text-xl font-black text-white">{selected.orders || 0}</p>
-                <p className="text-xs text-gray-500">Orders</p>
+                <p className="text-xs text-gray-500">Bought</p>
               </div>
               <div className="bg-gray-800 rounded-xl p-3 text-center">
                 <p className="text-xl font-black text-emerald-400">₹{((selected.totalSpent || 0)/1000).toFixed(0)}k</p>
-                <p className="text-xs text-gray-500">Spent</p>
+                <p className="text-xs text-gray-500">Paid</p>
               </div>
               <div className="bg-gray-800 rounded-xl p-3 text-center">
                 <p className="text-xl font-black text-blue-400">{selected.city || '--'}</p>
@@ -129,7 +129,7 @@ export default function Customers() {
               </div>
             </div>
             <div className="bg-gray-800/50 rounded-xl p-4">
-              <p className="text-xs text-gray-400 mb-2">Order History</p>
+              <p className="text-xs text-gray-400 mb-2">Buy History</p>
               {getCustomerOrders(selected.email).length > 0 ? (
                 getCustomerOrders(selected.email).map(o => (
                   <div key={o.id} className="flex justify-between py-1.5 border-b border-gray-700 last:border-0 text-sm">

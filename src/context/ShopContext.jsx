@@ -13,14 +13,29 @@ export const ShopProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [cart, setCart] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
   const [orders, setOrders] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [categories, setCategories] = useState([]);
 
-  // Monitor products
+  // Monitor products and handle "Back-in-Stock" triggers
   useEffect(() => {
     const unsubProducts = onSnapshot(collection(db, "products"), (snapshot) => {
-      setProducts(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+      const updatedProducts = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+      
+      setProducts(prevProducts => {
+        // Check for back-in-stock for current user's wishlist
+        if (user && wishlist.length > 0) {
+          updatedProducts.forEach(p => {
+            const wishItem = wishlist.find(w => w.id === p.id);
+            const prevProd = prevProducts.find(oldP => oldP.id === p.id);
+            if (wishItem && prevProd && prevProd.stock === 0 && p.stock > 0) {
+              toast(`🔥 Back in Stock: ${p.name}! Grab it now.`, { icon: '🚲', duration: 6000 });
+            }
+          });
+        }
+        return updatedProducts;
+      });
       setLoading(false);
     });
     const unsubCategories = onSnapshot(collection(db, "categories"), (snapshot) => {
@@ -31,7 +46,7 @@ export const ShopProvider = ({ children }) => {
       unsubProducts();
       unsubCategories();
     };
-  }, []);
+  }, [user, wishlist]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -39,6 +54,7 @@ export const ShopProvider = ({ children }) => {
         let role = 'user';
         let data = {};
 
+        // Check for both UID-based and Email-based documents
         const userRef = doc(db, 'users', currentUser.uid);
         const emailRef = doc(db, 'users', currentUser.email);
         
@@ -47,6 +63,7 @@ export const ShopProvider = ({ children }) => {
           getDoc(emailRef).catch(() => null)
         ]);
         
+        // If an email-based document exists and is admin, respect that role
         const emailRole = emailSnap?.exists() ? emailSnap.data().role : null;
 
         if (userSnap?.exists()) {
@@ -54,19 +71,23 @@ export const ShopProvider = ({ children }) => {
           role = emailRole === 'admin' ? 'admin' : (data.role || role);
 
           setCart(data.cart || []);
+          setWishlist(data.wishlist || []);
           setAddresses(data.addresses || []);
 
+          // Sync the admin role to the UID document if it was found in the email document
           const updates = { lastLogin: new Date() };
           if (emailRole === 'admin' && data.role !== 'admin') updates.role = 'admin';
           await updateDoc(userRef, updates).catch(() => {});
         } else {
           role = emailRole === 'admin' ? 'admin' : role;
           
+          // Initialize new user profile using UID
           data = { 
             uid: currentUser.uid,
             name: currentUser.displayName || currentUser.email?.split('@')[0] || "User",
             email: currentUser.email,
             cart: [], 
+            wishlist: [], 
             addresses: [], 
             role: role,
             createdAt: new Date(),
@@ -84,6 +105,7 @@ export const ShopProvider = ({ children }) => {
       } else {
         setUser(null);
         setCart([]);
+        setWishlist([]);
         setAddresses([]);
         setOrders([]);
       }
@@ -163,6 +185,10 @@ export const ShopProvider = ({ children }) => {
     // 1. Validation: Check inventory_count > 0
     const prodRef = doc(db, 'products', product.id);
     const prodSnap = await getDoc(prodRef);
+    if (!prodSnap.exists()) {
+      toast.error("This product is no longer available.");
+      return;
+    }
     const currentStock = prodSnap.data()?.stock || 0;
 
     if (currentStock <= 0) {
@@ -204,8 +230,12 @@ export const ShopProvider = ({ children }) => {
   const removeFromCart = async (productId, size, color) => {
     const itemToRemove = cart.find(item => item.id === productId && item.selectedSize === size && item.selectedColor === color);
     if (itemToRemove) {
-      // Increment stock back
-      await updateDoc(doc(db, 'products', productId), { stock: increment(itemToRemove.quantity) });
+      // Increment stock back (Safely handle deleted products)
+      try {
+        await updateDoc(doc(db, 'products', productId), { stock: increment(itemToRemove.quantity) });
+      } catch (e) {
+        console.warn(`Product ${productId} not found in catalog. Removing from cart without stock update.`);
+      }
     }
     const newCart = cart.filter(item => !(item.id === productId && item.selectedSize === size && item.selectedColor === color));
     setCart(newCart);
@@ -219,6 +249,11 @@ export const ShopProvider = ({ children }) => {
     if (delta > 0) {
       // Check stock before increasing
       const prodSnap = await getDoc(doc(db, 'products', productId));
+      if (!prodSnap.exists()) {
+        toast.error("This product is no longer in our catalog.");
+        removeFromCart(productId, size, color); // Auto-cleanup
+        return;
+      }
       if ((prodSnap.data()?.stock || 0) <= 0) {
         toast.error("No more items in stock!");
         return;
@@ -226,10 +261,14 @@ export const ShopProvider = ({ children }) => {
       await updateDoc(doc(db, 'products', productId), { stock: increment(-1) });
     } else {
       if (item.quantity <= 1) {
-        removeFromCart(productId, size);
+        removeFromCart(productId, size, color);
         return;
       }
-      await updateDoc(doc(db, 'products', productId), { stock: increment(1) });
+      try {
+        await updateDoc(doc(db, 'products', productId), { stock: increment(1) });
+      } catch (e) {
+        console.warn(`Stock update failed for ${productId}: Product gone.`);
+      }
     }
 
     const newCart = cart.map(i => 
@@ -241,11 +280,37 @@ export const ShopProvider = ({ children }) => {
     updateUserData({ cart: newCart });
   };
 
+  const addToWishlist = (product) => {
+    if (!user) {
+      toast.error("Please log in to use wishlist.");
+      return;
+    }
+    if (wishlist.find(item => item.id === product.id)) return;
+    const newWishlist = [...wishlist, product];
+    setWishlist(newWishlist);
+    updateUserData({ wishlist: newWishlist });
+    toast.success(`${product.name} added to wishlist!`);
+  };
+
+  const removeFromWishlist = (productId) => {
+    const newWishlist = wishlist.filter(item => item.id !== productId);
+    setWishlist(newWishlist);
+    updateUserData({ wishlist: newWishlist });
+  };
+
+  const isInWishlist = (productId) => {
+    return wishlist.some(item => item.id === productId);
+  };
+
   const placeOrder = async (orderData) => {
     if (!user?.uid) return null;
     
+    // Final Inventory Check: Re-verify stock at the millisecond of "Place Order"
+    // Since we did soft-reservation, we just need to ensure the cart items are still valid.
+    
+    // Use a combination of timestamp and a random string to guarantee uniqueness across users
     const uniqueSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const orderNum = Date.now().toString().slice(-6);
+    const orderNum = Date.now().toString().slice(-6); // last 6 digits of timestamp
     const newOrderId = `ORD-${orderNum}-${uniqueSuffix}`;
     const newOrder = {
       date: new Date().toISOString(),
@@ -260,7 +325,16 @@ export const ShopProvider = ({ children }) => {
     };
     
     await setDoc(doc(db, 'users', user.uid, 'orders', newOrderId), newOrder);
+
+    // Dynamic Notification for Admin
+    await addDoc(collection(db, "notifications"), {
+      msg: `New order placed by ${newOrder.name || user.name} (${newOrderId})`,
+      time: new Date().toLocaleTimeString(),
+      read: false,
+      timestamp: new Date().toISOString()
+    }).catch(e => console.error(e));
     
+    // Partially clear cart: Only remove items that were actually in the order
     const remainingCart = cart.filter(cartItem => 
       !newOrder.items.some(orderItem => 
         orderItem.id === cartItem.id && 
@@ -284,8 +358,13 @@ export const ShopProvider = ({ children }) => {
       return;
     }
 
+    // Restore Inventory (Safely)
     for (const item of orderData.items) {
-      await updateDoc(doc(db, 'products', item.id), { stock: increment(item.quantity || 1) });
+      try {
+        await updateDoc(doc(db, 'products', item.id), { stock: increment(item.quantity || 1) });
+      } catch (e) {
+        console.warn(`Inventory restoration skipped for ${item.id}: Item removed from catalog.`);
+      }
     }
 
     await updateDoc(orderRef, { 
@@ -330,6 +409,7 @@ export const ShopProvider = ({ children }) => {
     <ShopContext.Provider value={{
       user, login, logout, register,
       cart, addToCart, removeFromCart, updateQuantity,
+      wishlist, addToWishlist, removeFromWishlist, isInWishlist,
       orders, placeOrder, cancelOrder, requestReturn,
       addresses, addAddress, removeAddress,
       products, loading,

@@ -120,8 +120,8 @@ export default function Dashboard() {
         <div className="xl:col-span-2 space-y-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-white tracking-tight">Admin Executive</h1>
-                    <p className="text-amber-500/60 font-black uppercase tracking-[0.2em] text-[10px] mt-1">Real-time Operations Pulse</p>
+                    <h1 className="text-3xl font-black text-white tracking-tight">Shop Overview</h1>
+                    <p className="text-amber-500/60 font-black uppercase tracking-[0.2em] text-[10px] mt-1">Shop numbers right now</p>
                 </div>
                 <div className="flex bg-gray-900 p-1.5 rounded-2xl border border-gray-800 shadow-xl">
                     {['daily','monthly','yearly'].map(p => (
@@ -130,7 +130,7 @@ export default function Dashboard() {
                             onClick={() => setPeriod(p)} 
                             className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${period === p ? 'bg-amber-500 text-gray-900 shadow-lg' : 'text-gray-500 hover:text-white'}`}
                         >
-                            {p}
+                            {p === 'daily' ? 'Day' : p === 'monthly' ? 'Month' : 'Year'}
                         </button>
                     ))}
                 </div>
@@ -138,10 +138,10 @@ export default function Dashboard() {
 
             {/* Quick Actions Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <QuickAction icon={PlusCircle} label="Add Product" path="/admin/products/add" color="bg-blue-500" />
-                <QuickAction icon={ShoppingBag} label="View Orders" path="/admin/orders" color="bg-emerald-500" />
-                <QuickAction icon={Tags} label="Categories" path="/admin/categories" color="bg-purple-500" />
-                <QuickAction icon={Archive} label="Audit Stock" path="/admin/inventory" color="bg-amber-500" />
+                <QuickAction icon={PlusCircle} label="Add Cycle" path="/admin/products/add" color="bg-blue-500" />
+                <QuickAction icon={ShoppingBag} label="View Sales" path="/admin/orders" color="bg-emerald-500" />
+                <QuickAction icon={Tags} label="Cycle Types" path="/admin/categories" color="bg-purple-500" />
+                <QuickAction icon={Archive} label="Check Stock" path="/admin/inventory" color="bg-amber-500" />
             </div>
         </div>
 
@@ -155,13 +155,13 @@ export default function Dashboard() {
                     <span className="w-2 h-2 bg-gray-900 rounded-full animate-pulse" />
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900">System Live</span>
                 </div>
-                <h3 className="text-3xl font-black text-gray-900 leading-none tracking-tighter">Performance Peak</h3>
-                <p className="text-gray-900/60 text-xs font-bold mt-2">All global systems and payment gateways operating at optimal velocity.</p>
+                <h3 className="text-3xl font-black text-gray-900 leading-none tracking-tighter">Running Smoothly</h3>
+                <p className="text-gray-900/60 text-xs font-bold mt-2">All shop systems and payments are working very fast right now.</p>
             </div>
             <div className="mt-8 flex items-end justify-between relative z-10">
                 <div>
                     <p className="text-4xl font-black text-gray-900 tracking-tighter">98.4%</p>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-900/40">Efficiency Score</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-900/40">Success Rate</p>
                 </div>
                 <div className="w-12 h-12 bg-gray-900 rounded-2xl flex items-center justify-center text-amber-500 shadow-2xl shadow-black/20">
                     <TrendingUp size={24} />
@@ -172,10 +172,10 @@ export default function Dashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard icon={IndianRupee} label="Revenue" value={`₹${(totalRevenue/100000).toFixed(1)}L`} sub="Total settlements" color="bg-blue-600" trend={12.4} />
-        <StatCard icon={ShoppingBasket} label="Orders" value={totalOrders} sub={`${pendingOrders} to authorize`} color="bg-emerald-600" trend={8.2} />
-        <StatCard icon={Users} label="Clients" value={customers.length} sub="Lifetime members" color="bg-purple-600" trend={5.7} />
-        <StatCard icon={Bike} label="Inventory" value={products.length} sub={`${lowStockProducts.length} low priority targets`} color="bg-amber-600" trend={-2.1} />
+        <StatCard icon={IndianRupee} label="Earnings" value={`₹${(totalRevenue/100000).toFixed(1)}L`} sub="Total money in" color="bg-blue-600" trend={12.4} />
+        <StatCard icon={ShoppingBasket} label="Sales" value={totalOrders} sub={`${pendingOrders} to check`} color="bg-emerald-600" trend={8.2} />
+        <StatCard icon={Users} label="Buyers" value={customers.length} sub="Total shop users" color="bg-purple-600" trend={5.7} />
+        <StatCard icon={Bike} label="In Shop" value={products.length} sub={`${lowStockProducts.length} almost gone`} color="bg-amber-600" trend={-2.1} />
       </div>
 
       {/* Charts Row */}
@@ -184,8 +184,8 @@ export default function Dashboard() {
         <div className="lg:col-span-2 bg-gray-900 border border-gray-800 rounded-[2.5rem] p-8 shadow-xl">
           <div className="flex items-center justify-between mb-8">
             <div>
-                <h2 className="text-xl font-black text-white tracking-tight">Revenue Overview</h2>
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Growth progression last 6 months</p>
+                <h2 className="text-xl font-black text-white tracking-tight">Earnings Over Time</h2>
+                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Growth in the last 6 months</p>
             </div>
             <div className="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center text-amber-500">
                 <TrendingUp size={20} />
@@ -197,7 +197,7 @@ export default function Dashboard() {
         {/* Category Donut */}
         <div className="bg-gray-900 border border-gray-800 rounded-[2.5rem] p-8 shadow-xl">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-black text-white tracking-tight">Segmentation</h2>
+            <h2 className="text-xl font-black text-white tracking-tight">Bikes by Type</h2>
           </div>
           <DonutChart data={dynamicCategoryData} />
         </div>
@@ -208,9 +208,9 @@ export default function Dashboard() {
         {/* Recent Orders */}
         <div className="lg:col-span-2 bg-gray-900 border border-gray-800 rounded-[2.5rem] p-8 shadow-xl">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-black text-white tracking-tight">Recent Activity</h2>
+            <h2 className="text-xl font-black text-white tracking-tight">Recent Sales</h2>
             <Link to="/admin/orders" className="text-amber-500 text-[10px] font-black uppercase tracking-widest hover:text-amber-400 flex items-center gap-2">
-                Audit All <ArrowRight size={12} />
+                See All <ArrowRight size={12} />
             </Link>
           </div>
           <div className="space-y-4">
@@ -228,7 +228,9 @@ export default function Dashboard() {
                 </div>
                 <div className="text-right flex-shrink-0">
                   <p className="text-sm font-black text-white">₹{(order.total || 0).toLocaleString()}</p>
-                  <span className={`text-[9px] px-3 py-1 rounded-full font-black uppercase tracking-widest mt-1 inline-block ${statusColors[order.status] || 'bg-gray-700 text-gray-400'}`}>{order.status}</span>
+                  <span className={`text-[9px] px-3 py-1 rounded-full font-black uppercase tracking-widest mt-1 inline-block ${statusColors[order.status] || 'bg-gray-700 text-gray-400'}`}>
+                    {order.status || 'Pending'}
+                  </span>
                 </div>
               </div>
             ))}
@@ -239,14 +241,14 @@ export default function Dashboard() {
         {/* Top Products + Low Stock */}
         <div className="space-y-8">
           <div className="bg-gray-900 border border-gray-800 rounded-[2.5rem] p-8 shadow-xl">
-            <h2 className="text-xl font-black text-white tracking-tight mb-6">Top Assets</h2>
+            <h2 className="text-xl font-black text-white tracking-tight mb-6">Best Selling</h2>
             <div className="space-y-5">
               {topProducts.map((p, i) => (
                 <div key={p.id} className="flex items-center gap-4 group">
                   <span className="text-2xl font-black text-gray-800 group-hover:text-amber-500/20 transition-colors duration-500 italic">0{i+1}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-white truncate">{p.name}</p>
-                    <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{p.sold || 0} Units Sold</p>
+                    <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{p.sold || 0} Sold</p>
                   </div>
                   <span className="text-xs font-black text-emerald-400">₹{((p.price || 0)/1000).toFixed(0)}k</span>
                 </div>
@@ -263,20 +265,20 @@ export default function Dashboard() {
               <div className="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center text-red-500">
                   <Archive size={16} />
               </div>
-              <h2 className="text-lg font-black text-white tracking-tight">Depletion Alerts</h2>
+              <h2 className="text-lg font-black text-white tracking-tight">Sold Out Alerts</h2>
             </div>
             <div className="space-y-4 relative z-10">
               {lowStockProducts.slice(0,3).map(p => (
                 <div key={p.id} className="flex items-center justify-between">
                   <p className="text-xs font-bold text-gray-300 truncate flex-1">{p.name}</p>
                   <span className={`text-[10px] font-black uppercase tracking-widest ml-4 px-2 py-0.5 rounded-full ${p.stock === 0 ? 'bg-red-500/10 text-red-400' : 'bg-amber-500/10 text-amber-400'}`}>
-                      {p.stock === 0 ? 'Exhausted' : `${p.stock} units`}
+                      {p.stock === 0 ? 'Sold Out' : `${p.stock} in stock`}
                   </span>
                 </div>
               ))}
               {lowStockProducts.length === 0 && (
                   <div className="py-4 text-center">
-                      <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest">Inventory Optimal</p>
+                      <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest">Stock is full</p>
                   </div>
               )}
             </div>
@@ -290,7 +292,8 @@ export default function Dashboard() {
 const statusColors = {
   Delivered: 'bg-emerald-500/10 text-emerald-400',
   Shipped: 'bg-blue-500/10 text-blue-400',
-  Confirmed: 'bg-purple-500/10 text-purple-400',
+  Assembling: 'bg-indigo-500/10 text-indigo-400',
+  Processing: 'bg-purple-500/10 text-purple-400',
   Pending: 'bg-amber-500/10 text-amber-400',
   Cancelled: 'bg-red-500/10 text-red-400',
 };
