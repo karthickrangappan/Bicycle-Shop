@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   ShoppingCart,
@@ -26,7 +26,6 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useShop } from '../context/ShopContext';
-import { MOCK_PRODUCTS } from '../components/ProductCard';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -39,7 +38,7 @@ export default function Navbar() {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout, cart, wishlist } = useShop();
+  const { user, logout, cart, wishlist, categories: dynamicCategories, products: shopProducts } = useShop();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -52,9 +51,9 @@ export default function Navbar() {
 
   const filteredItems = searchQuery.trim() === "" 
     ? [] 
-    : MOCK_PRODUCTS.filter(product => 
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        product.category.toLowerCase().includes(searchQuery.toLowerCase())
+    : shopProducts.filter(product => 
+        (product.name || '').toLowerCase().includes(searchQuery.toLowerCase()) || 
+        (product.category || '').toLowerCase().includes(searchQuery.toLowerCase())
       ).slice(0, 5);
 
   const isHome = location.pathname === "/";
@@ -76,13 +75,19 @@ export default function Navbar() {
     { label: "Contact Us", href: "/contact", icon: Mail, desc: "Get in touch with our experts" },
   ];
 
-  const categoryItems = [
-    { label: "Mountain", href: "/shop?category=Mountain", icon: Mountain, desc: "Rugged bikes for off-road trails" },
-    { label: "Road", href: "/shop?category=Road", icon: Compass, desc: "Built for speed on paved roads" },
-    { label: "City", href: "/shop?category=City", icon: Bike, desc: "Perfect for urban commuting" },
-    { label: "E-Bikes", href: "/shop?category=E-Bikes", icon: Zap, desc: "Electric power for easy riding" },
-    { label: "Gravel", href: "/shop?category=Gravel", icon: TrendingUp, desc: "Versatile bikes for all surfaces" },
-  ];
+  // Build dynamic category navigation items from Firestore categories
+  const categoryItems = useMemo(() => {
+    return dynamicCategories
+      .filter(c => c.active)
+      .sort((a, b) => (a.priority || 0) - (b.priority || 0))
+      .slice(0, 6)
+      .map(c => ({
+        label: c.name,
+        href: `/shop?category=${encodeURIComponent(c.name)}`,
+        desc: c.description || `Browse ${c.name}`,
+        image: c.image
+      }));
+  }, [dynamicCategories]);
 
   const navbarBg = isHome
     ? (scrolled
@@ -155,8 +160,8 @@ export default function Navbar() {
                         onClick={() => setCategoriesDropdown(false)}
                         className="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 transition-all group"
                       >
-                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all">
-                          <item.icon size={18} />
+                        <div className="w-10 h-10 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all flex-shrink-0">
+                          {item.image ? <img src={item.image} alt={item.label} className="w-full h-full object-cover" /> : <Bike size={18} />}
                         </div>
                         <div>
                           <p className="text-sm font-black text-slate-900 group-hover:text-brand-600">{item.label}</p>
@@ -301,8 +306,9 @@ export default function Navbar() {
 
              {/* Admin Shortcut */}
              {user?.role === 'admin' && (
-                <Link to="/admin" className="p-2 text-white hover:bg-white/10 rounded-lg transition-all group" title="Admin Dashboard">
-                    <ShieldCheck size={18} className="group-hover:scale-110 text-brand-500" />
+                <Link to="/admin" className="p-2 border border-brand-500/30 bg-brand-500/10 text-brand-500 hover:bg-brand-500 hover:text-white rounded-lg transition-all group flex items-center gap-2" title="Admin Dashboard">
+                    <ShieldCheck size={18} className="group-hover:scale-110" />
+                    <span className="text-[10px] font-black uppercase tracking-widest hidden xl:block pr-1">Dashboard</span>
                 </Link>
              )}
 
@@ -471,6 +477,20 @@ export default function Navbar() {
                   </Link>
                 ))}
 
+                {user?.role === 'admin' && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setOpen(false)}
+                    className="flex justify-between items-center p-4 bg-amber-500 text-slate-900 rounded-2xl font-black shadow-lg shadow-amber-500/20"
+                  >
+                    <div className="flex items-center gap-3">
+                        <ShieldCheck size={18} />
+                        Admin Dashboard
+                    </div>
+                    <ArrowRight size={18} />
+                  </Link>
+                )}
+
                 <div className="pt-4 pb-2">
                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-300 ml-4 mb-2">Explore</p>
                 </div>
@@ -500,8 +520,8 @@ export default function Navbar() {
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-4 p-4 rounded-2xl text-slate-600 font-bold hover:bg-slate-50 transition-all"
                   >
-                    <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
-                       <item.icon size={18} />
+                    <div className="w-10 h-10 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center text-slate-400 flex-shrink-0">
+                       {item.image ? <img src={item.image} alt={item.label} className="w-full h-full object-cover" /> : <Bike size={18} />}
                     </div>
                     {item.label}
                   </Link>

@@ -54,28 +54,38 @@ export const ShopProvider = ({ children }) => {
         let role = 'user';
         let data = {};
 
-        // Use UID as primary key as per snippets
+        // Check for both UID-based and Email-based documents
         const userRef = doc(db, 'users', currentUser.uid);
-        const userSnap = await getDoc(userRef).catch(() => null);
+        const emailRef = doc(db, 'users', currentUser.email);
         
+        const [userSnap, emailSnap] = await Promise.all([
+          getDoc(userRef).catch(() => null),
+          getDoc(emailRef).catch(() => null)
+        ]);
+        
+        // If an email-based document exists and is admin, respect that role
+        const emailRole = emailSnap?.exists() ? emailSnap.data().role : null;
+
         if (userSnap?.exists()) {
           data = userSnap.data();
-          role = data.role || role;
+          role = emailRole === 'admin' ? 'admin' : (data.role || role);
+
           setCart(data.cart || []);
           setWishlist(data.wishlist || []);
           setAddresses(data.addresses || []);
 
-          // Update lastLogin as per snippet
-          await updateDoc(userRef, { lastLogin: new Date() }).catch(() => {});
+          // Sync the admin role to the UID document if it was found in the email document
+          const updates = { lastLogin: new Date() };
+          if (emailRole === 'admin' && data.role !== 'admin') updates.role = 'admin';
+          await updateDoc(userRef, updates).catch(() => {});
         } else {
+          role = emailRole === 'admin' ? 'admin' : role;
+          
           // Initialize new user profile using UID
-          const email = currentUser.email;
-          if (email === "admin@bicycleshop.com") role = 'admin';
-
           data = { 
             uid: currentUser.uid,
-            name: currentUser.displayName || email?.split('@')[0] || "User",
-            email: email,
+            name: currentUser.displayName || currentUser.email?.split('@')[0] || "User",
+            email: currentUser.email,
             cart: [], 
             wishlist: [], 
             addresses: [], 
@@ -88,7 +98,7 @@ export const ShopProvider = ({ children }) => {
 
         setUser({
           uid: currentUser.uid,
-          name: data.name || currentUser.displayName || (currentUser.email === "admin@bicycleshop.com" ? "Super Admin" : "User"),
+          name: data.name || currentUser.displayName || "User",
           email: currentUser.email,
           role
         });

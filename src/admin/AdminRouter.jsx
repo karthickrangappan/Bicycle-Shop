@@ -41,7 +41,7 @@ export default function AdminRouter() {
       <Route path="orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
       <Route path="customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
       <Route path="settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }

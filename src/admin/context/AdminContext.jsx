@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, auth } from '../../../firebase';
 import { collection, collectionGroup, onSnapshot, doc, deleteDoc, updateDoc, setDoc, addDoc, getDoc, getDocs } from 'firebase/firestore';
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { toast } from 'react-hot-toast';
 
 const AdminContext = createContext();
@@ -66,15 +66,20 @@ export const AdminProvider = ({ children }) => {
 
     const unsubAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userSnap = await getDoc(doc(db, "users", user.uid));
-        const isHardcodedAdmin = user.email === "admin@bicycleshop.com";
-        const isDbAdmin = userSnap.exists() && userSnap.data().role === 'admin';
+        const [userSnap, emailSnap] = await Promise.all([
+          getDoc(doc(db, "users", user.uid)).catch(() => null),
+          getDoc(doc(db, "users", user.email)).catch(() => null)
+        ]);
+        
+        const isUidAdmin = userSnap?.exists() && userSnap.data().role === 'admin';
+        const isEmailAdmin = emailSnap?.exists() && emailSnap.data().role === 'admin';
 
-        if (isHardcodedAdmin || isDbAdmin) {
+        if (isUidAdmin || isEmailAdmin) {
+          const data = userSnap?.exists() ? userSnap.data() : (emailSnap?.exists() ? emailSnap.data() : {});
           setAdminUser({ 
-            name: userSnap.data()?.name || (isHardcodedAdmin ? "Super Admin" : "Admin"), 
+            name: data?.name || "Admin", 
             email: user.email, 
-            role: isHardcodedAdmin ? "super_admin" : "manager",
+            role: 'admin',
             uid: user.uid 
           });
         } else {
@@ -186,21 +191,6 @@ export const AdminProvider = ({ children }) => {
     await updateDoc(doc(db, "services", id), { status }).catch(e => console.error(e));
   };
 
-  const login = async (email, password) => {
-    try {
-      if (email === "admin@bicycleshop.com" && password === "admin123") {
-        setAdminUser({ name: "Super Admin", email, role: "super_admin" });
-        return { success: true };
-      }
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      setAdminUser({ name: userCredential.user.displayName || "Admin", email, role: "manager" });
-      toast.success('Admin login successful');
-      return { success: true };
-    } catch(e) {
-      return { success: false, message: e.message };
-    }
-  };
-
   const logout = async () => {
     await signOut(auth);
     setAdminUser(null);
@@ -286,7 +276,7 @@ export const AdminProvider = ({ children }) => {
 
   return (
     <AdminContext.Provider value={{
-      adminUser, login, logout,
+      adminUser, logout,
       products, addProduct, updateProduct, deleteProduct, categorizeAllProducts, resetAllStocks,
       orders, updateOrderStatus,
       customers, toggleCustomerStatus,

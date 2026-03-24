@@ -14,7 +14,7 @@ export default function Products() {
 
   const categories = ['All', ...new Set(dynamicCategories.map(c => c.name))];
   const filtered = products.filter(p => {
-    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.sku.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = (p.name || '').toLowerCase().includes(search.toLowerCase()) || (p.sku || '').toLowerCase().includes(search.toLowerCase());
     const matchCat = categoryFilter === 'All' || p.category === categoryFilter;
     const matchStatus = statusFilter === 'All' || p.status === statusFilter;
     return matchSearch && matchCat && matchStatus;

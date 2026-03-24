@@ -11,9 +11,11 @@ export default function AddEditProduct() {
   const { products, categories: dynamicCategories, addProduct, updateProduct } = useAdmin();
   const navigate = useNavigate();
 
-  const categories = dynamicCategories.filter(c => c.active).map(c => c.name);
+  const categories = dynamicCategories?.length > 0 
+    ? dynamicCategories.filter(c => c.active).map(c => c.name) 
+    : ['Mountain Bikes', 'Road Bikes', 'Urban & City', 'Gravel & Adventure', 'Kids Bicycles', 'Spare Parts', 'Accessories', 'Performance Apparel'];
   const isEdit = !!id;
-  const existing = products.find(p => p.id === parseInt(id));
+  const existing = products.find(p => p.id === id);
 
   const [form, setForm] = useState({
     name: '', brand: '', category: 'Mountain Bikes', sku: '', price: '', mrp: '',
@@ -40,7 +42,7 @@ export default function AddEditProduct() {
   const handleSave = (e) => {
     e.preventDefault();
     const data = { ...form, price: parseInt(form.price), mrp: parseInt(form.mrp), stock: parseInt(form.stock) };
-    if (isEdit) updateProduct(parseInt(id), data);
+    if (isEdit) updateProduct(id, data);
     else addProduct(data);
     setSaved(true);
     setTimeout(() => navigate('/admin/products'), 1000);
