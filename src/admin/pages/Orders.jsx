@@ -139,48 +139,62 @@ export default function Orders() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [categoryFilter, setCategoryFilter] = useState('All');
+  const [paymentFilter, setPaymentFilter] = useState('All');
+  const [sortOrder, setSortOrder] = useState('Newest First');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [invoiceOrder, setInvoiceOrder] = useState(null);
 
-  const filtered = orders.filter(o => {
+  let filtered = orders.filter(o => {
     const orderId = o.id || '';
     const customer = o.customer || o.customerName || '';
     const matchSearch = orderId.toLowerCase().includes(search.toLowerCase()) || customer.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === 'All' || statusFilter === 'All Status' || o.status === statusFilter;
     const matchCat = categoryFilter === 'All' || categoryFilter === 'All Categories' || (o.items || []).some(item => item.category === categoryFilter);
-    return matchSearch && matchStatus && matchCat;
+    const matchPayment = paymentFilter === 'All' || (o.paymentMethod || o.payment || '').toLowerCase() === paymentFilter.toLowerCase();
+    
+    return matchSearch && matchStatus && matchCat && matchPayment;
   });
+
+  if (sortOrder === 'Newest First') filtered = [...filtered].sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
+  if (sortOrder === 'Oldest First') filtered = [...filtered].sort((a,b) => new Date(a.date || 0) - new Date(b.date || 0));
+  if (sortOrder === 'Highest Amount') filtered = [...filtered].sort((a,b) => (b.total || 0) - (a.total || 0));
 
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-black text-white">Orders</h1>
-          <p className="text-gray-500 text-sm">{orders.length} total orders</p>
+          <p className="text-gray-500 text-sm">{orders.length} total orders • {filtered.length} filtered</p>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {statusFlow.map(s => (
           <button key={s} onClick={() => setStatusFilter(statusFilter === s ? 'All' : s)} className={`bg-gray-900 border rounded-xl p-3 text-left transition-all ${statusFilter === s ? 'border-amber-500/50' : 'border-gray-800 hover:border-gray-700'}`}>
             <p className={`text-xl font-black ${statusColors[s]?.includes('emerald') ? 'text-emerald-400' : statusColors[s]?.includes('blue') ? 'text-blue-400' : statusColors[s]?.includes('purple') ? 'text-purple-400' : 'text-amber-400'}`}>{orders.filter(o => o.status === s).length}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{s}</p>
+            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">{s}</p>
           </button>
         ))}
       </div>
 
       {/* Filters */}
-      <div className="flex gap-3">
-        <input type="text" placeholder="Search by order ID or customer..." value={search} onChange={e => setSearch(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 flex-1" />
-        <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option value="All">All Categories</option>
-          {dynamicCategories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+        <input type="text" placeholder="Search Order ID, Customer..." value={search} onChange={e => setSearch(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 col-span-1 md:col-span-2" />
+        <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+          <option value="All">All Payments</option>
+          <option value="COD">Cash on Delivery</option>
+          <option value="Razorpay">Razorpay / Online</option>
         </select>
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          <option>All Status</option>
-          {statusFlow.map(s => <option key={s}>{s}</option>)}
-          <option>Cancelled</option>
+          <option value="All">All Status</option>
+          {statusFlow.map(s => <option key={s} value={s}>{s}</option>)}
+          <option value="Cancelled">Cancelled</option>
+        </select>
+        <select value={sortOrder} onChange={e => setSortOrder(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+          <option>Newest First</option>
+          <option>Oldest First</option>
+          <option>Highest Amount</option>
         </select>
       </div>
 
