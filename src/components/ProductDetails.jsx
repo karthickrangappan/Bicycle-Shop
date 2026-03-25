@@ -129,7 +129,7 @@ export default function ProductDetails() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="lg:col-span-7 bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden max-h-[400px] sm:max-h-[450px] lg:max-h-[520px]"
+            className="lg:col-span-7 bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden h-full"
           >
             <div className="h-full bg-slate-50 relative aspect-[4/3] sm:aspect-video lg:aspect-auto">
               <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
@@ -146,7 +146,7 @@ export default function ProductDetails() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="lg:col-span-5 bg-white rounded-[2rem] p-4 sm:p-6 xl:p-8 shadow-xl shadow-slate-200/50 border border-slate-100 max-h-[400px] sm:max-h-[450px] lg:max-h-[520px] overflow-y-auto custom-scrollbar"
+            className="lg:col-span-5 bg-white rounded-[2rem] p-4 sm:p-6 xl:p-8 shadow-xl shadow-slate-200/50 border border-slate-100 h-full"
           >
             <div className="mb-4 sm:mb-6">
               <div className="flex items-center gap-1 mb-2 sm:mb-3">
