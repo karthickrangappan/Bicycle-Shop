@@ -338,7 +338,7 @@ export default function Navbar() {
               <ShoppingCart size={18} className="group-hover:scale-110" />
               {cart.length > 0 && (
                 <span className="absolute top-1 right-1 w-3.5 h-3.5 text-[8px] bg-brand-500 text-white flex items-center justify-center rounded-full shadow-lg">
-                  {cart.reduce((a, c) => a + (c.quantity || 1), 0)}
+                  {cart.length}
                 </span>
               )}
             </Link>
