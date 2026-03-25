@@ -60,7 +60,7 @@ export default function NewArrivals() {
         {/* Product Swiper */}
         <div className="-mx-4 px-4 sm:mx-0 sm:px-0">
           <Swiper
-            modules={[Autoplay, Pagination]}
+            modules={[Autoplay, ]}
             spaceBetween={20}
             slidesPerView={1}
             loop={true}
@@ -70,10 +70,7 @@ export default function NewArrivals() {
               disableOnInteraction: false,
               pauseOnMouseEnter: true, // PAUSE ON HOVER
             }}
-            pagination={{
-              clickable: true,
-              dynamicBullets: true,
-            }}
+           
             breakpoints={{
               640: { slidesPerView: 2, spaceBetween: 24 },
               768: { slidesPerView: 3, spaceBetween: 24 },
