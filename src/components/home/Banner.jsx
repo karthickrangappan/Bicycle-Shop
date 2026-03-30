@@ -1,7 +1,8 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectFade, Pagination } from 'swiper/modules';
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'; 
+import { useNavigate } from 'react-router-dom';
 
 // Swiper styles
 import 'swiper/css';
@@ -33,6 +34,7 @@ const bannerData = [
 ];
 
 export default function Banner() {
+  const navigate = useNavigate();
   return (
     <div className="w-full h-screen overflow-hidden group">
       <Swiper
@@ -100,7 +102,9 @@ export default function Banner() {
 
                     <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
                       
-                      <button className="w-full sm:w-auto relative overflow-hidden px-10 sm:px-14 py-5 bg-brand-500 text-white font-black rounded-2xl transition-all duration-500 hover:shadow-[0_20px_40px_rgba(59,130,246,0.5)] hover:-translate-y-1 active:scale-95 group/btn">
+                      <button 
+                      onClick={() => navigate('/shop')} 
+                      className="w-full sm:w-auto relative overflow-hidden px-10 sm:px-14 py-5 bg-brand-500 text-white font-black rounded-2xl transition-all duration-500 hover:shadow-[0_20px_40px_rgba(59,130,246,0.5)] hover:-translate-y-1 active:scale-95 group/btn">
                         <span className="relative z-10 flex items-center justify-center gap-3">
                           Shop Collection
                           <svg
@@ -120,7 +124,9 @@ export default function Banner() {
                         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
                       </button>
 
-                      <button className="w-full sm:w-auto px-10 sm:px-14 py-5 bg-white/10 backdrop-blur-xl text-white font-black rounded-2xl transition-all duration-500 hover:bg-white/20 hover:-translate-y-1 active:scale-95 border border-white/20">
+                      <button
+                      onClick={() => navigate('/shop')}
+                      className="w-full sm:w-auto px-10 sm:px-14 py-5 bg-white/10 backdrop-blur-xl text-white font-black rounded-2xl transition-all duration-500 hover:bg-white/20 hover:-translate-y-1 active:scale-95 border border-white/20">
                         View Showroom
                       </button>
 

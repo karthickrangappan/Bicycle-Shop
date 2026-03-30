@@ -1,8 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Store } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'; 
 
 export default function PromoBanner() {
+  const navigate = useNavigate();
   return (
     <section className="relative py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,7 +52,9 @@ export default function PromoBanner() {
                whileInView={{ opacity: 1, y: 0 }}
                transition={{ delay: 0.3 }}
             >
-              <button className="group relative px-10 py-5 bg-brand-500 text-white font-black rounded-2xl shadow-2xl transition-all duration-300 hover:bg-brand-600 hover:shadow-brand-500/40 active:scale-95 flex items-center gap-3">
+              <button
+              onClick={() => navigate('/shop')} 
+              className="group relative px-10 py-5 bg-brand-500 text-white font-black rounded-2xl shadow-2xl transition-all duration-300 hover:bg-brand-600 hover:shadow-brand-500/40 active:scale-95 flex items-center gap-3">
                 Visit Our Store
                 <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
               </button>
